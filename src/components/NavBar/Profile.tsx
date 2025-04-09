@@ -5,7 +5,7 @@ import { MdHelpCenter } from "react-icons/md";
 import { TbDownloadOff, TbDownload } from "react-icons/tb";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import images from "@/img"; // Assuming images is a valid import path
+import images from "@/img"; // Giả sử images là một đường dẫn nhập hợp lệ
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,19 +24,19 @@ interface ProfileProps {
 const profileItems = [
   {
     link: "/author",
-    name: "My Profile",
+    name: "Hồ sơ của tôi",
   },
   {
     link: "/account",
-    name: "Edit Profile",
+    name: "Chỉnh sửa hồ sơ",
   },
   {
     link: "/contactus",
-    name: "Help",
+    name: "Trợ giúp",
   },
   {
     link: "/aboutus",
-    name: "About Us",
+    name: "Giới thiệu về chúng tôi",
   },
 ];
 const Profile: React.FC<ProfileProps> = ({ currentAccount, account }) => {
@@ -47,13 +47,13 @@ const Profile: React.FC<ProfileProps> = ({ currentAccount, account }) => {
         <div className={cn("flex items-center mb-4")}>
           <Image
             src={account.avatar || images.user1}
-            alt="user profile"
+            alt="hồ sơ người dùng"
             width={50}
             height={50}
             className={cn("rounded-full")}
           />
           <div className={cn("ml-4")}>
-            <p>{account.username || "User"}</p>
+            <p>{account.username || "Người dùng"}</p>
             <small>{currentAccount.slice(0, 18)}..</small>
           </div>
         </div>
@@ -62,7 +62,7 @@ const Profile: React.FC<ProfileProps> = ({ currentAccount, account }) => {
     >
       <Image
         src={account.avatar || images.user1}
-        alt="Profile"
+        alt="Hồ sơ"
         width={40}
         height={40}
         className="rounded-full min-w-10"

@@ -22,14 +22,14 @@ const AuthorTaps = ({
 }) => {
   const [openList, setOpenList] = useState(false);
   const [activeBtn, setActiveBtn] = useState(1);
-  const [selectedMenu, setSelectedMenu] = useState('Most Recent');
+  const [selectedMenu, setSelectedMenu] = useState('Mới nhất');
 
   const listArray = [
-    'Most Recent',
-    'Created By Admin',
-    'Most Appreciated',
-    'Most Discussed',
-    'Most Viewed',
+    'Mới nhất',
+    'Được tạo bởi Admin',
+    'Được yêu thích nhất',
+    'Được thảo luận nhiều nhất',
+    'Được xem nhiều nhất',
   ];
 
   const openDropDownList = () => {
@@ -39,11 +39,11 @@ const AuthorTaps = ({
   const openTab = (e: React.MouseEvent<HTMLButtonElement>) => {
     const btnText = (e.target as HTMLElement).innerText;
     const mapping: { [key: string]: () => void } = {
-      'Listed NFTs': () => { setCollectiables(true); setCreated(false); setFollower(false); setFollowing(false); setLike(false); setActiveBtn(1); },
-      'Own NFT': () => { setCollectiables(false); setCreated(true); setFollower(false); setFollowing(false); setLike(false); setActiveBtn(2); },
-      'Liked': () => { setCollectiables(false); setCreated(false); setFollower(false); setFollowing(false); setLike(true); setActiveBtn(3); },
-      'Following': () => { setCollectiables(false); setCreated(false); setFollower(false); setFollowing(true); setLike(false); setActiveBtn(4); },
-      'Followers': () => { setCollectiables(false); setCreated(false); setFollower(true); setFollowing(false); setLike(false); setActiveBtn(5); },
+      'NFT đã liệt kê': () => { setCollectiables(true); setCreated(false); setFollower(false); setFollowing(false); setLike(false); setActiveBtn(1); },
+      'NFT của tôi': () => { setCollectiables(false); setCreated(true); setFollower(false); setFollowing(false); setLike(false); setActiveBtn(2); },
+      'Đã thích': () => { setCollectiables(false); setCreated(false); setFollower(false); setFollowing(false); setLike(true); setActiveBtn(3); },
+      'Đang theo dõi': () => { setCollectiables(false); setCreated(false); setFollower(false); setFollowing(true); setLike(false); setActiveBtn(4); },
+      'Người theo dõi': () => { setCollectiables(false); setCreated(false); setFollower(true); setFollowing(false); setLike(false); setActiveBtn(5); },
     };
     mapping[btnText]?.();
   };
@@ -52,7 +52,7 @@ const AuthorTaps = ({
     <div className={cn('mt-32 mb-12')}>
       <div className={cn('mx-auto w-4/5tt lg:flex  lg:justify-between', )}>
         <div className={cn('flex gap-8 items-center flex-wrap')}>
-          {['Listed NFTs', 'Own NFT', 'Liked', 'Following', 'Followers'].map((btn, idx) => (
+          {['NFT đã liệt kê', 'NFT của tôi', 'Đã thích', 'Đang theo dõi', 'Người theo dõi'].map((btn, idx) => (
             <button
               key={idx}
               onClick={openTab}
@@ -72,9 +72,6 @@ const AuthorTaps = ({
               {openList ? <TiArrowSortedUp /> : <TiArrowSortedDown />}
             </DropdownMenuTrigger >
             <DropdownMenuContent className=" bg-main-bg border border-primary ">
-              {/* <DropdownMenuLabel className="mt-4">
-
-              </DropdownMenuLabel> */}
               <DropdownMenuSeparator />
               {listArray.map((el, i) => (
                 <DropdownMenuItem key={i} className={cn('bg-main-bg  w-64 left-[-0.75rem]  shadow-custom z-9')}>
@@ -87,12 +84,9 @@ const AuthorTaps = ({
                     <span>{selectedMenu === el && <TiTick />}</span>
                   </div>
                 </DropdownMenuItem>
-
               ))}
-
             </DropdownMenuContent>
           </DropdownMenu>
-
         </div>
       </div>
     </div>

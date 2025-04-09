@@ -18,57 +18,54 @@ const DaysComponents: React.FC<DaysComponentProps> = ({ el, i }) => {
         <div className="rounded-lg overflow-hidden">
           <Image
             src={el.background}
-            alt="profile background"
+            alt="hình nền hồ sơ"
             width={500}
             height={300}
-
-            className=' object-cover w-full h-64'
+            className='object-cover w-full h-64'
           />
         </div>
 
         <div className="grid grid-cols-3 gap-4 my-2">
           <Image
             src={images[`creatorbackground${i + 2}`]}
-            alt="profile"
+            alt="hồ sơ"
             width={200}
             height={200}
             layout='fixed'
-
             className="rounded-bl-lg object-cover w-full h-32"
           />
           <Image
             src={images[`creatorbackground${i + 4}`]}
-            alt="profile"
-            width="200"
-            height="200"
+            alt="hồ sơ"
+            width={200}
+            height={200}
             className="rounded-bl-lg object-cover w-full h-32"
           />
           <Image
             src={images[`creatorbackground${i + 3}`]}
-            alt="profile"
+            alt="hồ sơ"
             width={200}
             height={200}
             layout='fixed'
-
             className="rounded-bl-lg object-cover w-full h-32"
           />
         </div>
 
         <div className="px-4 py-4">
-          <h2 className="text-lg font-bold">Amazing Collection</h2>
+          <h2 className="text-lg font-bold">Bộ Sưu Tập Tuyệt Vời</h2>
           <div className="flex justify-between items-center pt-4">
             <div className="flex items-center gap-4">
               <Image
                 src={el.user}
-                alt="profile"
+                alt="hồ sơ"
                 width={30}
                 height={30}
                 className="rounded-full object-cover"
-                />
+              />
               <p>
-                Creator
+                Người Sáng Tạo
                 <span className="font-semibold mx-2">
-                  User
+                  Người Dùng
                   <small className="inline-block">
                     <MdVerified />
                   </small>
@@ -77,7 +74,7 @@ const DaysComponents: React.FC<DaysComponentProps> = ({ el, i }) => {
             </div>
 
             <div>
-              <small className=" whitespace-nowrap font-semibold border-4 border-icons p-2 rounded-md">
+              <small className="whitespace-nowrap font-semibold border-4 border-icons p-2 rounded-md">
                 {i + 4}.255 ETH
               </small>
             </div>

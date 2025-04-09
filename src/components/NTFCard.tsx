@@ -24,14 +24,12 @@ const Time = () => {
         seconds
       )}s`}{" "}
     </span>
-
   );
 };
 
 const NFTCard = () => {
   const { checkIfWalletConnected, currentAccount, nfts, setNfts, likes } =
     useContext(NFTMarketplaceContext)!;
-
 
   return (
     <div
@@ -43,19 +41,19 @@ const NFTCard = () => {
         <Link href={{ pathname: "/NFT-details", query: el }} key={i}>
           <div
             className={cn(
-              " h-72 grid grid-cols-4 grid-rows-4 bg-main-bg p-4 rounded-lg cursor-pointer transition-all duration-300 ease-in-out hover:shadow-custom"
+              "h-72 grid grid-cols-4 grid-rows-4 bg-main-bg p-4 rounded-lg cursor-pointer transition-all duration-300 ease-in-out hover:shadow-custom"
             )}
           >
             <div
               className={cn(
-                " col-[1/-1] row-[1/-1] overflow-hidden rounded-lg"
+                "col-[1/-1] row-[1/-1] overflow-hidden rounded-lg"
               )}
             >
               <Image
                 src={el.image}
                 width={1024}
                 height={768}
-                alt="NFT images"
+                alt="Hình ảnh NFT"
                 className={cn(
                   "col-span-full object-fill row-span-full transition-all duration-400 ease-in-out w-full"
                 )}
@@ -64,36 +62,36 @@ const NFTCard = () => {
 
             <div
               className={cn(
-                " col-[1/-1] row-[1/2] z-9 flex items-start justify-between overflow-hidden"
+                "col-[1/-1] row-[1/2] z-9 flex items-start justify-between overflow-hidden"
               )}
             >
               <Like nFTTokenId={el.tokenId!} currentAccount={currentAccount!}></Like>
 
               <div
                 className={cn(
-                  " text-primary bg-main-bg skew-x-[45deg] px-8 py-4 text-center  mr-[-2rem] rounded-bl-lg"
+                  "text-primary bg-main-bg skew-x-[45deg] px-8 py-4 text-center mr-[-2rem] rounded-bl-lg"
                 )}
-              > <div className={cn("skew-x-[-45deg] bg-main-bg")}>
+              >
+                <div className={cn("skew-x-[-45deg] bg-main-bg")}>
                   <p className={cn("text-xl font-bold whitespace-nowrap")}>
                     {" "}
                     <Time></Time>
                   </p>
                 </div>
-
               </div>
             </div>
 
             <div
               className={cn(
-                " col-[1/-1] row-[3/-1] overflow-hidden   items-end  pb-0"
+                "col-[1/-1] row-[3/-1] overflow-hidden items-end pb-0"
               )}
             >
               <div
                 className={cn(
-                  "bg-main-bg ml-[-3rem]  h-full skew-x-[35deg] overflow-hidden text-ellipsis whitespace-nowrap p-2 w-max  rounded-tr-lg"
+                  "bg-main-bg ml-[-3rem] h-full skew-x-[35deg] overflow-hidden text-ellipsis whitespace-nowrap p-2 w-max rounded-tr-lg"
                 )}
               >
-                <div className={cn("pl-12  skew-x-[-35deg]")}>
+                <div className={cn("pl-12 skew-x-[-35deg]")}>
                   <h4 className={cn("text-2xl mt-2")}>
                     {el.name} # {el.tokenId}
                   </h4>
@@ -109,12 +107,12 @@ const NFTCard = () => {
                       <small
                         className={cn("bg-icons text-main-bg rounded-sm p-1")}
                       >
-                        Current Bid
+                        Giá Hiện Tại
                       </small>
                       <p className={cn("p-2 font-bold")}>{el.price} ETH</p>
                     </div>
                     <div>
-                      <small>61 in stock</small>
+                      <small>61 trong kho</small>
                     </div>
                   </div>
                 </div>

@@ -14,9 +14,9 @@ const BigNFTSilder = () => {
 
   const sliderData = [
     {
-      title: "Hello NFT",
+      title: "Xin chào NFT",
       id: 1,
-      name: "Daulat Hussain",
+      name: "Duc Hung",
       collection: "GYm",
       price: "00664 ETH",
       like: 243,
@@ -79,14 +79,14 @@ const BigNFTSilder = () => {
     },
   ];
 
-  //-------INC
+  //-------TĂNG
   const inc = useCallback(() => {
     if (idNumber + 1 < sliderData.length) {
       setIdNumber(idNumber + 1);
     }
   }, [idNumber, sliderData.length]);
 
-  //-------DEC
+  //-------GIẢM
   const dec = useCallback(() => {
     if (idNumber > 0) {
       setIdNumber(idNumber - 1);
@@ -101,39 +101,39 @@ const BigNFTSilder = () => {
           <div className="flex justify-between">
             <div className="flex items-center gap-4">
               <div className="rounded-full overflow-hidden w-12 h-12">
-                <Image src={sliderData[idNumber].image} alt="profile image" width={50} height={50} />
+                <Image src={sliderData[idNumber].image} alt="hình ảnh hồ sơ" width={50} height={50} />
               </div>
               <div>
-                <p>Creator</p>
+                <p>Người tạo</p>
                 <h4 className="flex items-center">{sliderData[idNumber].name} <MdVerified /></h4>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <AiFillFire className="text-4xl" />
               <div>
-                <p>Collection</p>
+                <p>Bộ sưu tập</p>
                 <h4>{sliderData[idNumber].collection}</h4>
               </div>
             </div>
           </div>
           <div className="mt-8">
             <div className="border-4 h-24 border-shadow-dark rounded-md my-8 px-12 ">
-              <small className=" bg-shadow-dark py-6 px-8 rounded-lg text-lg whitespace-nowrap">Current Bid</small>
+              <small className=" bg-shadow-dark py-6 px-8 rounded-lg text-lg whitespace-nowrap">Giá hiện tại</small>
               <p className="mt-8">{sliderData[idNumber].price} <span>$221,21</span></p>
             </div>
             <div className="flex items-center gap-4">
               <MdTimer className="text-2xl" />
-              <span>Auction ending in</span>
+              <span>Đấu giá kết thúc trong</span>
             </div>
             <div className="flex items-center gap-8 mt-4 pb-8 border-b border-shadow-dark text-center">
-              <div><p className="text-2xl font-bold">{sliderData[idNumber].time.days}</p><span>Days</span></div>
-              <div><p className="text-2xl font-bold">{sliderData[idNumber].time.hours}</p><span>Hours</span></div>
-              <div><p className="text-2xl font-bold">{sliderData[idNumber].time.minutes}</p><span>mins</span></div>
-              <div><p className="text-2xl font-bold">{sliderData[idNumber].time.seconds}</p><span>secs</span></div>
+              <div><p className="text-2xl font-bold">{sliderData[idNumber].time.days}</p><span>Ngày</span></div>
+              <div><p className="text-2xl font-bold">{sliderData[idNumber].time.hours}</p><span>Giờ</span></div>
+              <div><p className="text-2xl font-bold">{sliderData[idNumber].time.minutes}</p><span>phút</span></div>
+              <div><p className="text-2xl font-bold">{sliderData[idNumber].time.seconds}</p><span>giây</span></div>
             </div>
             <div className="flex justify-center gap-16 py-8">
-              <Button onClick={() => { }} >Place</Button>
-              <Button onClick={() => { }} >View</Button>
+              <Button onClick={() => { }} >Đặt</Button>
+              <Button onClick={() => { }} >Xem</Button>
             </div>
           </div>
           <div className="flex justify-center gap-8 mt-8 select-none">
@@ -144,7 +144,7 @@ const BigNFTSilder = () => {
         <div className="h-[100vh] md:h-[unset]  row-[1/-1] w-10/12 mx-auto col-span-full md:col-[5_/_-1] md:row-span-full border border-primary  bg-main-bg shadow-custom rounded-2xl p-4 relative">
           <div className=" w-full h-full clip-path-content rounded-lg" style={{
           }}>
-            <Image src={sliderData[idNumber].nftImage} alt="NFT IMAGE"
+            <Image src={sliderData[idNumber].nftImage} alt="HÌNH ẢNH NFT"
               layout="responsive" 
               width={50}
               height={50}

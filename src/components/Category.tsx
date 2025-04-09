@@ -6,47 +6,47 @@ import images from "@/img";
 const CategoryArray = [
   {
     images: images.creatorbackground1,
-    name: "Dance Monkey",
+    name: "Nhảy Múa",
   },
   {
     images: images.creatorbackground2,
-    name: "Sports",
+    name: "Thể Thao",
   },
   {
     images: images.creatorbackground3,
-    name: "Entirtment Art",
+    name: "Nghệ Thuật Giải Trí",
   },
   {
     images: images.creatorbackground4,
-    name: "Time Life",
+    name: "Thời Gian Cuộc Sống",
   },
   {
     images: images.creatorbackground5,
-    name: "Animals Art",
+    name: "Nghệ Thuật Động Vật",
   },
   {
     images: images.creatorbackground6,
-    name: "Music",
+    name: "Âm Nhạc",
   },
   {
     images: images.creatorbackground7,
-    name: "Digital Arts",
+    name: "Nghệ Thuật Kỹ Thuật Số",
   },
   {
     images: images.creatorbackground8,
-    name: "Hubby",
+    name: "Sở Thích",
   },
   {
     images: images.creatorbackground8,
-    name: "Bad Arts",
+    name: "Nghệ Thuật Xấu",
   },
   {
     images: images.creatorbackground9,
-    name: " Arts",
+    name: "Nghệ Thuật",
   },
   {
     images: images.creatorbackground10,
-    name: "My Fav",
+    name: "Yêu Thích Của Tôi",
   },
 ];
 
@@ -58,7 +58,7 @@ const Category: React.FC = () => {
           <div className="relative overflow-hidden rounded-lg cursor-pointer p-4 transition-all duration-300 hover:shadow-custom" key={i}>
             <Image
               src={el.images}
-              alt="Background image"
+              alt="Hình ảnh nền"
               width={350}
               height={150}
               className="rounded-lg object-cover w-full h-32"

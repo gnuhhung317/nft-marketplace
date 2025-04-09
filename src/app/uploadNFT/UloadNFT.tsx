@@ -13,6 +13,7 @@ import { TNFTMarketplaceContextType } from "@/Context/NFTMarketplaceContext";
 import DropZone from "./DropZone";
 import { IconInput } from "@/components/IconInput";
 import { Button } from "@/components/ui/button";
+
 const UploadNFT: React.FC<
   Pick<TNFTMarketplaceContextType, "createNFT" | "uploadToPinata">
 > = ({ createNFT, uploadToPinata }) => {
@@ -32,36 +33,36 @@ const UploadNFT: React.FC<
   const categoryArray = [
     {
       image: images.nft_image_1,
-      category: "Sports",
+      category: "Thể Thao",
     },
     {
       image: images.nft_image_2,
-      category: "Arts",
+      category: "Nghệ Thuật",
     },
     {
       image: images.nft_image_3,
-      category: "Music",
+      category: "Âm Nhạc",
     },
     {
       image: images.nft_image_1,
-      category: "Digital",
+      category: "Kỹ Thuật Số",
     },
     {
       image: images.nft_image_2,
-      category: "Time",
+      category: "Thời Gian",
     },
     {
       image: images.nft_image_3,
-      category: "Photography",
+      category: "Nhiếp Ảnh",
     },
-  ]; // Example array for demonstration
+  ]; // Mảng ví dụ cho mục đích minh họa
 
   return (
     <div className={cn("p-4")}>
       <DropZone
-        title="JPG, PNG, WEBM , MAX 100MB"
-        heading="Drag & drop file"
-        subHeading="or Browse media on your device"
+        title="JPG, PNG, WEBM , TỐI ĐA 100MB"
+        heading="Kéo và thả tệp"
+        subHeading="hoặc Duyệt phương tiện trên thiết bị của bạn"
         name={name}
         website={website}
         description={description}
@@ -75,12 +76,12 @@ const UploadNFT: React.FC<
       <div className={cn("flex flex-col gap-4")}>
         {/* Text inputs for item name, website, description */}
         <div className={cn("flex flex-col gap-2")}>
-          <label htmlFor="nft" className=" font-bold text-xl">
-            Item Name
+          <label htmlFor="nft" className="font-bold text-xl">
+            Tên Mục
           </label>
           <input
             type="text"
-            placeholder="Enter item name"
+            placeholder="Nhập tên mục"
             className={cn(
               "w-full bg-transparent outline-none rounded-xl p-4 border border-icons"
             )}
@@ -116,13 +117,13 @@ const UploadNFT: React.FC<
           </div>
         </div>
         <div className={cn("flex flex-col gap-2")}>
-          <label htmlFor="description" className=" font-bold text-xl">
-            Description
+          <label htmlFor="description" className="font-bold text-xl">
+            Mô Tả
           </label>
           <textarea
             cols={30}
             rows={6}
-            placeholder="Describe your item"
+            placeholder="Mô tả mục của bạn"
             className={cn(
               "w-full bg-transparent outline-none rounded-xl p-4 border border-icons"
             )}
@@ -131,7 +132,7 @@ const UploadNFT: React.FC<
         </div>
 
         {/* Slider for categories */}
-        <div className={cn("grid grid-cols-2 xl:grid-cols-3  gap-4")}>
+        <div className={cn("grid grid-cols-2 xl:grid-cols-3 gap-4")}>
           {categoryArray.map((el, i) => (
             <div
               key={i}
@@ -147,7 +148,7 @@ const UploadNFT: React.FC<
               <div className={cn("flex items-center justify-between")}>
                 <Image
                   src={el.image}
-                  alt="background image"
+                  alt="hình ảnh nền"
                   width={70}
                   height={70}
                   className={cn("rounded-full")}
@@ -168,34 +169,33 @@ const UploadNFT: React.FC<
         </div>
         <div>
           <IconInput
-            label="Royalties"
-            placeholder="Enter royalties percentage"
+            label="Royalty"
+            placeholder="Nhập tỷ lệ phần trăm royalty"
             onChange={(e) => setRoyalties(e.target.value)}
             icon={<FaPercent className="text-4xl p-3" />}
           ></IconInput>
 
           <IconInput
-            label="Size"
-            placeholder="Enter file size"
+            label="Kích thước"
+            placeholder="Nhập kích thước tệp"
             onChange={(e) => setFileSize(e.target.value)}
             icon={<FaPercent className="text-4xl p-3" />}
           ></IconInput>
           <IconInput
-            label="Properties"
-            placeholder="Enter properties"
+            label="Thuộc tính"
+            placeholder="Nhập thuộc tính"
             onChange={(e) => setProperties(e.target.value)}
             icon={<FaPercent className="text-4xl p-3" />}
           ></IconInput>
           <IconInput
-            label="Price"
-            placeholder="Enter Price"
+            label="Giá"
+            placeholder="Nhập Giá"
             onChange={(e) => setPrice(e.target.value)}
             icon={<FaPercent className="text-4xl p-3" />}
           ></IconInput>
         </div>
         <div className={cn("grid grid-cols-[repeat(2,1fr)] gap-8")}>
           <Button
-
             onClick={async () =>
               createNFT({
                 name,
@@ -206,11 +206,15 @@ const UploadNFT: React.FC<
               })
             }
             className={cn("w-full grid self-center text-[1.3rem]")}
-          >Upload</Button>
+          >
+            Tải lên
+          </Button>
           <Button
-            onClick={() => { }}
+            onClick={() => {}}
             className={cn("w-full grid self-center text-[1.3rem]")}
-          >Preview</Button>
+          >
+            Xem trước
+          </Button>
         </div>
       </div>
     </div>

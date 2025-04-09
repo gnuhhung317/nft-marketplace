@@ -10,7 +10,6 @@ import Slider from "@/components/Slider";
 import Filter from "@/components/Filter";
 import { TMarketItem } from "@/types";
 
-
 const collection = () => {
   const collectionArray: TMarketItem[] = [];
   return (

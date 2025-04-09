@@ -65,7 +65,7 @@ const AuthorProfileCard = ({
         <div className={cn("rounded-lg text-center mx-auto ")}>
           <Image
             src={images.nft_image_1}
-            alt="NFT IMAGES"
+            alt="HÌNH ẢNH NFT"
             width={220}
             height={220}
             className={cn("rounded-lg ")}
@@ -94,8 +94,8 @@ const AuthorProfileCard = ({
             />
           </div>
           <p className={cn("text-md leading-none w-[90%]  ")}>
-            Punk #4786 / An OG Cryptopunk Collector, hoarder of NFTs.
-            Contributing to @ether_cards, an NFT Monetization Platform.
+            Punk #4786 / Một nhà sưu tập Cryptopunk OG, người tích trữ NFTs.
+            Đóng góp cho @ether_cards, một nền tảng kiếm tiền từ NFT.
           </p>
           <div className={cn("flex items-center gap-4 text-2xl mt-4 ")}>
             <Link
@@ -142,7 +142,7 @@ const AuthorProfileCard = ({
         </div>
         <div className={cn("flex justify-around items-center gap-8")}>
           {currentAccount !== account.accountAddress && (
-            <Button onClick={() => {}}>Follow</Button>
+            <Button onClick={() => {}}>Theo dõi</Button>
           )}
 
           <DropdownMenu>
@@ -150,9 +150,6 @@ const AuthorProfileCard = ({
               <MdCloudUpload className={cn("text-4xl cursor-pointer")} />
             </DropdownMenuTrigger>
             <DropdownMenuContent className=" bg-main-bg border border-primary">
-              {/* <DropdownMenuLabel className="mt-4">
-
-              </DropdownMenuLabel> */}
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <p
@@ -205,9 +202,6 @@ const AuthorProfileCard = ({
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent className=" bg-main-bg border border-primary">
-              {/* <DropdownMenuLabel className="mt-4">
-
-              </DropdownMenuLabel> */}
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <p
@@ -215,7 +209,7 @@ const AuthorProfileCard = ({
                     "flex items-center gap-8  px-4 py-2 cursor-pointer hover:bg-icons hover:text-main-bg"
                   )}
                 >
-                  <MdOutlineReportProblem /> Report abuse
+                  <MdOutlineReportProblem /> Báo cáo lạm dụng
                 </p>
               </DropdownMenuItem>
             </DropdownMenuContent>

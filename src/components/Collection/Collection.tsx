@@ -11,7 +11,6 @@ type CardData = {
 import images from "@/img";
 import { Button } from '../ui/button';
 
-
 const Collection: React.FC = () => {
   const [popular, setPopular] = useState(true);
   const [following, setFollowing] = useState(false);
@@ -135,23 +134,24 @@ const Collection: React.FC = () => {
       setNews(true);
     }
   };
+  
   return (
     <div className="w-full py-12 pb-40">
       <div className="w-88 mx-auto pb-24 text-center">
-        <h2 className="text-3xl text-primary mb-16 font-bold">Top List Creators</h2>
+        <h2 className="text-3xl text-primary mb-16 font-bold">Danh Sách Người Sáng Tạo Hàng Đầu</h2>
         <div>
           <div className="bg-main-bg py-2 px-4 rounded-full flex justify-around gap-4 items-center text-1.2rem shadow-custom">
-            <Button className=" h-12 bg-icons text-main-bg p-4 rounded-full cursor-pointer border-none transition-all duration-300 hover:bg-transparent hover:text-icons"
+            <Button className="h-12 bg-icons text-main-bg p-4 rounded-full cursor-pointer border-none transition-all duration-300 hover:bg-transparent hover:text-icons"
               onClick={openPopular}>
-              <BsFillAlarmFill /> &nbsp;24 hours
+              <BsFillAlarmFill /> &nbsp;24 giờ
             </Button>
-            <Button className=" h-12 bg-icons text-main-bg p-4 rounded-full cursor-pointer border-none transition-all duration-300 hover:bg-transparent hover:text-icons"
+            <Button className="h-12 bg-icons text-main-bg p-4 rounded-full cursor-pointer border-none transition-all duration-300 hover:bg-transparent hover:text-icons"
               onClick={openFollower}>
-              <BsCalendar3 /> &nbsp;7 days
+              <BsCalendar3 /> &nbsp;7 ngày
             </Button>
-            <Button className=" h-12 bg-icons text-main-bg p-4 rounded-full cursor-pointer border-none transition-all duration-300 hover:bg-transparent hover:text-icons"
+            <Button className="h-12 bg-icons text-main-bg p-4 rounded-full cursor-pointer border-none transition-all duration-300 hover:bg-transparent hover:text-icons"
               onClick={openNews}>
-              <BsFillCalendarDateFill /> &nbsp;30 days
+              <BsFillCalendarDateFill /> &nbsp;30 ngày
             </Button>
           </div>
         </div>

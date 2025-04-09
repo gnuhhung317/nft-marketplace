@@ -8,10 +8,10 @@ import images from "@/img";
 
 const Service = () => {
   const [services] = useState([
-    { step: "Step 1", title: "Filter & Discover", image: images.service1, desc: "Connect with wallet, discover, buy NTFs, sell your NFTs and earn money" },
-    { step: "Step 2", title: "Filter & Discover", image: images.service2, desc: "Connect with wallet, discover, buy NTFs, sell your NFTs and earn money" },
-    { step: "Step 3", title: "Connect Wallet", image: images.service3, desc: "Connect with wallet, discover, buy NTFs, sell your NFTs and earn money" },
-    { step: "Step 4", title: "Start Trading", image: images.service1, desc: "Connect with wallet, discover, buy NTFs, sell your NFTs and earn money" }
+    { step: "Bước 1", title: "Lọc & Khám Phá", image: images.service1, desc: "Kết nối ví, khám phá, mua NFT, bán NFT của bạn và kiếm tiền" },
+    { step: "Bước 2", title: "Lọc & Khám Phá", image: images.service2, desc: "Kết nối ví, khám phá, mua NFT, bán NFT của bạn và kiếm tiền" },
+    { step: "Bước 3", title: "Kết Nối Ví", image: images.service3, desc: "Kết nối ví, khám phá, mua NFT, bán NFT của bạn và kiếm tiền" },
+    { step: "Bước 4", title: "Bắt Đầu Giao Dịch", image: images.service1, desc: "Kết nối ví, khám phá, mua NFT, bán NFT của bạn và kiếm tiền" }
   ])
   return (
     <div className={cn("w-4/5tt mx-auto my-32 md:w-11/12tt")}>

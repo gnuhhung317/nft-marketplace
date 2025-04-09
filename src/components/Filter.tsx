@@ -33,19 +33,19 @@ const Filter: React.FC = () => {
           <Button className="bg-main-bg text-icons font-semibold py-4 px-6 rounded-full border border-main-bg hover:border-icons hover:text-icons hover:shadow-custom transition-all duration-300 cursor-pointer"
             onClick={() => {}}>NFTs</Button>
           <Button className="bg-main-bg text-icons font-semibold py-4 px-6 rounded-full border border-main-bg hover:border-icons hover:text-icons hover:shadow-custom transition-all duration-300 cursor-pointer"
-            onClick={() => {}}>Arts</Button>
+            onClick={() => {}}>Nghệ Thuật</Button>
           <Button className="bg-main-bg text-icons font-semibold py-4 px-6 rounded-full border border-main-bg hover:border-icons hover:text-icons hover:shadow-custom transition-all duration-300 cursor-pointer"
-            onClick={() => {}}>Musics</Button>
+            onClick={() => {}}>Âm Nhạc</Button>
           <Button className="bg-main-bg text-icons font-semibold py-4 px-6 rounded-full border border-main-bg hover:border-icons hover:text-icons hover:shadow-custom transition-all duration-300 cursor-pointer"
-            onClick={() => {}}>Sports</Button>
+            onClick={() => {}}>Thể Thao</Button>
           <Button className="bg-main-bg text-icons font-semibold py-4 px-6 rounded-full border border-main-bg hover:border-icons hover:text-icons hover:shadow-custom transition-all duration-300 cursor-pointer"
-            onClick={() => {}}>Photography</Button>
+            onClick={() => {}}>Nhiếp Ảnh</Button>
         </div>
 
         <div className="border-icons mt-12 sm:mt-2 border px-8 py-4 rounded-full flex items-center gap-4 cursor-pointer shadow-md"
           onClick={toggleFilter}>
           <FaFilter />
-          <span>Filter</span>
+          <span>Bộ Lọc</span>
           {filter ? <FaAngleDown /> : <FaAngleUp />}
         </div>
       </div>
@@ -57,21 +57,21 @@ const Filter: React.FC = () => {
           </div>
           <div className="flex gap-2 items-center border border-icons p-4 rounded-full cursor-pointer"
             onClick={toggleImage}>
-            <FaImages /> <small>Images</small>
+            <FaImages /> <small>Hình Ảnh</small>
             {image ? <AiFillCloseCircle /> : <TiTick />}
           </div>
           <div className="flex gap-2 items-center border border-icons p-4 rounded-full cursor-pointer"
             onClick={toggleVideo}>
-            <FaVideo /> <small>Videos</small>
+            <FaVideo /> <small>Video</small>
             {video ? <AiFillCloseCircle /> : <TiTick />}
           </div>
           <div className="flex gap-2 items-center border border-icons p-4 rounded-full cursor-pointer"
             onClick={toggleMusic}>
-            <FaMusic /> <small>Musics</small>
+            <FaMusic /> <small>Âm Nhạc</small>
             {music ? <AiFillCloseCircle /> : <TiTick />}
           </div>
           <div className="flex gap-2 items-center bg-icons text-main-bg p-4 rounded-full cursor-pointer">
-            <FaUserAlt /> <span>Verified</span> <MdVerified />
+            <FaUserAlt /> <span>Đã Xác Minh</span> <MdVerified />
           </div>
         </div>
       )}

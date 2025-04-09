@@ -58,14 +58,14 @@ const Author = () => {
   const { fetchMyNFTsOrListedNFTs, currentAccount } = useContext(
     NFTMarketplaceContext
   )!;
-  const {account} = useContext(AccountContext)!
+  const { account } = useContext(AccountContext)!;
   const [nfts, setNfts] = useState<TMarketItem[]>([]);
   const [myNFTs, setMyNFTs] = useState<TMarketItem[]>([]);
 
   useEffect(() => {
     fetchMyNFTsOrListedNFTs("fetchItemsListed").then(
       (items: TMarketItem[] | undefined) => {
-        console.log(items)
+        console.log(items);
         setNfts(items!);
       }
     );
@@ -74,7 +74,7 @@ const Author = () => {
   useEffect(() => {
     fetchMyNFTsOrListedNFTs("fetchMyNFTs").then(
       (items: TMarketItem[] | undefined) => {
-        console.log(items)
+        console.log(items);
         setMyNFTs(items!);
       }
     );
@@ -103,8 +103,8 @@ const Author = () => {
         myNFTs={myNFTs}
       />
       <Title
-        heading="Popular Creators"
-        paragraph="Click on music icon and enjoy NTF music or audio"
+        heading="Những người sáng tạo nổi bật"
+        paragraph="Nhấn vào biểu tượng nhạc và thưởng thức nhạc hoặc âm thanh NFT"
       />
       <div
         className={cn(

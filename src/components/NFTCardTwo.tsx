@@ -64,7 +64,7 @@ const NFTCardTwo = ({ NFTs }: { NFTs: TMarketItem[] }) => {
             <div className={cn("flex justify-between items-end p-4")}>
               <div>
                 <small className=" bg-primary text-main-bg py-1 px-2 rounded-sm ml-4">
-                  Current Bid
+                  Giá Hiện Tại
                 </small>
                 <p
                   className={cn(
@@ -79,7 +79,7 @@ const NFTCardTwo = ({ NFTs }: { NFTs: TMarketItem[] }) => {
                   "flex items-center whitespace-nowrap gap-2 text-[1.1rem]"
                 )}
               >
-                <MdTimer /> <span>{i + 1} hours left</span>
+                <MdTimer /> <span>{i + 1} giờ còn lại</span>
               </p>
             </div>
           </div>

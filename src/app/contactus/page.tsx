@@ -9,29 +9,30 @@ import {
 import { HiOutlineMail } from "react-icons/hi";
 import { cn } from "@/lib/utils";
 import { Button } from '@/components/ui/button'
+
 const contactus = () => {
   return (
     <div className={cn("w-full")}>
       <div className={cn("lg:w-3/5 w-full mx-auto")}>
-        <h1 className={cn("text-center text-4xl font-bold")}>Contact</h1>
+        <h1 className={cn("text-center text-4xl font-bold")}>Liên hệ</h1>
         <div className={cn("grid lg:grid-cols-[1fr_2fr] lg:gap-20 items-center self-start mb-40 grid-cols-1 gap-4")}>
           <div>
             <div>
-              <h3 className=" font-bold">🗺 ADDRESS</h3>
+              <h3 className="font-bold">🗺 ĐỊA CHỈ</h3>
               <p className={cn("text-base mt-2 leading-relaxed w-4/5tt")}>
-                Photo booth tattooed prism, portland taiyaki hoodie neutra typewriter
+                Ký túc xá ĐH KTQD
               </p>
             </div>
             <div>
-              <h3 className=" font-bold mt-4">💌 EMAIL</h3>
-              <p className={cn("text-base mt-2")}>nc.example@example.com</p>
+              <h3 className="font-bold mt-4">💌 EMAIL</h3>
+              <p className={cn("text-base mt-2")}>duchung02nd@gmail.com</p>
             </div>
             <div>
-              <h3 className=" font-bold mt-4">☎ PHONE</h3>
-              <p className={cn("text-base mt-2")}>000-123-456-7890</p>
+              <h3 className="font-bold mt-4">☎ ĐIỆN THOẠI</h3>
+              <p className={cn("text-base mt-2")}>0noi0noidunghoinuadunghoinua</p>
             </div>
             <div>
-              <h3 className=" font-bold mt-4">🌏 SOCIALS</h3>
+              <h3 className="font-bold mt-4">🌏 MẠNG XÃ HỘI</h3>
               <div className="flex items-center mt-2">
                 <a href="#" className={cn("text-xl rounded-full p-2")}>
                   <TiSocialFacebook />
@@ -54,10 +55,10 @@ const contactus = () => {
           <div>
             <form>
               <div className={cn('mt-8')}>
-                <label htmlFor="name" className={cn('block w-full ml-4 font-bold text-xl')}>Full Name</label>
+                <label htmlFor="name" className={cn('block w-full ml-4 font-bold text-xl')}>Họ và tên</label>
                 <input
                   type="text"
-                  placeholder="User"
+                  placeholder="Người dùng"
                   className={cn('w-full border border-icons p-4 rounded-xl bg-transparent mt-2 outline-none')}
                 />
               </div>
@@ -71,19 +72,19 @@ const contactus = () => {
                 </div>
               </div>
               <div className={cn('mt-8')}>
-                <label htmlFor="description" className={cn('block w-full ml-4 font-bold text-xl')}>Description</label>
+                <label htmlFor="description" className={cn('block w-full ml-4 font-bold text-xl')}>Mô tả</label>
                 <textarea
                   name=""
                   id=""
                   cols={30}
                   rows={6}
-                  placeholder="something about yourself in few words"
+                  placeholder="Một vài điều về bản thân bạn"
                   className={cn('w-full bg-transparent outline-none rounded-xl p-4 border border-icons')}
                 ></textarea>
               </div>
               <Button
                 className={cn("mt-8")}
-              >Send Message</Button>
+              >Gửi tin nhắn</Button>
             </form>
           </div>
         </div>

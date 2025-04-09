@@ -19,20 +19,20 @@ const Brand: React.FC = () => {
             <DiAws className="text-[4rem]" />
           </Link>
 
-          <h1 className="text-6xl leading-none md:text-4xl font-bold">Earn free crypto with Ciscrypt</h1>
-          <p className="text-xl mt-2">A creative agency that lead and inspire.</p>
+          <h1 className="text-6xl leading-none md:text-4xl font-bold">Kiếm tiền điện tử miễn phí với Ciscrypt</h1>
+          <p className="text-xl mt-2">Một công ty sáng tạo dẫn dắt và truyền cảm hứng.</p>
 
           <div className="flex items-center gap-8 mt-12">
             <Button
               onClick={() => router.push("/uploadNFT")}
-            >Create</Button>
+            >Tạo</Button>
             <Button
               onClick={() => router.push("/searchPage")}
-            >Discover</Button>
+            >Khám Phá</Button>
           </div>
         </div>
         <div>
-          <Image src={images.earn} alt="brand logo" width={800} height={600} />
+          <Image src={images.earn} alt="logo thương hiệu" width={800} height={600} />
         </div>
       </div>
     </div>

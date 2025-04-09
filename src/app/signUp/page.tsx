@@ -5,12 +5,12 @@ import React from "react";
 
 const signUp = () => {
   return (
-    <div >
-      <div >
-        <h1>SignUp</h1>
+    <div>
+      <div>
+        <h1>Đăng Ký</h1>
         <LoginAndSignUp />
-        <p >
-          New user? <a href="#">Create an account</a>
+        <p>
+          Người dùng mới? <a href="#">Tạo tài khoản</a>
         </p>
       </div>
     </div>

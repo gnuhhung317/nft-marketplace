@@ -12,7 +12,7 @@ const CollectionProfile = () => {
         <div>
           <Image
             src={images.nft_image_1}
-            alt="nft image"
+            alt="hình ảnh nft"
             width={800}
             height={800}
             className={cn('rounded-lg')}
@@ -35,9 +35,9 @@ const CollectionProfile = () => {
         </div>
 
         <div className={cn('self-start')}>
-          <h1 className={cn(' text-4xl font-bold leading-none mt-4')}>Awesome NFTs Collection</h1>
+          <h1 className={cn(' text-4xl font-bold leading-none mt-4')}>Bộ Sưu Tập NFT Tuyệt Vời</h1>
           <p className={cn('leading-snug w-[70%] text-sm mt-8')}>
-            Karafuru is home to 5,555 generative arts where colors reign supreme. Leave the drab reality and enter the world of Karafuru by Museum of Toys.
+            Karafuru là nơi có 5,555 tác phẩm nghệ thuật sinh ra nơi mà màu sắc thống trị. Hãy rời bỏ thực tại tẻ nhạt và bước vào thế giới của Karafuru bởi Bảo Tàng Đồ Chơi.
           </p>
 
           <div className={cn('grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-8 bg-main-bg mt-6')}>
@@ -46,7 +46,7 @@ const CollectionProfile = () => {
                 key={i + 1}
                 className={cn('bg-main-bg shadow-[0_0_4px_rgba(93,222,226,1)] py-6 rounded-2xl text-center')}
               >
-                <small>Floor price</small>
+                <small>Giá sàn</small>
                 <p className={cn('text-4xl')}>${i + 1}95,4683</p>
                 <span className={cn('text-icons')}>+ {i + 2}.11%</span>
               </div>

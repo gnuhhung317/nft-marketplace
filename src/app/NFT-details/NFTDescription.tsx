@@ -69,7 +69,7 @@ const helpsItems = [
     link: "",
     name: (
       <div className="flex items-center gap-2">
-        <BiDollar /> Change price
+        <BiDollar /> Thay đổi giá
       </div>
     ),
   },
@@ -77,7 +77,7 @@ const helpsItems = [
     link: "",
     name: (
       <div className="flex items-center gap-2">
-        <BiTransferAlt /> Transfer{" "}
+        <BiTransferAlt /> Chuyển nhượng{" "}
       </div>
     ),
   },
@@ -85,7 +85,7 @@ const helpsItems = [
     link: "",
     name: (
       <div className="flex items-center gap-2">
-        <MdReportProblem /> Report abuse
+        <MdReportProblem /> Báo cáo lạm dụng
       </div>
     ),
   },
@@ -93,7 +93,7 @@ const helpsItems = [
     link: "",
     name: (
       <div className="flex items-center gap-2">
-        <MdOutlineDeleteSweep /> Delete item
+        <MdOutlineDeleteSweep /> Xóa mục
       </div>
     ),
   },
@@ -153,7 +153,7 @@ const NFTDescription = ({ nft }: { nft: TMarketItem }) => {
               "bg-icons text-main-bg p-[0.2rem_0.8rem] rounded-[2rem]"
             )}
           >
-            Virtual Worlds
+            Thế giới ảo
           </p>
           <div className="flex items-center gap-4">
             <DropDown items={cloudItems}>
@@ -184,7 +184,7 @@ const NFTDescription = ({ nft }: { nft: TMarketItem }) => {
                 className={cn("rounded-full")}
               />
               <div>
-                <small className={cn("font-medium")}>Creator</small> <br />
+                <small className={cn("font-medium")}>Người tạo</small> <br />
                 <Link href={{ pathname: "/author" }}>
                   <span className={cn("font-bold flex items-center")}>
                     Karli Costa <MdVerified />
@@ -206,9 +206,9 @@ const NFTDescription = ({ nft }: { nft: TMarketItem }) => {
                 className={cn("rounded-full")}
               />
               <div>
-                <small className={cn("font-medium")}>Collection</small> <br />
+                <small className={cn("font-medium")}>Bộ sưu tập</small> <br />
                 <span className={cn("font-bold flex items-center")}>
-                  Mokeny app <MdVerified />
+                  Ứng dụng Mokeny <MdVerified />
                 </span>
               </div>
             </div>
@@ -216,32 +216,32 @@ const NFTDescription = ({ nft }: { nft: TMarketItem }) => {
 
           <div className={cn("my-[1rem]")}>
             <p className={cn("flex items-center text-[1.5rem] gap-[1rem]")}>
-              <MdTimer /> <span>Auction ending in:</span>
+              <MdTimer /> <span>Đấu giá sẽ kết thúc trong:</span>
             </p>
             <div className={cn("flex gap-[3rem] items-center mt-12")}>
               <div className={cn("flex flex-col items-center")}>
                 <p className={cn("text-[3rem] leading-[0] font-extrabold")}>
                   {days}
                 </p>
-                <span className={cn("font-semibold mt-8")}>Days</span>
+                <span className={cn("font-semibold mt-8")}>Ngày</span>
               </div>
               <div className={cn("flex flex-col items-center")}>
                 <p className={cn("text-[3rem] leading-[0] font-extrabold")}>
                   {formatTime(hours)}
                 </p>
-                <span className={cn("font-semibold mt-8")}>hours</span>
+                <span className={cn("font-semibold mt-8")}>Giờ</span>
               </div>
               <div className={cn("flex flex-col items-center")}>
                 <p className={cn("text-[3rem] leading-[0] font-extrabold")}>
                   {formatTime(minutes)}
                 </p>
-                <span className={cn("font-semibold mt-8")}>mins</span>
+                <span className={cn("font-semibold mt-8")}>Phút</span>
               </div>
               <div className={cn("flex flex-col items-center")}>
                 <p className={cn("text-[3rem] leading-[0] font-extrabold")}>
                   {formatTime(seconds)}
                 </p>
-                <span className={cn("font-semibold mt-8")}>secs</span>
+                <span className={cn("font-semibold mt-8")}>Giây</span>
               </div>
             </div>
 
@@ -260,18 +260,18 @@ const NFTDescription = ({ nft }: { nft: TMarketItem }) => {
                     "text-[1.2rem] bg-icons text-main-bg px-[1rem] py-[0.5rem] rounded-[0.5rem] ml-[2rem]"
                   )}
                 >
-                  Current Bid
+                  Giá hiện tại
                 </small>
                 <p className={cn("px-[1rem] text-[1.5rem] font-extrabold")}>
                   {nft.price} ETH <span>( ≈ $3,221.22)</span>
                 </p>
               </div>
-              <span className=" whitespace-nowrap">[96 in stock]</span>
+              <span className=" whitespace-nowrap">[96 trong kho]</span>
             </div>
 
             <div className={cn("mt-[3rem] flex items-center gap-[3rem]")}>
               {currentAccount == nft.seller?.toLowerCase() ? (
-                <p>You cant buy your own NFT</p>
+                <p>Bạn không thể mua NFT của chính mình</p>
               ) : currentAccount == nft.owner?.toLowerCase() ? (
                 <Button
                   onClick={() =>
@@ -282,18 +282,18 @@ const NFTDescription = ({ nft }: { nft: TMarketItem }) => {
                   className={cn("button")}
                 >
                   <FaWallet />
-                  &nbsp; List on Marketplace
+                  &nbsp; Đưa lên Thị Trường
                 </Button>
               ) : (
                 <Button onClick={() => buyNFT(nft)} className={cn("button")}>
                   <FaWallet />
-                  &nbsp; Buy NFT
+                  &nbsp; Mua NFT
                 </Button>
               )}
 
               <Button onClick={() => {}} className={cn("button")}>
                 <FaPercentage />
-                &nbsp; Make offer
+                &nbsp; Đưa ra đề nghị
               </Button>
             </div>
 
@@ -304,7 +304,7 @@ const NFTDescription = ({ nft }: { nft: TMarketItem }) => {
                   "text-[1rem] py-[1rem] px-[2rem] whitespace-nowrap border-0 bg-shadow-dark text-icons rounded-[2rem] cursor-pointer font-semibold"
                 )}
               >
-                Bid History
+                Lịch sử Đấu Giá
               </button>
               <button
                 onClick={() => switchTab("provenance")}
@@ -312,7 +312,7 @@ const NFTDescription = ({ nft }: { nft: TMarketItem }) => {
                   "text-[1rem] py-[1rem] px-[2rem]  whitespace-nowrap border-0 bg-shadow-dark text-icons rounded-[2rem] cursor-pointer font-semibold"
                 )}
               >
-                Provenance
+                Nguồn gốc
               </button>
               <button
                 onClick={() => switchTab("owner")}
@@ -320,7 +320,7 @@ const NFTDescription = ({ nft }: { nft: TMarketItem }) => {
                   "text-[1rem] py-[1rem] px-[2rem]  whitespace-nowrap border-0 bg-shadow-dark text-icons rounded-[2rem] cursor-pointer font-semibold"
                 )}
               >
-                Owner
+                Chủ sở hữu
               </button>
             </div>
 

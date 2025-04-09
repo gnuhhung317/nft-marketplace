@@ -42,7 +42,7 @@ const FollowerTabCard: React.FC<FollowerTabCardProps> = ({ i, el }) => {
         <div className={cn("col-span-full")}>
           <Image
             src={el.background || images[`creatorbackground${i + 1}`]}
-            alt="profile background"
+            alt="hình nền hồ sơ"
             width={500}
             height={300}
             layout="fixed"
@@ -52,7 +52,7 @@ const FollowerTabCard: React.FC<FollowerTabCardProps> = ({ i, el }) => {
 
         <div className={cn("col-span-full text-center mt-[-2rem] relative")}>
           <Image
-            alt="profile picture"
+            alt="hình ảnh hồ sơ"
             width={50}
             height={50}
             src={el.user || images[`user${i + 1}`]!}
@@ -91,10 +91,10 @@ const FollowerTabCard: React.FC<FollowerTabCardProps> = ({ i, el }) => {
           >
             {following ? (
               <span className="flex items-center">
-                Following <TiTick />
+                Đang Theo Dõi <TiTick />
               </span>
             ) : (
-              "Follow "
+              "Theo Dõi "
             )}
           </a>
         </div>

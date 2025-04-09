@@ -32,9 +32,9 @@ const ConnectWallet = () => {
   return (
     <div className={cn("w-full my-20")}>
       <div className={cn("w-1/2 mx-auto")}>
-        <h1 className={cn("text-3xl leading-none")}>Connect your wallet</h1>
+        <h1 className={cn("text-3xl leading-none")}>Kết nối ví của bạn</h1>
         <p className={cn("text-xl mt-4 pb-8 border-b border-shadow-dark")}>
-          Connect with one of our available wallet providers or create a new one.
+          Kết nối với một trong những nhà cung cấp ví có sẵn hoặc tạo một cái mới.
         </p>
 
         <div className={cn("my-20")}>

@@ -24,16 +24,16 @@ const Home = () => {
       <Service />
       <BigNFTSilder />
       <Title
-        heading="Featured NFTs"
-        paragraph="Discover the most outstanding NFTs in all topics of life."
+        heading="NFT Nổi Bật"
+        paragraph="Khám phá những NFT xuất sắc nhất trong tất cả các lĩnh vực của cuộc sống."
       />
       <Filter />
       <Suspense fallback={<Loader />}>
         <NFTCard />
       </Suspense>
       <Title
-        heading="Audio Collection"
-        paragraph="Discover the most outstanding NFTs in all topics of life."
+        heading="Bộ Sưu Tập Âm Thanh"
+        paragraph="Khám phá những NFT xuất sắc nhất trong tất cả các lĩnh vực của cuộc sống."
       />
       <AudioLive />
       <Suspense fallback={<Loader />}>
@@ -46,8 +46,8 @@ const Home = () => {
 
 
       <Title
-        heading="Browse by category"
-        paragraph="Explore the NFTs in the most featured categories."
+        heading="Duyệt theo danh mục"
+        paragraph="Khám phá các NFT trong những danh mục nổi bật nhất."
       />
       <Category />
       <Subscribe />

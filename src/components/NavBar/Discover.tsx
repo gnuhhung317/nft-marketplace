@@ -5,27 +5,27 @@ import { cn } from "@/lib/utils";
 const HelpCenter: React.FC = () => {
   const helpItems = [
     {
-      name: "Collection",
+      name: "Bộ sưu tập",
       link: "collection",
     },
     {
-      name: "Search",
+      name: "Tìm kiếm",
       link: "searchPage",
     },
     {
-      name: "Author Profile",
+      name: "Hồ sơ tác giả",
       link: "author",
     },
     {
-      name: "Account Setting",
+      name: "Cài đặt tài khoản",
       link: "account",
     },
     {
-      name: "Upload NFT",
+      name: "Tải lên NFT",
       link: "uploadNFT",
     },
     {
-      name: "Connect Wallet",
+      name: "Kết nối ví",
       link: "connectWallet",
     },
     {

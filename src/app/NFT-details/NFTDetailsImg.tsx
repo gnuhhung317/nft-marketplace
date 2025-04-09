@@ -30,16 +30,12 @@ const NFTDetailsImg = ({ nft }: { nft: TMarketItem }) => {
           >
             <div className={cn("flex items-center justify-between")}>
               <BsImages className={cn("text-[1.4rem]")} />
-              {/* <p onClick={toggleLike} className={cn("bg-icons p-[0.2rem_1rem] text-main-bg flex items-center gap-[0.5rem] rounded-[2rem] cursor-pointer")}>
-                {like ? <AiOutlineHeart className={cn("text-[1.4rem]")} /> : <AiFillHeart className={cn("text-[1.4rem]")} />}
-                <span>23</span>
-              </p> */}
               <Like nFTTokenId={nft.tokenId!} currentAccount={currentAccount!}></Like>
             </div>
             <div>
               <Image
                 src={nft.image}
-                alt="NFT image"
+                alt="hình ảnh NFT"
                 width={500}
                 height={500}
                 className={cn("rounded-[1rem] w-full object-cover")}
@@ -54,7 +50,7 @@ const NFTDetailsImg = ({ nft }: { nft: TMarketItem }) => {
           )}
           onClick={toggleDescription}
         >
-          <p>Description</p>
+          <p>Mô tả</p>
           {description ? <TiArrowSortedUp /> : <TiArrowSortedDown />}
         </div>
 
@@ -70,20 +66,20 @@ const NFTDetailsImg = ({ nft }: { nft: TMarketItem }) => {
           )}
           onClick={toggleDetails}
         >
-          <p>Details</p>
+          <p>Chi tiết</p>
           {details ? <TiArrowSortedUp /> : <TiArrowSortedDown />}
         </div>
 
         {details && (
           <div className={cn("p-[0.1rem_1rem] mt-2 text-[1rem]")}>
-            <small>2000 x 2000 px. IMAGE (685KB)</small>
+            <small>2000 x 2000 px. HÌNH ẢNH (685KB)</small>
             <p>
-              <small>Seller Address</small>
+              <small>Địa chỉ người bán</small>
               <br />
               {nft.seller}
             </p>
             <p>
-              <small>Token ID</small>
+              <small>ID Token</small>
               &nbsp;&nbsp;{nft.tokenId}
             </p>
           </div>

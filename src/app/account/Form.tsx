@@ -69,11 +69,11 @@ const Form = ({
               htmlFor="name"
               className={cn("block w-full ml-4 font-bold text-xl")}
             >
-              Username
+              Tên người dùng
             </label>
             <input
               type="text"
-              placeholder="User"
+              placeholder="Người dùng"
               value={account.username!}
               onChange={(e) =>
                 setAccount({ ...account, username: e.target.value })
@@ -120,7 +120,7 @@ const Form = ({
               htmlFor="description"
               className={cn("block w-full ml-4 font-bold text-xl")}
             >
-              Description
+              Mô tả
             </label>
             <textarea
               name=""
@@ -131,7 +131,7 @@ const Form = ({
               onChange={(e) =>
                 setAccount({ ...account, description: e.target.value })
               }
-              placeholder="something about yourself in few words"
+              placeholder="Một vài điều về bản thân bạn"
               className={cn(
                 "w-full bg-transparent outline-none rounded-xl p-4 border border-icons"
               )}
@@ -143,7 +143,7 @@ const Form = ({
               htmlFor="website"
               className={cn("block w-full ml-4 font-bold text-xl")}
             >
-              Website
+              Trang web
             </label>
             <div
               className={cn(
@@ -163,7 +163,7 @@ const Form = ({
                 onChange={(e) =>
                   setAccount({ ...account, website: e.target.value })
                 }
-                placeholder="website"
+                placeholder="Trang web"
                 className={cn("w-[90%] bg-transparent border-0 outline-none")}
               />
             </div>
@@ -269,7 +269,7 @@ const Form = ({
               htmlFor="wallet"
               className={cn("block w-full ml-4 font-bold text-xl")}
             >
-              Wallet address
+              Địa chỉ ví
             </label>
             <div
               className={cn(
@@ -302,7 +302,7 @@ const Form = ({
 
           <div className={cn("my-16")}>
             <Button className={cn("w-full flex justify-center text-xl")}>
-              Update profile
+              Cập nhật hồ sơ
             </Button>
           </div>
         </form>

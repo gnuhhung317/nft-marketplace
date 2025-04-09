@@ -42,9 +42,9 @@ const Slider = () => {
   return (
     <div className={cn("w-full")}>
       <div className={cn("w-4/5tt mx-auto p-[0_-4rem_8rem_0] ")}>
-        <h2 className={cn("text-6xl leading-none mb-5 md:text-4xl")}>Explore NFTs Video</h2>
+        <h2 className={cn("text-6xl leading-none mb-5 md:text-4xl")}>Khám Phá Video NFT</h2>
         <div className={cn("flex justify-between items-center")}>
-          <p>Click on play icon & enjoy NFTs Video</p>
+          <p>Nhấn vào biểu tượng phát & thưởng thức Video NFT</p>
           <div className={cn("flex items-center gap-8 text-4xl")}>
             <div
               className={cn("border border-icons p-2 rounded-full cursor-pointer transition-all duration-300 ease-in hover:bg-icons hover:text-main-bg hover:shadow-custom")}
@@ -68,12 +68,11 @@ const Slider = () => {
           className="w-full ">
           <CarouselContent className="-ml-4">
             {followingArray.map((el, i) => (
-              <CarouselItem className="pl-1  md:basis-1/2 xl:basis-1/3 2xl:basis-1/4" key={i}> <SliderCard key={i} i={i} el={el} /></CarouselItem>
+              <CarouselItem className="pl-1 md:basis-1/2 xl:basis-1/3 2xl:basis-1/4" key={i}> <SliderCard key={i} i={i} el={el} /></CarouselItem>
             ))}
-
           </CarouselContent>
-          <CarouselPrevious className=" absolute left-0 invisible" ref={leftSideRef} />
-          <CarouselNext className=" absolute left-0 invisible" ref={rightSideRef} />
+          <CarouselPrevious className="absolute left-0 invisible" ref={leftSideRef} />
+          <CarouselNext className="absolute left-0 invisible" ref={rightSideRef} />
         </Carousel>
 
         {/* <motion.div className={cn("w-full overflow-hidden")} ref={dragSlider}>

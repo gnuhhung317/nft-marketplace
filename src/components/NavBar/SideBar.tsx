@@ -15,7 +15,7 @@ import {
 import { DiAws } from "react-icons/di";
 
 // Internal imports
-import images from "@/img"; // Updated to use absolute path
+import images from "@/img"; // Đã cập nhật để sử dụng đường dẫn tuyệt đối
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -32,34 +32,34 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
   const [openHelp, setOpenHelp] = useState(false);
   const router = useRouter();
 
-  //--------DISCOVER NAVIGATION MENU
+  //--------MENU ĐIỀU HƯỚNG KHÁM PHÁ
   const discover = [
     {
-      name: "Collection",
+      name: "Bộ sưu tập",
       link: "collection",
     },
     {
-      name: "Search",
+      name: "Tìm kiếm",
       link: "searchPage",
     },
     {
-      name: "Author Profile",
+      name: "Hồ sơ tác giả",
       link: "author",
     },
     {
-      name: "NFT Details",
+      name: "Chi tiết NFT",
       link: "NFT-details",
     },
     {
-      name: "Account Setting",
+      name: "Cài đặt tài khoản",
       link: "account",
     },
     {
-      name: "Upload NFT",
+      name: "Tải lên NFT",
       link: "uploadNFT",
     },
     {
-      name: "Connect Wallet",
+      name: "Kết nối ví",
       link: "connectWallet",
     },
     {
@@ -67,26 +67,26 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
       link: "blog",
     },
   ];
-  //------HELP CNTEER
+  //------TRUNG TÂM TRỢ GIÚP
   const helpCenter = [
     {
-      name: "About",
+      name: "Giới thiệu",
       link: "aboutus",
     },
     {
-      name: "Contact Us",
+      name: "Liên hệ với chúng tôi",
       link: "contactus",
     },
     {
-      name: "Sign Up",
+      name: "Đăng ký",
       link: "signUp",
     },
     {
-      name: "LogIn",
+      name: "Đăng nhập",
       link: "login",
     },
     {
-      name: "Subscription",
+      name: "Đăng ký nhận tin",
       link: "subscription",
     },
   ];
@@ -103,7 +103,7 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
         </Link>
 
         <p>
-          Discover the most outstanding articles on all topics of NFT & write your own stories and share them.
+          Khám phá những bài viết nổi bật nhất về tất cả các chủ đề NFT & viết câu chuyện của riêng bạn và chia sẻ chúng.
         </p>
         <div className={cn("flex gap-5 text-xl items-center")}>
           <a href="#" className={cn("p-1 rounded-full transition-all duration-300 grid hover:bg-icons hover:text-shadow-dark")}>
@@ -124,10 +124,9 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
         </div>
       </div>
       <div className={cn("px-8 py-4 uppercase font-medium border-b border-icons-light")}>
-
         <div>
           <div onClick={() => setOpenHelp(prev => !prev)} className={cn("flex justify-between text-md items-center cursor-pointer")}>
-            <p className="font-bold mb-2">Discover</p>
+            <p className="font-bold mb-2">Khám Phá</p>
             <TiArrowSortedDown />
           </div>
           {openHelp && (
@@ -142,7 +141,7 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
         </div>
         <div>
           <div onClick={() => setOpenDiscover(prev => !prev)} className={cn("flex justify-between text-md items-center cursor-pointer")}>
-            <p className="font-bold">Discover</p>
+            <p className="font-bold">Khám Phá</p>
             <TiArrowSortedDown />
           </div>
           {openDiscover && (
@@ -155,15 +154,14 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
             </div>
           )}
         </div>
-
       </div>
       <div className={cn("p-8 flex round items-center justify-between")}>
         {currentAccount === "" ? (
-          <Button onClick={connectWallet} >connect</Button>
+          <Button onClick={connectWallet} >Kết nối</Button>
         ) : (
-          <Button onClick={() => router.push("/uploadNFT")} >Create</Button>
+          <Button onClick={() => router.push("/uploadNFT")} >Tạo</Button>
         )}
-        <Button onClick={() => { }} >Connect Wallet</Button>
+        <Button onClick={() => { }} >Kết nối ví</Button>
       </div>
     </div>
   );

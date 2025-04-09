@@ -19,18 +19,18 @@ const AudioCardSmall = () => {
       <div className="grid grid-cols-[1fr_2fr_1fr] gap-5 justify-self-center items-center">
         <Image
           src={images.creatorbackground1}
-          alt="music"
+          alt="âm nhạc"
           width={80}
           height={100}
-          className=" rounded-md m-auto"
+          className="rounded-md m-auto"
         />
 
         <div>
-          <h4 className="text-lg whitespace-nowrap">NFT music #1142</h4>
+          <h4 className="text-lg whitespace-nowrap">NFT âm nhạc #1142</h4>
           <div className="flex gap-4 mt-4">
             <LikeProfile />
-            <div className=" relative border border-icons rounded-sm p-1 w-2/5 font-semibold text-sm">
-              <small className=" absolute top-[-0.5rem] left-2 bg-icons text-main-bg rounded-sm px-1">Price</small>
+            <div className="relative border border-icons rounded-sm p-1 w-2/5 font-semibold text-sm">
+              <small className="absolute top-[-0.5rem] left-2 bg-icons text-main-bg rounded-sm px-1">Giá</small>
               <p className="mt-4 text-xs whitespace-nowrap">1.00 ETH</p>
             </div>
           </div>

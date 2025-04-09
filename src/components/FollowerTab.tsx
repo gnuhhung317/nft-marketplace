@@ -100,7 +100,7 @@ const FollowerTab = () => {
     <div className={cn("w-full relative pb-52 padding-6 padding-0 sm:pb-24")}>
       <div className={cn("w-96 mx-auto pb-24 text-center sm:w-full")}>
         <h2 className={cn("text-3xl text-primary mb-16 font-bold")}>
-          Top Creators List..
+          Danh Sách Những Người Sáng Tạo Hàng Đầu..
         </h2>
         <div
           className={cn(
@@ -114,7 +114,7 @@ const FollowerTab = () => {
             )}
             onClick={() => setTab("popular")}
           >
-            <RiUserFollowFill /> Popular
+            <RiUserFollowFill /> Nổi Bật
           </Button>
           <Button
             className={cn(
@@ -123,7 +123,7 @@ const FollowerTab = () => {
             )}
             onClick={() => setTab("following")}
           >
-            <RiUserFollowFill /> Following
+            <RiUserFollowFill /> Đang Theo Dõi
           </Button>
           <Button
             className={cn(
@@ -132,7 +132,7 @@ const FollowerTab = () => {
             )}
             onClick={() => setTab("news")}
           >
-            <RiAwardLine /> NoteWorthy
+            <RiAwardLine /> Đáng Chú Ý
           </Button>
         </div>
       </div>
@@ -176,10 +176,10 @@ const FollowerTab = () => {
       <div className={cn("text-center")}>
         <div className={cn("mx-auto p-28")}>
           <Button className="mr-8">
-            <a href="#">Show me more</a>
+            <a href="#">Hiện Thêm</a>
           </Button>
           <Button>
-            <a href="#">Become an author</a>
+            <a href="#">Trở Thành Tác Giả</a>
           </Button>
         </div>
       </div>
