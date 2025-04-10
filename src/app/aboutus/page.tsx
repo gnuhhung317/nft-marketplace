@@ -28,16 +28,16 @@ const founderArray = [
 
 const factsArray = [
   {
-    title: "10 triệu",
-    info: "Bài viết đã được công bố trên toàn thế giới (tính đến ngày 30 tháng 9, 2021)",
+    title: "1",
+    info: "Bài viết đã được công bố trên toàn thế giới (tính đến ngày sinh nhật thứ 20 của tôi)",
   },
   {
-    title: "100,000",
-    info: "Tài khoản người dùng đã đăng ký (tính đến ngày 30 tháng 9, 2021)",
+    title: "1",
+    info: "Tài khoản người dùng đã đăng ký (tính đến ngày sinh nhật thứ 20 của tôi)",
   },
   {
     title: "220+",
-    info: "Các quốc gia và khu vực có sự hiện diện của chúng tôi (tính đến ngày 30 tháng 9, 2021)",
+    info: "Các quốc gia và khu vực có sự hiện diện của chúng tôi (tính đến ngày sinh nhật thứ 20 của tôi)",
   },
 ];
 const aboutus = () => {
