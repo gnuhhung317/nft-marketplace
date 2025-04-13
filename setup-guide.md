@@ -112,11 +112,19 @@ Sau khi triển khai, cập nhật địa chỉ contract trong mã nguồn (nế
 ### 7. Khởi Động Ứng Dụng
 
 ```bash
-# Chạy ứng dụng ở chế độ development
+# Chạy Hardhat node (local blockchain)
+npx hardhat node
+
+# Mở terminal mới và chạy ứng dụng ở chế độ development
 npm run dev
 ```
 
 Ứng dụng sẽ chạy tại địa chỉ: [http://localhost:3331](http://localhost:3331)
+
+> **Lưu ý**: Khi chạy với Hardhat node, bạn cần:
+> - Mở terminal mới để chạy `npm run dev`
+> - Kết nối MetaMask với Hardhat network (localhost:8545)
+> - Import test accounts từ Hardhat vào MetaMask để test
 
 ## Kiểm Tra Các Chức Năng
 
