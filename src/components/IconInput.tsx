@@ -9,14 +9,16 @@ export const IconInput = ({
   label,
   onChange,
   className,
-  placeholder
+  placeholder,
+  value
 }: {
   children?: React.ReactNode,
   icon: React.ReactNode,
   label: string,
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void,
   className?: string,
-  placeholder?: string
+  placeholder?: string,
+  value?: string
 }) => {
 
   return (
@@ -32,6 +34,7 @@ export const IconInput = ({
           placeholder={placeholder}
           className={cn('w-[90%] bg-transparent border-0 outline-none', className)}
           onChange={onChange}
+          value={value}
         />}
       </div>
     </div>

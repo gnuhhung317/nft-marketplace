@@ -54,11 +54,7 @@ const discoverItems = [
   {
     name: "Kết nối ví",
     link: "connectWallet",
-  },
-  {
-    name: "Blog",
-    link: "blog",
-  },
+  }
 ];
 const helpItems = [
   { name: "Giới thiệu", link: "aboutus" },

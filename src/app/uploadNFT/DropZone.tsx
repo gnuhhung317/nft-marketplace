@@ -18,6 +18,8 @@ type TDropZone = {
   properties: string;
   uploadToPinata: TNFTMarketplaceContextType["uploadToPinata"];
   setImage: Dispatch<SetStateAction<string>>;
+  setName: Dispatch<SetStateAction<string>>;
+  setFileSize: Dispatch<SetStateAction<string>>;
 };
 
 const DropZone = ({
@@ -33,17 +35,23 @@ const DropZone = ({
   properties,
   uploadToPinata,
   setImage,
+  setName,
+  setFileSize,
 }: TDropZone) => {
   const [fileUrl, setFileUrl] = useState("");
   const [loading, setLoading] = useState(-1);
+  // const [fileSize, setFileSize] = useState("");
   
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       try {
         setLoading(1);
-        const url = await uploadToPinata(acceptedFiles[0]);
+        const file = acceptedFiles[0];
+        const url = await uploadToPinata(file);
         setFileUrl(url!);
         setImage(url!);
+        setName(file.name);
+        setFileSize((file.size / 1024).toFixed(2) + " KB");
         setLoading(0);
       } catch (error) {
         setLoading(-1);
@@ -88,14 +96,18 @@ const DropZone = ({
         >
           <div className={cn("grid grid-cols-2 gap-12")}>
             <Image
-              src={loading === 0 ? fileUrl : images.upload}
+              src={fileUrl || images.upload}
               alt="Xem trước NFT"
-              width={200}
-              height={200}
-              className={cn("col-span-1")}
+              width={150}
+              height={150}
+              className={cn("col-span-1 object-cover")}
               blurDataURL={images.upload}
             />
             <div className={cn("col-span-1 space-y-4")}>
+              <p className={cn("text-2xl font-bold")}>
+                Tên tệp: {name || "N/A"}
+              </p>
+              <p className={cn("text-xl")}>Kích thước tệp: {fileSize || "N/A"}</p>
               <p className={cn("text-2xl font-bold")}>
                 Tên NFT: {name || "N/A"}
               </p>
@@ -106,7 +118,6 @@ const DropZone = ({
                 Mô tả: {description || "N/A"}
               </p>
               <p className={cn("text-xl")}>Royalty: {royalties || "N/A"}</p>
-              <p className={cn("text-xl")}>Kích thước tệp: {fileSize || "N/A"}</p>
               <p className={cn("text-xl")}>Thuộc tính: {properties || "N/A"}</p>
               <p className={cn("text-xl")}>Danh mục: {category || "N/A"}</p>
             </div>

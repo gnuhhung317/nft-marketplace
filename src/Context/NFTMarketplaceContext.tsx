@@ -12,7 +12,7 @@ import { ethers } from "ethers";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 //INTERNAL  IMPORT
-import { NFTMarketplaceAddress, NFTMarketplaceABI } from "./constants";
+import { NFTMarketplaceAddress, NFTMarketplaceABI, SUPPORTED_NETWORKS } from "./constants";
 import { TLike, TMarketItem } from "@/types";
 import { createNewNFT, getLikes } from "@/actions/NFT";
 import { LoadingContext } from "./LoadingSpinnerProvider";
@@ -32,6 +32,7 @@ export type TNFTMarketplaceContextType = {
   uploadToPinata: (file: File) => Promise<string | undefined>;
   checkIfWalletConnected: () => Promise<void>;
   connectWallet: () => Promise<void>;
+  disconnectWallet: () => Promise<void>;
   createNFT: CreateNFT;
   fetchNFTs: () => Promise<TMarketItem[]>;
   fetchMyNFTsOrListedNFTs: (type?: string) => Promise<TMarketItem[]>;
@@ -76,6 +77,11 @@ const connectingWithSmartContract = async () => {
     const signer = provider.getSigner();
 
     const contract = fetchContract(signer);
+    console.log("connecting with smart contract: ", contract);
+
+    const network = await provider.getNetwork();
+    console.log("Connected network:", network);
+    
     return contract;
   } catch (error) {
     console.log("Something went wrong while connecting with contract", error);
@@ -147,10 +153,14 @@ export const NFTMarketplaceProvider = ({
       const connection = await web3Modal.connect();
       const provider = new ethers.providers.Web3Provider(connection);
       const network = await provider.getNetwork();
-      // expect chainId  80002
-      if (network.chainId !== 80002) {
+      console.log("Current network in checkIfWalletConnected:", network);
+      
+      // Support both localhost and Polygon Amoy networks
+      if (network.chainId !== SUPPORTED_NETWORKS.LOCALHOST.chainId && 
+          network.chainId !== SUPPORTED_NETWORKS.POLYGON_AMOY.chainId) {
         setOpenSwitchNetwork(true);
       }
+      
       const accounts = await window.ethereum.request({
         method: "eth_accounts",
       });
@@ -184,11 +194,28 @@ export const NFTMarketplaceProvider = ({
       if (!window.ethereum)
         return setOpenError(true), setError("Install MetaMask");
 
+      // Kiểm tra mạng hiện tại
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const network = await provider.getNetwork();
+      console.log("Current network in connectWallet:", network);
+
+      // Hỗ trợ cả mạng localhost và Polygon Amoy
+      const isValidNetwork = 
+        network.chainId === SUPPORTED_NETWORKS.LOCALHOST.chainId || 
+        network.chainId === SUPPORTED_NETWORKS.POLYGON_AMOY.chainId;
+      
+      // Nếu không phải mạng được hỗ trợ, hiển thị modal chuyển mạng
+      if (!isValidNetwork) {
+        setOpenSwitchNetwork(true);
+        // Không cần tự động chuyển mạng ở đây, để người dùng chọn
+        // thông qua modal SwitchNetwork
+      }
+
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
 
-      console.log(accounts);
+      console.log("accounts:", accounts);
       setCurrentAccount(accounts[0]);
 
       // window.location.reload();
@@ -196,6 +223,7 @@ export const NFTMarketplaceProvider = ({
     } catch (error) {
       // setError("Error while connecting to wallet");
       setOpenError(true);
+      console.log("Connection error:", error);
     }
   };
 
@@ -262,7 +290,25 @@ export const NFTMarketplaceProvider = ({
     }
   };
 
-  //--- createSale FUNCTION
+  function convertCidToImage(cid: string) {
+    // Kiểm tra xem CID có hợp lệ không
+    if (!cid) {
+      throw new Error("CID không hợp lệ");
+    }
+  
+    // Tạo URL từ CID
+    const imageUrl = `https://gateway.pinata.cloud/ipfs/${cid}`;
+  
+    return imageUrl;
+  }
+
+  /**
+   * Creates a new NFT sale or resells an existing NFT on the marketplace
+   * @param url - The IPFS URL of the NFT metadata
+   * @param formInputPrice - The price of the NFT in ETH
+   * @param isReselling - Optional flag to indicate if this is a resale of an existing NFT
+   * @param id - Optional token ID for reselling an existing NFT
+   */
   const createSale: TNFTMarketplaceContextType["createSale"] = async (
     url,
     formInputPrice,
@@ -270,25 +316,45 @@ export const NFTMarketplaceProvider = ({
     id?
   ) => {
     try {
+      // Log the sale creation attempt and parameters
+      console.log("createSale");
       console.log(url, formInputPrice, isReselling, id);
+      
+      // Convert the price from ETH to Wei (the smallest unit in Ethereum)
       const price = ethers.utils.parseUnits(formInputPrice, "ether");
 
+      // Connect to the smart contract
       const contract = await connectingWithSmartContract();
       if (!contract) return;
+      
+      // Get the listing fee required to create a sale
       const listingPrice = await contract.getListingPrice();
-      console.log(listingPrice, accountBalance);
+      console.log("listingPrice:", listingPrice);
+      
+      // Determine whether to create a new token or resell an existing one
+      // If isReselling is true, call resellToken with the token ID
+      // Otherwise, call createToken with the metadata URL
       const transaction = !isReselling
         ? await contract.createToken(url, price, {
-            value: listingPrice.toString(),
+            value: listingPrice.toString(), // Include the listing fee in the transaction
           })
         : await contract.resellToken(id, price, {
-            value: listingPrice.toString(),
+            value: listingPrice.toString(), // Include the listing fee in the transaction
           });
-      console.log(transaction);
+      
+      // Log the transaction details
+      console.log("wait for mining" ,transaction);
+      
+      // Wait for the transaction to be mined on the blockchain
       await transaction.wait();
+      
+      // Turn off the loading indicator
       setLoading(false);
+      
+      // Log the completed transaction
       console.log(transaction);
     } catch (error) {
+      // Handle any errors that occur during the sale creation process
       setError("error while creating sale");
       setOpenError(true);
       console.log(error);
@@ -462,12 +528,37 @@ export const NFTMarketplaceProvider = ({
       contract?.off("MarketItemCreated", onMarketItemCreatedEvent);
     };
   }, [currentAccount]);
+
+  //---DISCONNECT WALLET FUNCTION
+  const disconnectWallet = async () => {
+    try {
+      // Reset current account state
+      setCurrentAccount("");
+      
+      // Clear local connection data if any
+      localStorage.removeItem("walletConnected");
+      
+      // Note: MetaMask doesn't have an official disconnect method
+      // This just resets the app state, user can still be connected in MetaMask
+      
+      console.log("Wallet disconnected from app");
+      
+      // Optionally redirect to home page
+      // window.location.href = "/";
+    } catch (error) {
+      console.log("Error while disconnecting wallet:", error);
+      setError("Lỗi khi đăng xuất");
+      setOpenError(true);
+    }
+  };
+
   return (
     <NFTMarketplaceContext.Provider
       value={{
         uploadToPinata,
         checkIfWalletConnected,
         connectWallet,
+        disconnectWallet,
         createNFT,
         setError,
         fetchNFTs,

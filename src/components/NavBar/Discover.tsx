@@ -28,10 +28,7 @@ const HelpCenter: React.FC = () => {
       name: "Kết nối ví",
       link: "connectWallet",
     },
-    {
-      name: "Blog",
-      link: "blog",
-    },
+    
   ];
 
   return (

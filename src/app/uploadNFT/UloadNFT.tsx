@@ -13,6 +13,7 @@ import { TNFTMarketplaceContextType } from "@/Context/NFTMarketplaceContext";
 import DropZone from "./DropZone";
 import { IconInput } from "@/components/IconInput";
 import { Button } from "@/components/ui/button";
+import Modal from "@/components/Modal";
 
 const UploadNFT: React.FC<
   Pick<TNFTMarketplaceContextType, "createNFT" | "uploadToPinata">
@@ -27,6 +28,7 @@ const UploadNFT: React.FC<
   const [category, setCategory] = useState("");
   const [properties, setProperties] = useState("");
   const [image, setImage] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const router = useRouter();
 
@@ -47,15 +49,23 @@ const UploadNFT: React.FC<
       image: images.nft_image_1,
       category: "Kỹ Thuật Số",
     },
-    {
-      image: images.nft_image_2,
-      category: "Thời Gian",
-    },
+    // {
+    //   image: images.nft_image_2,
+    //   category: "Thời Gian",
+    // },
     {
       image: images.nft_image_3,
       category: "Nhiếp Ảnh",
     },
   ]; // Mảng ví dụ cho mục đích minh họa
+
+  const handlePreview = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className={cn("p-4")}>
@@ -72,6 +82,8 @@ const UploadNFT: React.FC<
         properties={properties}
         setImage={setImage}
         uploadToPinata={uploadToPinata}
+        setName={setName}
+        setFileSize={setFileSize} // Pass the existing setFileSize
       />
       <div className={cn("flex flex-col gap-4")}>
         {/* Text inputs for item name, website, description */}
@@ -82,6 +94,7 @@ const UploadNFT: React.FC<
           <input
             type="text"
             placeholder="Nhập tên mục"
+            value={name}
             className={cn(
               "w-full bg-transparent outline-none rounded-xl p-4 border border-icons"
             )}
@@ -176,6 +189,8 @@ const UploadNFT: React.FC<
           ></IconInput>
 
           <IconInput
+          
+            value={fileSize}
             label="Kích thước"
             placeholder="Nhập kích thước tệp"
             onChange={(e) => setFileSize(e.target.value)}
@@ -210,13 +225,33 @@ const UploadNFT: React.FC<
             Tải lên
           </Button>
           <Button
-            onClick={() => {}}
+            onClick={handlePreview}
             className={cn("w-full grid self-center text-[1.3rem]")}
           >
             Xem trước
           </Button>
         </div>
       </div>
+
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <h2 className="text-xl font-bold">Xem trước NFT</h2>
+        <div className="flex flex-col items-center">
+          <img
+            src={image}
+            alt="NFT Preview"
+            className="w-48 h-48 object-cover" // Cố định kích thước và giữ tỷ lệ khung hình
+          />
+          <p><strong>Tên:</strong> {name}</p>
+          <p><strong>Giá:</strong> {price}</p>
+          <p><strong>Mô tả:</strong> {description}</p>
+          <p><strong>Danh mục:</strong> {category}</p>
+          <p><strong>Royalty:</strong> {royalties}</p>
+          <p><strong>Kích thước:</strong> {fileSize}</p>
+          <p><strong>Thuộc tính:</strong> {properties}</p>
+        </div>
+        <Button onClick={closeModal} className="mt-4">Đóng</Button>
+      </Modal>
+
     </div>
   );
 };

@@ -8,10 +8,10 @@ import images from "@/img";
 
 const Service = () => {
   const [services] = useState([
-    { step: "Bước 1", title: "Lọc & Khám Phá", image: images.service1, desc: "Kết nối ví, khám phá, mua NFT, bán NFT của bạn và kiếm tiền" },
-    { step: "Bước 2", title: "Lọc & Khám Phá", image: images.service2, desc: "Kết nối ví, khám phá, mua NFT, bán NFT của bạn và kiếm tiền" },
-    { step: "Bước 3", title: "Kết Nối Ví", image: images.service3, desc: "Kết nối ví, khám phá, mua NFT, bán NFT của bạn và kiếm tiền" },
-    { step: "Bước 4", title: "Bắt Đầu Giao Dịch", image: images.service1, desc: "Kết nối ví, khám phá, mua NFT, bán NFT của bạn và kiếm tiền" }
+    { step: "Bước 1", title: "Kết Nối Ví", image: images.service1, desc: "Kết nối MetaMask hoặc ví Web3 khác để bắt đầu hành trình NFT của bạn trên Polygon Amoy Testnet" },
+    { step: "Bước 2", title: "Khám Phá NFT", image: images.service2, desc: "Tìm kiếm, lọc và khám phá các NFT độc đáo từ các nghệ sĩ và nhà sáng tạo trên marketplace" },
+    { step: "Bước 3", title: "Tạo & Đăng Bán", image: images.service3, desc: "Tạo NFT mới từ tác phẩm của bạn, đặt giá và đăng bán trên marketplace" },
+    { step: "Bước 4", title: "Mua & Giao Dịch", image: images.service1, desc: "Mua NFT yêu thích, quản lý bộ sưu tập và bán lại NFT để kiếm lợi nhuận" }
   ])
   return (
     <div className={cn("w-4/5tt mx-auto my-32 md:w-11/12tt")}>

@@ -15,10 +15,10 @@ const LoginAndSignUp = ({ }) => {
       social: images.twitter,
       name: 'Tiếp tục với Twitter',
     },
-    {
-      social: images.facebook,
-      name: 'Tiếp tục với Facebook',
-    },
+    // {
+    //   social: images.facebook,
+    //   name: 'Tiếp tục với Facebook',
+    // },
   ];
 
   return (

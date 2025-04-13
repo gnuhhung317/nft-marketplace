@@ -1,6 +1,7 @@
 // React imports
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 // Icons
 import { GrClose } from "react-icons/gr";
@@ -11,6 +12,7 @@ import {
   TiSocialYoutube,
   TiSocialInstagram,
   TiArrowSortedDown,
+  TiArrowSortedUp,
 } from "react-icons/ti";
 import { DiAws } from "react-icons/di";
 
@@ -19,18 +21,20 @@ import images from "@/img"; // Đã cập nhật để sử dụng đường d�
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
 
 // TypeScript Props
 interface SideBarProps {
-  setOpenSideMenu: (open: boolean) => void;
+  setOpenSideMenu: () => void;
   currentAccount: string;
-  connectWallet: () => void;
+  connectWallet: () => Promise<void>;
 }
 
 const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, connectWallet }) => {
   const [openDiscover, setOpenDiscover] = useState(false);
   const [openHelp, setOpenHelp] = useState(false);
   const router = useRouter();
+  const { disconnectWallet } = useContext(NFTMarketplaceContext)!;
 
   //--------MENU ĐIỀU HƯỚNG KHÁM PHÁ
   const discover = [
@@ -65,13 +69,13 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
     {
       name: "Blog",
       link: "blog",
-    },
+    }
   ];
   //------TRUNG TÂM TRỢ GIÚP
   const helpCenter = [
     {
       name: "Giới thiệu",
-      link: "aboutus",
+      link: "about",
     },
     {
       name: "Liên hệ với chúng tôi",
@@ -91,11 +95,26 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
     },
   ];
 
+  const openDiscoverMenu = () => {
+    setOpenDiscover(!openDiscover);
+    setOpenHelp(false);
+  };
+
+  const openHelpMenu = () => {
+    setOpenHelp(!openHelp);
+    setOpenDiscover(false);
+  };
+
+  const handleLogout = () => {
+    disconnectWallet();
+    setOpenSideMenu();
+  };
+
   return (
     <div className={cn("absolute top-0 left-0 w-full h-full bg-main-bg z-9")}>
       <GrClose
         className={cn("absolute top-12 right-12 cursor-pointer transition duration-200 ease-in-out text-icons hover:rotate-45")}
-        onClick={() => setOpenSideMenu(false)}
+        onClick={() => setOpenSideMenu()}
       />
       <div className={cn("p-8 pt-0 pb-2 border-b border-icons-light bg-main-bg")}>
         <Link href={{ pathname: '/' }}>
@@ -125,9 +144,9 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
       </div>
       <div className={cn("px-8 py-4 uppercase font-medium border-b border-icons-light")}>
         <div>
-          <div onClick={() => setOpenHelp(prev => !prev)} className={cn("flex justify-between text-md items-center cursor-pointer")}>
+          <div onClick={() => openHelpMenu()} className={cn("flex justify-between text-md items-center cursor-pointer")}>
             <p className="font-bold mb-2">Khám Phá</p>
-            <TiArrowSortedDown />
+            {openHelp ? <TiArrowSortedUp /> : <TiArrowSortedDown />}
           </div>
           {openHelp && (
             <div className={cn("pl-4")}>
@@ -140,9 +159,9 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
           )}
         </div>
         <div>
-          <div onClick={() => setOpenDiscover(prev => !prev)} className={cn("flex justify-between text-md items-center cursor-pointer")}>
+          <div onClick={() => openDiscoverMenu()} className={cn("flex justify-between text-md items-center cursor-pointer")}>
             <p className="font-bold">Khám Phá</p>
-            <TiArrowSortedDown />
+            {openDiscover ? <TiArrowSortedUp /> : <TiArrowSortedDown />}
           </div>
           {openDiscover && (
             <div className={cn("pl-4 ")}>
@@ -157,9 +176,18 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
       </div>
       <div className={cn("p-8 flex round items-center justify-between")}>
         {currentAccount === "" ? (
-          <Button onClick={connectWallet} >Kết nối</Button>
+          <Button onClick={() => connectWallet()} >Kết nối</Button>
         ) : (
-          <Button onClick={() => router.push("/uploadNFT")} >Tạo</Button>
+          <div className={cn("space-y-3")}>
+            <Button onClick={() => router.push("/uploadNFT")} className={cn("w-full")}>Tạo</Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleLogout}
+              className={cn("w-full")}
+            >
+              Đăng xuất
+            </Button>
+          </div>
         )}
         <Button onClick={() => { }} >Kết nối ví</Button>
       </div>

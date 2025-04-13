@@ -32,6 +32,7 @@
     "fortmatic": "^2.4.0",
     "framer-motion": "^11.2.0",
     "install": "^0.13.0",
+    "ipfs-http-client": "^60.0.1",
     "lucide-react": "^0.378.0",
     "metamask": "^0.0.1-security",
     "next": "15.2.3",
