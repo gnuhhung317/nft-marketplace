@@ -64,7 +64,7 @@ const AuthorProfileCard = ({
       >
         <div className={cn("rounded-lg text-center mx-auto ")}>
           <Image
-            src={images.nft_image_1}
+            src={account.avatar || images.user1}
             alt="HÌNH ẢNH NFT"
             width={220}
             height={220}
@@ -94,8 +94,7 @@ const AuthorProfileCard = ({
             />
           </div>
           <p className={cn("text-md leading-none w-[90%]  ")}>
-            Punk #4786 / Một nhà sưu tập Cryptopunk OG, người tích trữ NFTs.
-            Đóng góp cho @ether_cards, một nền tảng kiếm tiền từ NFT.
+            {account.description}
           </p>
           <div className={cn("flex items-center gap-4 text-2xl mt-4 ")}>
             <Link

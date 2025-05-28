@@ -191,7 +191,7 @@ const Form = ({
                 </div>
                 <input
                   type="text"
-                  placeholder="http://shoaib"
+                  placeholder="http://duchung.edu"
                   value={account.facebook!}
                   onChange={(e) =>
                     setAccount({ ...account, facebook: e.target.value })
@@ -226,7 +226,7 @@ const Form = ({
                   onChange={(e) =>
                     setAccount({ ...account, twitter: e.target.value })
                   }
-                  placeholder="http://shoaib"
+                  placeholder="http://duchung.edu"
                   className={cn("w-[90%] bg-transparent border-0 outline-none")}
                 />
               </div>
@@ -257,7 +257,7 @@ const Form = ({
                   onChange={(e) =>
                     setAccount({ ...account, instagram: e.target.value })
                   }
-                  placeholder="http://shoaib"
+                  placeholder="http://duchung.edu"
                   className={cn("w-[90%] bg-transparent border-0 outline-none")}
                 />
               </div>

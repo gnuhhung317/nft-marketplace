@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { AiFillFire, AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { MdVerified, MdTimer } from "react-icons/md";
+import { MdVerified } from "react-icons/md";
 import { TbArrowBigLeftLines, TbArrowBigRightLine } from "react-icons/tb";
 
 //INTERNAL IMPORT
@@ -13,8 +13,7 @@ const BigNFTSilder = () => {
   const [idNumber, setIdNumber] = useState(0);
 
   const sliderData = [
-    {
-      title: "Xin chào NFT",
+    {      title: "Xin chào NFT",
       id: 1,
       name: "Duc Hung",
       collection: "GYm",
@@ -22,15 +21,8 @@ const BigNFTSilder = () => {
       like: 243,
       image: images.user1,
       nftImage: images.nft_image_1,
-      time: {
-        days: 21,
-        hours: 40,
-        minutes: 81,
-        seconds: 15,
-      },
     },
-    {
-      title: "Buddy NFT",
+    {      title: "Buddy NFT",
       id: 2,
       name: "Duc Hung",
       collection: "Home",
@@ -38,15 +30,8 @@ const BigNFTSilder = () => {
       like: 243,
       image: images.user2,
       nftImage: images.nft_image_2,
-      time: {
-        days: 77,
-        hours: 11,
-        minutes: 21,
-        seconds: 45,
-      },
     },
-    {
-      title: "Gym NFT",
+    {      title: "Gym NFT",
       id: 3,
       name: "Raayan Hussain",
       collection: "GYm",
@@ -54,15 +39,8 @@ const BigNFTSilder = () => {
       like: 243,
       image: images.user3,
       nftImage: images.nft_image_3,
-      time: {
-        days: 37,
-        hours: 20,
-        minutes: 11,
-        seconds: 55,
-      },
     },
-    {
-      title: "Home NFT",
+    {      title: "Home NFT",
       id: 4,
       name: "Raayan Hussain",
       collection: "GYm",
@@ -70,12 +48,6 @@ const BigNFTSilder = () => {
       like: 243,
       image: images.user4,
       nftImage: images.nft_image_1,
-      time: {
-        days: 87,
-        hours: 29,
-        minutes: 10,
-        seconds: 15,
-      },
     },
   ];
 
@@ -120,20 +92,9 @@ const BigNFTSilder = () => {
             <div className="border-4 h-24 border-shadow-dark rounded-md my-8 px-12 ">
               <small className=" bg-shadow-dark py-6 px-8 rounded-lg text-lg whitespace-nowrap">Giá hiện tại</small>
               <p className="mt-8">{sliderData[idNumber].price} <span>$221,21</span></p>
-            </div>
-            <div className="flex items-center gap-4">
-              <MdTimer className="text-2xl" />
-              <span>Đấu giá kết thúc trong</span>
-            </div>
-            <div className="flex items-center gap-8 mt-4 pb-8 border-b border-shadow-dark text-center">
-              <div><p className="text-2xl font-bold">{sliderData[idNumber].time.days}</p><span>Ngày</span></div>
-              <div><p className="text-2xl font-bold">{sliderData[idNumber].time.hours}</p><span>Giờ</span></div>
-              <div><p className="text-2xl font-bold">{sliderData[idNumber].time.minutes}</p><span>phút</span></div>
-              <div><p className="text-2xl font-bold">{sliderData[idNumber].time.seconds}</p><span>giây</span></div>
-            </div>
-            <div className="flex justify-center gap-16 py-8">
-              <Button onClick={() => { }} >Đặt</Button>
+            </div>            <div className="flex justify-center gap-16 py-8 mt-4 pb-8 border-b border-shadow-dark">
               <Button onClick={() => { }} >Xem</Button>
+              <Button onClick={() => { }} >Mua ngay</Button>
             </div>
           </div>
           <div className="flex justify-center gap-8 mt-8 select-none">

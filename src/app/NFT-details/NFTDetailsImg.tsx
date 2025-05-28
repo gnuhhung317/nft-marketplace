@@ -5,7 +5,6 @@ import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import React, { useContext, useState } from "react";
 import { TMarketItem } from "@/types";
-import { useSearchParams } from "next/navigation";
 import { Like } from "@/components/Like";
 import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
 
@@ -13,11 +12,9 @@ const NFTDetailsImg = ({ nft }: { nft: TMarketItem }) => {
   const [description, setDescription] = useState(true);
   const [details, setDetails] = useState(true);
   const [like, setLike] = useState(false);
-
   const toggleDescription = () => setDescription(!description);
   const toggleDetails = () => setDetails(!details);
   const toggleLike = () => setLike(!like);
-  const searchParams = useSearchParams();
   const { currentAccount, nfts } = useContext(NFTMarketplaceContext)!;
   return (
     <div className={cn("w-full")}>

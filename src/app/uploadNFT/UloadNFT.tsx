@@ -9,14 +9,14 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import images from "@/img";
-import { TNFTMarketplaceContextType } from "@/Context/NFTMarketplaceContext";
+import type { NFTMarketplaceContextType } from "@/Context/NFTMarketplaceContext";
 import DropZone from "./DropZone";
 import { IconInput } from "@/components/IconInput";
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/Modal";
 
 const UploadNFT: React.FC<
-  Pick<TNFTMarketplaceContextType, "createNFT" | "uploadToPinata">
+  Pick<NFTMarketplaceContextType, "createNFT" | "uploadToPinata">
 > = ({ createNFT, uploadToPinata }) => {
   const [price, setPrice] = useState("");
   const [active, setActive] = useState(0);
@@ -189,7 +189,7 @@ const UploadNFT: React.FC<
           ></IconInput>
 
           <IconInput
-          
+
             value={fileSize}
             label="Kích thước"
             placeholder="Nhập kích thước tệp"
@@ -233,23 +233,67 @@ const UploadNFT: React.FC<
         </div>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <h2 className="text-xl font-bold">Xem trước NFT</h2>
+      <Modal isOpen={isModalOpen} onClose={closeModal} title="Connect to Dragon Wallet">
         <div className="flex flex-col items-center">
-          <img
-            src={image}
-            alt="NFT Preview"
-            className="w-48 h-48 object-cover" // Cố định kích thước và giữ tỷ lệ khung hình
-          />
-          <p><strong>Tên:</strong> {name}</p>
-          <p><strong>Giá:</strong> {price}</p>
-          <p><strong>Mô tả:</strong> {description}</p>
-          <p><strong>Danh mục:</strong> {category}</p>
-          <p><strong>Royalty:</strong> {royalties}</p>
-          <p><strong>Kích thước:</strong> {fileSize}</p>
-          <p><strong>Thuộc tính:</strong> {properties}</p>
+          <div className="relative w-64 h-64 mb-6 rounded-lg overflow-hidden border border-icons shadow-custom">
+            {image ? (
+              <img
+                src={image}
+                alt="NFT Preview"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-shadow-dark/20 flex items-center justify-center text-icons/50">
+                No Image
+              </div>
+            )}
+          </div>
+
+          <div className="w-full space-y-3 text-primary">
+            <div className="grid grid-cols-[100px_1fr] items-center border-b border-icons/30 pb-2">
+              <span className="font-medium">Tên:</span>
+              <span>{name || "—"}</span>
+            </div>
+
+            <div className="grid grid-cols-[100px_1fr] items-center border-b border-icons/30 pb-2">
+              <span className="font-medium">Giá:</span>
+              <span>{price || "—"}</span>
+            </div>
+
+            <div className="grid grid-cols-[100px_1fr] items-center border-b border-icons/30 pb-2">
+              <span className="font-medium">Danh mục:</span>
+              <span>{category || "—"}</span>
+            </div>
+
+            <div className="grid grid-cols-[100px_1fr] items-center border-b border-icons/30 pb-2">
+              <span className="font-medium">Royalty:</span>
+              <span>{royalties || "—"}</span>
+            </div>
+
+            <div className="grid grid-cols-[100px_1fr] items-center border-b border-icons/30 pb-2">
+              <span className="font-medium">Kích thước:</span>
+              <span>{fileSize || "—"}</span>
+            </div>
+
+            <div className="grid grid-cols-[100px_1fr] items-center border-b border-icons/30 pb-2">
+              <span className="font-medium">Thuộc tính:</span>
+              <span>{properties || "—"}</span>
+            </div>
+
+            {description && (
+              <div className="pt-2">
+                <div className="font-medium mb-1">Mô tả:</div>
+                <p className="text-sm text-primary/80 bg-shadow-dark/10 p-3 rounded-md">{description}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-6 w-full flex justify-end">
+            <Button onClick={closeModal} className="bg-icons text-main-bg hover:bg-main-bg hover:text-icons hover:border-icons border">
+              Đóng
+            </Button>
+          </div>
         </div>
-        <Button onClick={closeModal} className="mt-4">Đóng</Button>
       </Modal>
 
     </div>

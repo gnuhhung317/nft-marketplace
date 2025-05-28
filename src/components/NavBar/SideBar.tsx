@@ -22,6 +22,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
+import { LocalStorageProvider } from "@/utils/localStorageProvider";
+import { AccountContext, accountData } from "@/Context/AccountProvider";
 
 // TypeScript Props
 interface SideBarProps {
@@ -35,6 +37,7 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
   const [openHelp, setOpenHelp] = useState(false);
   const router = useRouter();
   const { disconnectWallet } = useContext(NFTMarketplaceContext)!;
+  const { setAccount } = useContext(AccountContext)!;
 
   //--------MENU ĐIỀU HƯỚNG KHÁM PHÁ
   const discover = [
@@ -49,10 +52,9 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
     {
       name: "Hồ sơ tác giả",
       link: "author",
-    },
-    {
+    },    {
       name: "Chi tiết NFT",
-      link: "NFT-details",
+      link: "/", // Redirects to homepage since we need a specific tokenId
     },
     {
       name: "Cài đặt tài khoản",
@@ -61,10 +63,6 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
     {
       name: "Tải lên NFT",
       link: "uploadNFT",
-    },
-    {
-      name: "Kết nối ví",
-      link: "connectWallet",
     },
     {
       name: "Blog",
@@ -82,14 +80,6 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
       link: "contactus",
     },
     {
-      name: "Đăng ký",
-      link: "signUp",
-    },
-    {
-      name: "Đăng nhập",
-      link: "login",
-    },
-    {
       name: "Đăng ký nhận tin",
       link: "subscription",
     },
@@ -103,11 +93,22 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
   const openHelpMenu = () => {
     setOpenHelp(!openHelp);
     setOpenDiscover(false);
-  };
-
-  const handleLogout = () => {
+  };  const handleLogout = () => {
+    // Ngắt kết nối ví
     disconnectWallet();
+    
+    // Xóa tất cả dữ liệu tài khoản khỏi localStorage
+    LocalStorageProvider.clearAccount();
+    LocalStorageProvider.removeItem('accountData');
+    
+    // Reset trạng thái tài khoản về rỗng
+    setAccount({...accountData});
+    
+    // Chuyển hướng về trang chủ và đóng menu
+    router.push("/");
     setOpenSideMenu();
+    
+    console.log("Đã đăng xuất và xóa thông tin tài khoản");
   };
 
   return (
@@ -176,7 +177,7 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
       </div>
       <div className={cn("p-8 flex round items-center justify-between")}>
         {currentAccount === "" ? (
-          <Button onClick={() => connectWallet()} >Kết nối</Button>
+          <Button onClick={() => connectWallet()}>Kết nối</Button>
         ) : (
           <div className={cn("space-y-3")}>
             <Button onClick={() => router.push("/uploadNFT")} className={cn("w-full")}>Tạo</Button>

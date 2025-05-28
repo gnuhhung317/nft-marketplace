@@ -11,16 +11,16 @@ const UploadNFTComponent = () => {
     <div className={cn("w-full my-32")}>
       <div className={cn("xl:w-3/5 lg:w-4/5 w-full mx-auto")}>
         <div className={cn("border-b border-shadow-dark")}>
-          <h1 className={cn("text-4xl leading-none")}>Create New NFT</h1>
+          <h1 className={cn("text-4xl leading-none")}>Tạo NFT Mới</h1>
           <p className={cn("text-lg leading-snug w-7/10 py-4")}>
-            You can set preferred display name, create your profile URL and manage other personal settings.
+            Bạn có thể đặt tên hiển thị ưa thích, tạo URL hồ sơ và quản lý các cài đặt cá nhân khác.
           </p>
         </div>
 
         <div className={cn("border-b border-shadow-dark mt-8")}>
-          <h2 className={cn("text-3xl leading-none")}>Image, Video, Audio, or 3D Model</h2>
+          <h2 className={cn("text-3xl leading-none")}>Hình ảnh, Video, Âm thanh, hoặc Mô hình 3D</h2>
           <p className={cn("text-lg font-medium py-4")}>
-            File types supported: JPG, PNG, GIF, SVG, MP4, WEBM, MP3, WAV, OGG, GLB, GLTF. Max size: 100 MB
+            Các định dạng tệp được hỗ trợ: JPG, PNG, GIF, SVG, MP4, WEBM, MP3, WAV, OGG, GLB, GLTF. Kích thước tối đa: 100 MB
           </p>
         </div>
 

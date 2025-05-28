@@ -5,27 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { TMarketItem } from "@/types";
-import { useTimer } from "react-timer-hook";
 import React, { useState, useEffect, useContext, Suspense } from "react";
 import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
 import { LikeOrDislike } from "@/actions/NFT";
 import { Like } from "./Like";
-
-const Time = () => {
-  const { seconds, minutes, hours, days } = useTimer({
-    expiryTimestamp: new Date(
-      new Date().getTime() + 1000 * (3 * 60 * 60 + 15 * 60 + 20)
-    ),
-  });
-  const formatTime = (num: number) => { return num < 10 ? `0${num}` : num; };
-  return (
-    <span>
-      {`${formatTime(hours)}h : ${formatTime(minutes)}m : ${formatTime(
-        seconds
-      )}s`}{" "}
-    </span>
-  );
-};
 
 const NFTCard = () => {
   const { checkIfWalletConnected, currentAccount, nfts, setNfts, likes } =
@@ -36,9 +19,8 @@ const NFTCard = () => {
       className={cn(
         "mx-auto grid gap-12 mb-40 sm:grid-cols-1 md:grid-cols-2 md:gap-6 xl:grid-cols-3"
       )}
-    >
-      {nfts.map((el, i) => (
-        <Link href={{ pathname: "/NFT-details", query: el }} key={i}>
+    >      {nfts.map((el, i) => (
+        <Link href={`/NFT-details/${el.tokenId}`} key={i}>
           <div
             className={cn(
               "h-72 grid grid-cols-4 grid-rows-4 bg-main-bg p-4 rounded-lg cursor-pointer transition-all duration-300 ease-in-out hover:shadow-custom"
@@ -65,19 +47,8 @@ const NFTCard = () => {
                 "col-[1/-1] row-[1/2] z-9 flex items-start justify-between overflow-hidden"
               )}
             >
-              <Like nFTTokenId={el.tokenId!} currentAccount={currentAccount!}></Like>
-
-              <div
-                className={cn(
-                  "text-primary bg-main-bg skew-x-[45deg] px-8 py-4 text-center mr-[-2rem] rounded-bl-lg"
-                )}
-              >
-                <div className={cn("skew-x-[-45deg] bg-main-bg")}>
-                  <p className={cn("text-xl font-bold whitespace-nowrap")}>
-                    {" "}
-                    <Time></Time>
-                  </p>
-                </div>
+              <Like nFTTokenId={el.tokenId!} currentAccount={currentAccount!}></Like>              <div className={cn("flex justify-end")}>
+                {/* Removed auction timer */}
               </div>
             </div>
 

@@ -2,11 +2,20 @@ require("@nomicfoundation/hardhat-toolbox");
 require('dotenv').configDotenv({path:'./.env.local'})
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  // defaultNetwork: "polygonAmoy",
-  solidity: "0.8.24",
+  solidity: {
+    version: "0.8.24",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200
+      },
+      viaIR: true
+    }
+  },
   networks: {
     localhost: {
-      url: "http://127.0.0.1:8545"
+      url: "http://127.0.0.1:8545",
+      chainId: 31337
     },
     // Other networks...
   },

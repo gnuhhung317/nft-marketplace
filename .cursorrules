@@ -1,0 +1,28 @@
+# NFT Marketplace Project - Cursor AI Rules
+
+## Project Context
+This is a Next.js 14+ React TypeScript NFT marketplace application using ethers.js, Web3Modal, and blockchain integration. Focus on clean architecture, type safety, and maintainable code.
+
+## Core Principles
+- Use TypeScript strictly - no `any` types unless absolutely necessary
+- Prefer composition over inheritance
+- Single Responsibility Principle - one function/hook should do one thing well
+- Fail fast with clear error messages
+- Prioritize readability over cleverness
+
+## Code Style & Standards
+
+### Language & Naming
+- Use ONLY Vietnamese for all comments, error messages, and logs
+- camelCase for variables, functions, and methods
+- PascalCase for components, interfaces, types, and classes
+- SCREAMING_SNAKE_CASE for constants
+- Prefix interfaces with 'I' only if needed for disambiguation
+- Use descriptive names: `fetchNFTsByOwner` not `getNFTs`
+
+### File Organization
+- Max 200 lines per file (prefer 100-150)
+- Max 50 lines per function
+- Group related functions together
+- Use barrel exports (index.ts files)
+- Follow this structure:

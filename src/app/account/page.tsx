@@ -32,10 +32,9 @@ const Account = () => {
       <div
         className={cn("xl:w-2/3 w-full mx-auto border-b border-shadow-dark")}
       >
-        <h1 className={cn("text-4xl leading-[0.5]")}>Profile settings</h1>
+        <h1 className={cn("text-4xl leading-[0.5]")}>Cài đặt hồ sơ</h1>
         <p className={cn("text-xl mt-2 w-4/5tt leading-loose pb-2")}>
-          You can set preferred display name, create your profile URL and manage
-          other personal settings.
+          Bạn có thể đặt tên hiển thị, tạo URL hồ sơ và quản lý các cài đặt cá nhân khác.
         </p>
       </div>
 
@@ -51,7 +50,7 @@ const Account = () => {
           <input {...getInputProps()} />
           <Image
             src={account.avatar || images.user1}
-            alt="account upload"
+            alt="Tải ảnh đại diện"
             width={150}
             height={150}
             className={cn("rounded-full mx-auto")}
@@ -61,7 +60,7 @@ const Account = () => {
               "text-base font-bold leading-none whitespace-nowrap mt-2"
             )}
           >
-            Change Image
+            Đổi ảnh đại diện
           </p>
         </div>
         <div>

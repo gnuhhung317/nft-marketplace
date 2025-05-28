@@ -25,7 +25,7 @@ const HeroSection = () => {
           <Button
             className="w-48 text-xl h-12"
             onClick={() => router.push("/searchPage")}
-          >Bắt đầu tìm kiếm của bạn</Button>
+          >Bắt đầu tìm kiếm</Button>
         </div>
         <div>
           <Image

@@ -1,32 +1,20 @@
 'use client'
-import React, { useEffect, useState, useContext } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
-import Brand from "@/components/Brand";
-import Category from "@/components/Category";
-import NFTDetailsPage from "./NFTDetailsPage";
-import { TMarketItem } from "@/types";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Loader from "@/components/Loader";
 
+// This page will redirect to the home page if someone tries to access /NFT-details directly
+// without a specific tokenId
+const NFTDetailsRedirect = () => {
+  const router = useRouter();
 
-const NFTDetails = () => {
-  const searchParams = useSearchParams();
+  useEffect(() => {
+    // Redirect to the home page
+    router.push('/');
+  }, [router]);
 
-  return (
-    <div>
-      <NFTDetailsPage nft={{
-        image: searchParams.get('image') || "",
-        tokenId: searchParams.get('tokenId') || "",
-        tokenURI: searchParams.get('tokenURI') || "",
-        name: searchParams.get('name') || "",
-        owner: searchParams.get('owner') || "",
-        price: searchParams.get('price') || "",
-        seller: searchParams.get('seller') || "",
-        description: searchParams.get('description') || "",
-      }} />
-      <Category />
-      <Brand />
-    </div>
-  );
+  // Show loader while redirecting
+  return <Loader />;
 };
 
-export default NFTDetails;
+export default NFTDetailsRedirect;

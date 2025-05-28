@@ -24,11 +24,6 @@ const HelpCenter: React.FC = () => {
       name: "Tải lên NFT",
       link: "uploadNFT",
     },
-    {
-      name: "Kết nối ví",
-      link: "connectWallet",
-    },
-    
   ];
 
   return (

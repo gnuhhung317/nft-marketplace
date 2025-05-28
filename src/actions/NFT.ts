@@ -121,4 +121,31 @@ export const LikeOrDislike = async ({
   };
 };
 
+export const getNFTByTokenId = async (tokenId: string) => {
+  try {
+    const nft = await db.nFT.findUnique({
+      where: {
+        tokenId: tokenId
+      }
+    });
+
+    if (!nft) {
+      return {
+        success: false,
+        error: "Không thấy NFT"
+      };
+    }
+
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(nft))
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "Failed to fetch NFT: " + error
+    };
+  }
+};
+
 type LikeType = 0 | 1; //0 disLike 1 like

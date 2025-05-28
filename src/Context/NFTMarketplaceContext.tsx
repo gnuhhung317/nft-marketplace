@@ -6,6 +6,9 @@ import React, {
   Dispatch,
   SetStateAction,
   useContext,
+  createContext,
+  useMemo,
+  useCallback,
 } from "react";
 import Web3Modal from "web3modal";
 import { ethers } from "ethers";
@@ -16,6 +19,10 @@ import { NFTMarketplaceAddress, NFTMarketplaceABI, SUPPORTED_NETWORKS } from "./
 import { TLike, TMarketItem } from "@/types";
 import { createNewNFT, getLikes } from "@/actions/NFT";
 import { LoadingContext } from "./LoadingSpinnerProvider";
+import { WalletContext } from "./WalletContext";
+import { WalletService } from "../services/WalletService";
+import LoginModal from "../components/LoginModal";
+import { LocalStorageService } from "@/services/LocalStorageService";
 
 export type CreateNFTParams = {
   name: string;
@@ -28,7 +35,7 @@ export type CreateNFTParams = {
 export type CreateNFT = (params: CreateNFTParams) => Promise<void>;
 
 // defined the type of value in the Context
-export type TNFTMarketplaceContextType = {
+export type NFTMarketplaceContextType = {
   uploadToPinata: (file: File) => Promise<string | undefined>;
   checkIfWalletConnected: () => Promise<void>;
   connectWallet: () => Promise<void>;
@@ -36,6 +43,7 @@ export type TNFTMarketplaceContextType = {
   createNFT: CreateNFT;
   fetchNFTs: () => Promise<TMarketItem[]>;
   fetchMyNFTsOrListedNFTs: (type?: string) => Promise<TMarketItem[]>;
+  fetchNFTsByOwner: (ownerAddress: string) => Promise<TMarketItem[]>;
   buyNFT: (nftId: TMarketItem) => void;
   createSale: (
     url: string,
@@ -56,82 +64,23 @@ export type TNFTMarketplaceContextType = {
   setLikes: Dispatch<SetStateAction<TLike[][]>>;
   openSwitchNetwork: boolean;
   setOpenSwitchNetwork: Dispatch<SetStateAction<boolean>>;
+  getTokenTransactionHistory: (tokenId: string) => Promise<any[]>;
+  getTokenProvenance: (tokenId: string) => Promise<any>;
+  getTokenOwnershipHistory: (tokenId: string) => Promise<string[]>;
+  getCurrentTokenOwner: (tokenId: string) => Promise<string>;
+  getTokenTransactionCount: (tokenId: string) => Promise<number>;
+  getTokenOwnerCount: (tokenId: string) => Promise<number>;
+  isOriginalToken: (tokenId: string) => Promise<boolean>;
+  getTokensCreatedBy: (creator: string) => Promise<string[]>;
 };
 
-//---FETCHING SMART CONTRACT
-const fetchContract = (
-  signerOrProvider: ethers.Signer | ethers.providers.Provider
-) =>
-  new ethers.Contract(
-    NFTMarketplaceAddress,
-    NFTMarketplaceABI,
-    signerOrProvider
-  );
-const web3Modal = globalThis.window && new Web3Modal();
-
-//---CONNECTING WITH SMART CONTRACT
-const connectingWithSmartContract = async () => {
-  try {
-    const connection = await web3Modal.connect();
-    const provider = new ethers.providers.Web3Provider(connection);
-    const signer = provider.getSigner();
-
-    const contract = fetchContract(signer);
-    console.log("connecting with smart contract: ", contract);
-
-    const network = await provider.getNetwork();
-    console.log("Connected network:", network);
-    
-    return contract;
-  } catch (error) {
-    console.log("Something went wrong while connecting with contract", error);
-  }
-};
-// listen NFT created
-const onMarketItemCreatedEvent = async (
-  tokenId: string,
-  seller: string,
-  owner: string,
-  price: string,
-  sold: boolean
-) => {
-  try {
-    const contract = await connectingWithSmartContract();
-    if (contract) {
-      console.log("tokenId", tokenId);
-      const tokenURI = await contract.tokenURI(tokenId);
-      console.log("tokenURI", tokenURI);
-      console.log({
-        tokenId: tokenId.toString(),
-        seller,
-        owner,
-        price: ethers.utils.formatUnits(price.toString(), "ether"),
-        sold,
-        tokenURI,
-      });
-      createNewNFT({
-        tokenId: tokenId.toString(),
-        seller,
-        owner,
-        price: ethers.utils.formatUnits(price.toString(), "ether"),
-        sold,
-        tokenURI,
-      });
-    }
-  } catch (error) {
-    console.log("createNFT in database has a problem ", error);
-  }
-};
-
-export const NFTMarketplaceContext =
-  React.createContext<TNFTMarketplaceContextType | null>(null);
-
+export const NFTMarketplaceContext = createContext<NFTMarketplaceContextType | null>(null);
 export const NFTMarketplaceProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const titleData = "Discover, collect, and sell NFTs";
+  const titleData = "Khám phá, sưu tầm và bán NFT";
 
   //------USESTAT
   const [error, setError] = useState("");
@@ -143,89 +92,48 @@ export const NFTMarketplaceProvider = ({
   const [nfts, setNfts] = useState<TMarketItem[]>([]);
   const [likes, setLikes] = useState<TLike[][]>([]);
   const [openSwitchNetwork, setOpenSwitchNetwork] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [contractInstance, setContractInstance] = useState<ethers.Contract | null>(null);
 
-  //---CHECK IF WALLET IS CONNECTD
-  const checkIfWalletConnected = async () => {
+  const walletContext = useContext(WalletContext);
+  
+  // Khởi tạo WalletService
+  const walletService = useMemo(() => new WalletService(
+    process.env.NEXT_PUBLIC_WALLET_API_URL || '',
+    process.env.NEXT_PUBLIC_WALLET_API_TOKEN || ''
+  ), []);
+
+  const setToken = useCallback(async (token: string) => {
+    walletService.setToken(token);
+  }, [walletService]);
+
+  // Memoize contract connection
+  const connectingWithSmartContract = useCallback(async () => {
     try {
-      if (!window.ethereum)
-        return setOpenError(true), setError("Install MetaMask");
-
-      const connection = await web3Modal.connect();
-      const provider = new ethers.providers.Web3Provider(connection);
-      const network = await provider.getNetwork();
-      console.log("Current network in checkIfWalletConnected:", network);
-      
-      // Support both localhost and Polygon Amoy networks
-      if (network.chainId !== SUPPORTED_NETWORKS.LOCALHOST.chainId && 
-          network.chainId !== SUPPORTED_NETWORKS.POLYGON_AMOY.chainId) {
-        setOpenSwitchNetwork(true);
+      const savedAddress = LocalStorageService.getAccountAddress();
+      if (savedAddress) {
+        const provider = new ethers.providers.JsonRpcProvider(SUPPORTED_NETWORKS.LOCALHOST.rpcUrl);
+        const privateKey = LocalStorageService.getPrivateKey();
+        if (!privateKey) {
+          throw new Error("No private key found");
+        }
+        const wallet = new ethers.Wallet(privateKey, provider);
+        const signer = wallet.connect(provider);
+        const contract = fetchContract(signer);
+        setContractInstance(contract);
+        return contract;
       }
-      
-      const accounts = await window.ethereum.request({
-        method: "eth_accounts",
-      });
-
-      if (accounts && accounts.length) {
-        setCurrentAccount(accounts[0]!);
-        // console.log(accounts[0]);
-      } else {
-        // setError("No Account Found");
-        // setOpenError(true);
-        console.log("No account");
-      }
-
-      const getBalance = await provider.getBalance(accounts?.[0]!);
-      const bal = ethers.utils.formatEther(getBalance);
-      setAccountBalance(bal);
     } catch (error) {
-      // setError("Something wrong while connecting to wallet");
-      // setOpenError(true);
-      console.log("not connected");
+      console.error("Error connecting to smart contract:", error);
+      setError("Failed to connect to smart contract");
+      setOpenError(true);
+      return null;
     }
-  };
+  }, []);
 
   useEffect(() => {
     checkIfWalletConnected();
   }, []);
-
-  //---CONNET WALLET FUNCTION
-  const connectWallet = async () => {
-    try {
-      if (!window.ethereum)
-        return setOpenError(true), setError("Install MetaMask");
-
-      // Kiểm tra mạng hiện tại
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const network = await provider.getNetwork();
-      console.log("Current network in connectWallet:", network);
-
-      // Hỗ trợ cả mạng localhost và Polygon Amoy
-      const isValidNetwork = 
-        network.chainId === SUPPORTED_NETWORKS.LOCALHOST.chainId || 
-        network.chainId === SUPPORTED_NETWORKS.POLYGON_AMOY.chainId;
-      
-      // Nếu không phải mạng được hỗ trợ, hiển thị modal chuyển mạng
-      if (!isValidNetwork) {
-        setOpenSwitchNetwork(true);
-        // Không cần tự động chuyển mạng ở đây, để người dùng chọn
-        // thông qua modal SwitchNetwork
-      }
-
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-
-      console.log("accounts:", accounts);
-      setCurrentAccount(accounts[0]);
-
-      // window.location.reload();
-      connectingWithSmartContract();
-    } catch (error) {
-      // setError("Error while connecting to wallet");
-      setOpenError(true);
-      console.log("Connection error:", error);
-    }
-  };
 
   //---UPLOAD TO IPFS FUNCTION
   const uploadToPinata = async (file: File) => {
@@ -249,7 +157,7 @@ export const NFTMarketplaceProvider = ({
 
         return ImgHash;
       } catch (error) {
-        console.log("Unable to upload image to Pinata");
+        console.log("Không thể tải ảnh lên Pinata");
       }
     }
   };
@@ -263,7 +171,7 @@ export const NFTMarketplaceProvider = ({
     router,
   }) => {
     if (!name || !description || !price || !image)
-      return setError("Data Is Missing"), setOpenError(true);
+      return setError("Thiếu dữ liệu"), setOpenError(true);
     setLoading(true);
     const data = JSON.stringify({ name, description, image });
     try {
@@ -279,197 +187,244 @@ export const NFTMarketplaceProvider = ({
       });
 
       const url = `https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`;
-      console.log(url);
 
-      await createSale(url, price);
+      await createSale(url, price, false);
       router.push("/searchPage");
     } catch (error) {
       setLoading(false);
-      setError("Error while creating NFT");
+      setError("Lỗi khi tạo NFT");
       setOpenError(true);
     }
   };
 
   function convertCidToImage(cid: string) {
-    // Kiểm tra xem CID có hợp lệ không
     if (!cid) {
       throw new Error("CID không hợp lệ");
     }
   
-    // Tạo URL từ CID
     const imageUrl = `https://gateway.pinata.cloud/ipfs/${cid}`;
   
     return imageUrl;
   }
 
-  /**
-   * Creates a new NFT sale or resells an existing NFT on the marketplace
-   * @param url - The IPFS URL of the NFT metadata
-   * @param formInputPrice - The price of the NFT in ETH
-   * @param isReselling - Optional flag to indicate if this is a resale of an existing NFT
-   * @param id - Optional token ID for reselling an existing NFT
-   */
-  const createSale: TNFTMarketplaceContextType["createSale"] = async (
+  const createSale: NFTMarketplaceContextType["createSale"] = async (
     url,
     formInputPrice,
-    isReselling?,
+    isReselling = false,
     id?
   ) => {
     try {
-      // Log the sale creation attempt and parameters
-      console.log("createSale");
-      console.log(url, formInputPrice, isReselling, id);
-      
-      // Convert the price from ETH to Wei (the smallest unit in Ethereum)
-      const price = ethers.utils.parseUnits(formInputPrice, "ether");
 
-      // Connect to the smart contract
+      const price = ethers.utils.parseUnits(formInputPrice, "ether");
+      
       const contract = await connectingWithSmartContract();
       if (!contract) return;
-      
-      // Get the listing fee required to create a sale
+        
       const listingPrice = await contract.getListingPrice();
-      console.log("listingPrice:", listingPrice);
+      console.log("Phí niêm yết:", listingPrice);
       
-      // Determine whether to create a new token or resell an existing one
-      // If isReselling is true, call resellToken with the token ID
-      // Otherwise, call createToken with the metadata URL
       const transaction = !isReselling
         ? await contract.createToken(url, price, {
-            value: listingPrice.toString(), // Include the listing fee in the transaction
+            value: listingPrice.toString(),
           })
         : await contract.resellToken(id, price, {
-            value: listingPrice.toString(), // Include the listing fee in the transaction
+            value: listingPrice.toString(),
           });
-      
-      // Log the transaction details
-      console.log("wait for mining" ,transaction);
-      
-      // Wait for the transaction to be mined on the blockchain
       await transaction.wait();
       
-      // Turn off the loading indicator
       setLoading(false);
       
-      // Log the completed transaction
       console.log(transaction);
-    } catch (error) {
-      // Handle any errors that occur during the sale creation process
-      setError("error while creating sale");
+    } catch (error :any) {
+      if (JSON.parse(error.body).error.code === -32000){
+        setError("Số dư không đủ nha bạn ơi");
+        setOpenError(true);
+        return;
+      }
+      setError("Lỗi khi tạo giao dịch bán");
       setOpenError(true);
       console.log(error);
     }
   };
 
-  //--FETCHNFTS FUNCTION
-
-  const fetchNFTs: TNFTMarketplaceContextType["fetchNFTs"] = async () => {
+  // Memoize fetchNFTs function
+  const fetchNFTs = useCallback(async () => {
     try {
-      const connection = await web3Modal.connect();
-      const provider = new ethers.providers.Web3Provider(connection);
-
-      const contract = fetchContract(provider);
-
+      const contract = await connectingWithSmartContract();
+      if (!contract) {
+        console.error("Không thể kết nối với contract");
+        return [];
+      }
+      
       const data = await contract.fetchMarketItems();
 
-      console.log(data);
+      if (!data || !data.length) {
+        console.log("Không có NFT nào trên thị trường");
+        return [];
+      }
+
+      console.log(`Tìm thấy ${data.length} NFT trên thị trường`);
 
       const items = await Promise.all(
         data.map(
-          async ({
-            tokenId,
-            seller,
-            owner,
-            price: unformattedPrice,
-          }: TMarketItem) => {
-            const tokenURI = await contract.tokenURI(tokenId);
+          async (item: any, index: number) => {
+            try {
+              const tokenId = item.tokenId || (Array.isArray(item) ? item[0] : null);
+              const seller = item.seller || (Array.isArray(item) ? item[1] : null);
+              const owner = item.owner || (Array.isArray(item) ? item[2] : null);
+              const price = item.price || (Array.isArray(item) ? item[3] : null);
+              
+              if (!tokenId) {
+                console.log(`Bỏ qua NFT ${index} - không tìm thấy tokenId`);
+                return null;
+              }
+              
+              console.log(`Xử lý NFT ${index} với tokenId: ${tokenId}`);
+              
+              const tokenURI = await contract.tokenURI(tokenId);
+              console.log(`TokenURI cho ${tokenId}: ${tokenURI}`);
+              
+              let metadata;
+              try {
+                const response = await axios.get(tokenURI);
+                metadata = response.data;
+                console.log(`Lấy metadata thành công cho tokenId ${tokenId}`);
+              } catch (err) {
+                console.error(`Lỗi khi lấy metadata cho ${tokenId}:`, err);
+                return null;
+              }
+              
+              const priceFormatted = ethers.utils.formatUnits(
+                price.toString(),
+                "ether"
+              );
 
-            const {
-              data: { image, name, description },
-            } = await axios.get(tokenURI, {});
-            const price = ethers.utils.formatUnits(
-              unformattedPrice.toString(),
-              "ether"
-            );
-            return {
-              price,
-              tokenId: tokenId?.toString(),
-              seller,
-              owner,
-              image,
-              name,
-              description,
-              tokenURI,
-            };
+              return {
+                price: priceFormatted,
+                tokenId: tokenId.toString(),
+                seller,
+                owner,
+                image: metadata.image,
+                name: metadata.name,
+                description: metadata.description,
+                tokenURI,
+              };
+            } catch (error) {
+              console.error(`Lỗi xử lý NFT ${index}:`, error);
+              return null;
+            }
           }
         )
       );
 
-      return items;
+      const validItems = items.filter(item => item !== null);
+      console.log(`Trả về ${validItems.length} NFT hợp lệ từ thị trường`);
+      return validItems;
 
-      // }
     } catch (error) {
-      // setError("Error while fetching NFTS");
-      // setOpenError(true);
-      console.log(error);
+      console.error("Lỗi khi tải NFTs từ thị trường:", error);
       return [];
     }
-  };
+  }, [connectingWithSmartContract]);
 
   useEffect(() => {
     fetchNFTs().then((items: TMarketItem[]) => {
       console.log("fetchNFTs", items);
       setNfts(items?.reverse());
     });
-  }, []);
+  }, [fetchNFTs]);
 
   //--FETCHING MY NFT OR LISTED NFTs
-  const fetchMyNFTsOrListedNFTs: TNFTMarketplaceContextType["fetchMyNFTsOrListedNFTs"] =
+  /**
+   * Fetch NFTs based on the specified type:
+   * - "fetchMyNFTs": Retrieves NFTs owned by the current account (purchased NFTs)
+   * - "fetchItemsListed": Retrieves NFTs listed by the current account for sale
+   * - If no type is provided, it defaults to "fetchMyNFTs"
+   * 
+   * @param type - The type of NFTs to fetch: "fetchMyNFTs" or "fetchItemsListed"
+   * @returns Promise containing an array of NFT items
+   */
+  const fetchMyNFTsOrListedNFTs: NFTMarketplaceContextType["fetchMyNFTsOrListedNFTs"] =
     async (type?: string) => {
       try {
-        if (currentAccount) {
-          const contract = await connectingWithSmartContract();
-          if (!contract) return [];
-          const data =
-            type == "fetchItemsListed"
-              ? await contract.fetchItemsListed()
-              : await contract.fetchMyNFTs();
-          const items = await Promise.all(
-            data.map(
-              async ({
-                tokenId,
-                seller,
-                owner,
-                price: unformattedPrice,
-              }: TMarketItem) => {
+        // Sử dụng trực tiếp giá trị currentAccount từ closure
+        setCurrentAccount(LocalStorageService.getAccountAddress() || "");
+        const accountToUse = LocalStorageService.getAccountAddress();
+        console.log("fetchMyNFTsOrListedNFTs đang sử dụng tài khoản:", accountToUse);
+        
+        if (!accountToUse) {
+          console.log("Không có tài khoản hiện tại để truy vấn NFT");
+          return [];
+        }
+          
+        const contract = await connectingWithSmartContract();
+        if (!contract) return [];
+        
+        console.log(`Gọi contract với ${type || "fetchMyNFTs"} cho tài khoản ${accountToUse}`);
+        const data =
+          type == "fetchItemsListed"
+            ? await contract.fetchItemsListed()  // NFTs the user has listed for sale  
+            : await contract.fetchMyNFTs();      // NFTs the user owns
+            
+        console.log(`Nhận được ${data.length} NFTs từ contract`);
+        
+        const items = await Promise.all(
+          data.map(
+            async (item: any, index: number) => {
+              try {
+                // Extract necessary properties safely
+                const tokenId = item.tokenId || (Array.isArray(item) ? item[0] : null);
+                const seller = item.seller || (Array.isArray(item) ? item[1] : null);
+                const owner = item.owner || (Array.isArray(item) ? item[2] : null);
+                const price = item.price || (Array.isArray(item) ? item[3] : null);
+                
+                if (!tokenId) {
+                  console.log(`Bỏ qua NFT ${index} - không tìm thấy tokenId`);
+                  return null;
+                }
+                
+                console.log(`Xử lý NFT ${index} với tokenId: ${tokenId}`);
+                
                 const tokenURI = await contract.tokenURI(tokenId);
-                const {
-                  data: { image, name, description },
-                } = await axios.get(tokenURI);
-                const price = ethers.utils.formatUnits(
-                  unformattedPrice.toString(),
+                
+                let metadata;
+                try {
+                  const response = await axios.get(tokenURI);
+                  metadata = response.data;
+                } catch (err) {
+                  console.error(`Lỗi khi lấy metadata cho ${tokenId}:`, err);
+                  return null;
+                }
+                
+                const priceFormatted = ethers.utils.formatUnits(
+                  price.toString(),
                   "ether"
                 );
-
+  
                 return {
-                  price,
-                  tokenId: tokenId?.toString(),
+                  price: priceFormatted,
+                  tokenId: tokenId.toString(),
                   seller,
                   owner,
-                  image,
-                  name,
-                  description,
+                  image: metadata.image,
+                  name: metadata.name,
+                  description: metadata.description,
                   tokenURI,
                 };
+              } catch (error) {
+                console.error(`Lỗi xử lý NFT ${index}:`, error);
+                return null;
               }
-            )
-          );
-          return items;
-        }
-        return [];
+            }
+          )
+        );
+        
+        // Filter out null items
+        const validItems = items.filter(item => item !== null);
+        console.log(`Trả về ${validItems.length} NFT hợp lệ`);
+        return validItems;
       } catch (error) {
-        // setError("Error while fetching listed NFTs");
-        // setOpenError(true);
+        console.error("Lỗi khi tải NFT:", error);
         return [];
       }
     };
@@ -478,8 +433,121 @@ export const NFTMarketplaceProvider = ({
     fetchMyNFTsOrListedNFTs();
   }, []);
 
+  /**
+   * Fetch NFTs owned by a specific address
+   * @param ownerAddress - The Ethereum address to fetch NFTs for
+   * @returns Promise containing an array of NFT items owned by the address
+   */
+  const fetchNFTsByOwner: NFTMarketplaceContextType["fetchNFTsByOwner"] = async (ownerAddress) => {
+    try {
+      if (!ownerAddress) return [];
+      
+      // Get contract connection
+      const contract = await connectingWithSmartContract();
+      if (!contract) return [];
+      
+      console.log(`Fetching NFTs for owner: ${ownerAddress}`);
+      
+      // Get all market items
+      const marketItems = await contract.fetchMarketItems();
+      console.log("Raw market items data:", marketItems);
+      
+      // Filter items by owner
+      // Carefully access properties ensuring we handle different data structures
+      const filteredItems = [];
+      for (let i = 0; i < marketItems.length; i++) {
+        const item = marketItems[i];
+        // Log every item to check its structure
+        console.log(`Item ${i}:`, item);
+        
+        // Handle potential different data structures
+        const owner = item.owner || (Array.isArray(item) ? item[2] : null);
+        
+        // Skip items without valid owner
+        if (!owner) {
+          console.log(`Skipping item ${i} - no owner found`);
+          continue;
+        }
+        
+        // Compare owners case-insensitive
+        if (typeof owner === 'string' && owner.toLowerCase() === ownerAddress.toLowerCase()) {
+          console.log(`Found matching item ${i} for owner ${ownerAddress}`);
+          filteredItems.push(item);
+        }
+      }
+      
+      console.log(`Found ${filteredItems.length} items owned by ${ownerAddress}`);
+      
+      if (filteredItems.length === 0) {
+        return [];
+      }
+      
+      // Process NFT data
+      const items = await Promise.all(
+        filteredItems.map(
+          async (item, index) => {
+            try {
+              // Extract necessary properties, safely handling different data structures
+              const tokenId = item.tokenId || (Array.isArray(item) ? item[0] : null);
+              const seller = item.seller || (Array.isArray(item) ? item[1] : null);
+              const owner = item.owner || (Array.isArray(item) ? item[2] : null);
+              const price = item.price || (Array.isArray(item) ? item[3] : null);
+              
+              if (!tokenId) {
+                console.log(`Skipping item ${index} - no tokenId found`);
+                return null;
+              }
+              
+              console.log(`Processing NFT ${index} with tokenId: ${tokenId}`);
+              
+              const tokenURI = await contract.tokenURI(tokenId);
+              console.log(`TokenURI for ${tokenId}: ${tokenURI}`);
+              
+              let metadata;
+              try {
+                const response = await axios.get(tokenURI);
+                metadata = response.data;
+                console.log(`Successfully fetched metadata for tokenId ${tokenId}`);
+              } catch (err) {
+                console.error(`Error fetching metadata for ${tokenId}:`, err);
+                return null;
+              }
+              
+              const priceFormatted = ethers.utils.formatUnits(
+                price.toString(),
+                "ether"
+              );
+
+              return {
+                price: priceFormatted,
+                tokenId: tokenId.toString(),
+                seller,
+                owner,
+                image: metadata.image,
+                name: metadata.name,
+                description: metadata.description,
+                tokenURI,
+              };
+            } catch (error) {
+              console.error(`Error processing NFT item ${index}:`, error);
+              return null;
+            }
+          }
+        )
+      );
+      
+      // Filter out null items (from errors)
+      const validItems = items.filter(item => item !== null);
+      console.log(`Returning ${validItems.length} valid NFTs for ${ownerAddress}`);
+      return validItems;
+    } catch (error) {
+      console.error("Error fetching NFTs by owner:", error);
+      return [];
+    }
+  };
+
   //---BUY NFTs FUNCTION
-  const buyNFT: TNFTMarketplaceContextType["buyNFT"] = async (nft) => {
+  const buyNFT: NFTMarketplaceContextType["buyNFT"] = async (nft) => {
     try {
       const contract = await connectingWithSmartContract();
       console.log(contract);
@@ -494,14 +562,13 @@ export const NFTMarketplaceProvider = ({
       await transaction.wait();
       router.push("/author");
     } catch (error) {
-      setError("Error While buying NFT");
+      setError("Lỗi khi mua NFT");
       setOpenError(true);
     }
   };
 
   // monitoring when user account change
   useEffect(() => {
-    // Check if window.ethereum is available
     if (typeof window !== "undefined" && window.ethereum) {
       const handleAccountsChanged = (accounts: string[]) => {
         setCurrentAccount(accounts[0]);
@@ -509,7 +576,6 @@ export const NFTMarketplaceProvider = ({
 
       window.ethereum.on("accountsChanged", handleAccountsChanged);
 
-      // Cleanup the event listener on component unmount
       return () => {
         window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
       };
@@ -518,10 +584,13 @@ export const NFTMarketplaceProvider = ({
 
   // catch up when new Token Created
   useEffect(() => {
-    let contract: ethers.Contract | undefined;
+    let contract: ethers.Contract | null = null;
     async function onNewTokenCreated() {
-      contract = await connectingWithSmartContract();
-      contract && contract.on("MarketItemCreated", onMarketItemCreatedEvent);
+      const newContract = await connectingWithSmartContract();
+      if (newContract) {
+        contract = newContract;
+        contract.on("MarketItemCreated", onMarketItemCreatedEvent);
+      }
     }
     onNewTokenCreated();
     return () => {
@@ -532,54 +601,340 @@ export const NFTMarketplaceProvider = ({
   //---DISCONNECT WALLET FUNCTION
   const disconnectWallet = async () => {
     try {
-      // Reset current account state
+      // Use wallet context to disconnect if available
+      if (walletContext?.disconnect) {
+        walletContext.disconnect();
+      }
+      
+      // Reset local state
       setCurrentAccount("");
+      setAccountBalance("");
+      setContractInstance(null);
       
-      // Clear local connection data if any
-      localStorage.removeItem("walletConnected");
-      
-      // Note: MetaMask doesn't have an official disconnect method
-      // This just resets the app state, user can still be connected in MetaMask
-      
-      console.log("Wallet disconnected from app");
-      
-      // Optionally redirect to home page
-      // window.location.href = "/";
+      // Clear persisted data
+      LocalStorageService.clearAccountAddress();
     } catch (error) {
-      console.log("Error while disconnecting wallet:", error);
-      setError("Lỗi khi đăng xuất");
+      setError("Failed to disconnect wallet");
       setOpenError(true);
     }
   };
 
+  //---FETCHING SMART CONTRACT
+  const fetchContract = (
+  signerOrProvider: ethers.Signer | ethers.providers.Provider
+) =>
+  new ethers.Contract(
+    NFTMarketplaceAddress,
+    NFTMarketplaceABI,
+    signerOrProvider
+  );
+
+  const onMarketItemCreatedEvent = async (
+    tokenId: string,
+    seller: string,
+    owner: string,
+    price: string,
+    sold: boolean
+  ) => {
+    try {
+      const contract = await connectingWithSmartContract();
+      if (contract) {
+        console.log("tokenId", tokenId);
+        const tokenURI = await contract.tokenURI(tokenId);
+        console.log("tokenURI", tokenURI);
+        console.log({
+          tokenId: tokenId.toString(),
+          seller,
+          owner,
+          price: ethers.utils.formatUnits(price.toString(), "ether"),
+          sold,
+          tokenURI,
+        });
+        createNewNFT({
+          tokenId: tokenId.toString(),
+          seller,
+          owner,
+          price: ethers.utils.formatUnits(price.toString(), "ether"),
+          sold,
+          tokenURI,
+        });
+      }
+    } catch (error) {
+      console.log("Lỗi khi tạo NFT trong cơ sở dữ liệu", error);
+    }
+  };
+
+  //---CHECK IF WALLET IS CONNECTED
+  const checkIfWalletConnected = async () => {
+    try {
+      // Use WalletContext when available
+      if (walletContext) {
+        const { state } = walletContext;
+        
+        if (state.isConnected && state.address) {
+          // Use wallet context state when connected
+          setCurrentAccount(state.address);
+          setAccountBalance(state.balance || "");
+          // Save for persistence
+          LocalStorageService.setAccountAddress(state.address);
+          return;
+        }
+      }
+      
+      // Fallback to localStorage when wallet context isn't available or isn't connected
+      const savedAddress = LocalStorageService.getAccountAddress();
+      if (savedAddress) {
+        setCurrentAccount(savedAddress);
+      }
+    } catch (error) {
+      setError("Failed to connect wallet");
+      setOpenError(true);
+    }
+  };
+
+  // Theo dõi thay đổi của currentAccount để log
+  useEffect(() => {
+    console.log("currentAccount đã thay đổi:", currentAccount);
+    // Lưu địa chỉ mới vào localStorage nếu có
+    if (currentAccount) {
+      LocalStorageService.setAccountAddress(currentAccount);
+    }
+  }, [currentAccount]);
+
+  //---CONNECT WALLET FUNCTION
+  const connectWallet = async () => {
+    try {
+      if (!walletContext) {
+        // Show login modal if wallet context is not available
+        setShowLoginModal(true);
+        return;
+      }
+
+      const { connect, state } = walletContext;
+
+      if (!state.isConnected) {
+        // Show login modal for authentication
+        setShowLoginModal(true);
+        return;
+      }
+
+      // If already connected, update our state from wallet context
+      setCurrentAccount(state.address);
+      setAccountBalance(state.balance || "");
+      LocalStorageService.setAccountAddress(state.address);
+
+      // Initialize contract with current network
+      if (!contractInstance) {
+        await connectingWithSmartContract();
+      }
+    } catch (error) {
+      setError("Failed to connect wallet");
+      setOpenError(true);
+    }
+  };
+
+  // Thêm các hàm tracking mới
+  const getTokenTransactionHistory = async (tokenId: string) => {
+    try {
+      const contract = await connectingWithSmartContract();
+      if (!contract) return [];
+      
+      const history = await contract.getTokenTransactionHistory(tokenId);
+      return history.map((tx: any) => ({
+        from: tx.from,
+        to: tx.to,
+        price: ethers.utils.formatUnits(tx.price.toString(), "ether"),
+        timestamp: new Date(tx.timestamp.toNumber() * 1000).toLocaleString(),
+        type: ["MINT", "SALE", "RESELL", "TRANSFER"][tx.transactionType]
+      }));
+    } catch (error) {
+      console.error("Lỗi khi lấy lịch sử giao dịch:", error);
+      return [];
+    }
+  };
+
+  const getTokenProvenance = async (tokenId: string) => {
+    try {
+      const contract = await connectingWithSmartContract();
+      if (!contract) return null;
+      
+      debugger;
+      const provenance = await contract.getTokenProvenance(tokenId);
+      return {
+        creator: provenance.creator,
+        creationTime: new Date(provenance.creationTime.toNumber() * 1000).toLocaleString(),
+        metadataURI: provenance.metadataURI,
+        verified: provenance.verified
+      };
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin nguồn gốc:", error);
+      return null;
+    }
+  };
+
+  const getTokenOwnershipHistory = async (tokenId: string) => {
+    try {
+      const contract = await connectingWithSmartContract();
+      if (!contract) return [];
+      
+      return await contract.getTokenOwnershipHistory(tokenId);
+    } catch (error) {
+      console.error("Lỗi khi lấy lịch sử sở hữu:", error);
+      return [];
+    }
+  };
+
+  const getCurrentTokenOwner = async (tokenId: string) => {
+    try {
+      const contract = await connectingWithSmartContract();
+      if (!contract) return "";
+      
+      return await contract.getCurrentTokenOwner(tokenId);
+    } catch (error) {
+      console.error("Lỗi khi lấy chủ sở hữu hiện tại:", error);
+      return "";
+    }
+  };
+
+  const getTokenTransactionCount = async (tokenId: string) => {
+    try {
+      const contract = await connectingWithSmartContract();
+      if (!contract) return 0;
+      
+      return (await contract.getTokenTransactionCount(tokenId)).toNumber();
+    } catch (error) {
+      console.error("Lỗi khi lấy số lượng giao dịch:", error);
+      return 0;
+    }
+  };
+
+  const getTokenOwnerCount = async (tokenId: string) => {
+    try {
+      const contract = await connectingWithSmartContract();
+      if (!contract) return 0;
+      
+      return (await contract.getTokenOwnerCount(tokenId)).toNumber();
+    } catch (error) {
+      console.error("Lỗi khi lấy số lượng chủ sở hữu:", error);
+      return 0;
+    }
+  };
+
+  const isOriginalToken = async (tokenId: string) => {
+    try {
+      const contract = await connectingWithSmartContract();
+      if (!contract) return false;
+      
+      return await contract.isOriginalToken(tokenId);
+    } catch (error) {
+      console.error("Lỗi khi kiểm tra token gốc:", error);
+      return false;
+    }
+  };
+
+  const getTokensCreatedBy = async (creator: string) => {
+    try {
+      const contract = await connectingWithSmartContract();
+      if (!contract) return [];
+      
+      return await contract.getTokensCreatedBy(creator);
+    } catch (error) {
+      console.error("Lỗi khi lấy tokens được tạo bởi:", error);
+      return [];
+    }
+  };
+
+  // Memoize context value
+  const contextValue = useMemo(() => ({
+    uploadToPinata,
+    checkIfWalletConnected,
+    connectWallet,
+    disconnectWallet,
+    createNFT,
+    setError,
+    fetchNFTs,
+    fetchMyNFTsOrListedNFTs,
+    fetchNFTsByOwner,
+    buyNFT,
+    createSale,
+    currentAccount,
+    titleData,
+    setOpenError,
+    openError,
+    error,
+    accountBalance,
+    nfts,
+    setNfts,
+    likes,
+    setLikes,
+    openSwitchNetwork,
+    setOpenSwitchNetwork,
+    getTokenTransactionHistory,
+    getTokenProvenance,
+    getTokenOwnershipHistory,
+    getCurrentTokenOwner,
+    getTokenTransactionCount,
+    getTokenOwnerCount,
+    isOriginalToken,
+    getTokensCreatedBy,
+  }), [
+    uploadToPinata,
+    checkIfWalletConnected,
+    connectWallet,
+    disconnectWallet,
+    createNFT,
+    setError,
+    fetchNFTs,
+    fetchMyNFTsOrListedNFTs,
+    fetchNFTsByOwner,
+    buyNFT,
+    createSale,
+    currentAccount,
+    titleData,
+    setOpenError,
+    openError,
+    error,
+    accountBalance,
+    nfts,
+    setNfts,
+    likes,
+    setLikes,
+    openSwitchNetwork,
+    setOpenSwitchNetwork,
+    getTokenTransactionHistory,
+    getTokenProvenance,
+    getTokenOwnershipHistory,
+    getCurrentTokenOwner,
+    getTokenTransactionCount,
+    getTokenOwnerCount,
+    isOriginalToken,
+    getTokensCreatedBy,
+  ]);
+
   return (
-    <NFTMarketplaceContext.Provider
-      value={{
-        uploadToPinata,
-        checkIfWalletConnected,
-        connectWallet,
-        disconnectWallet,
-        createNFT,
-        setError,
-        fetchNFTs,
-        fetchMyNFTsOrListedNFTs,
-        buyNFT,
-        createSale,
-        currentAccount,
-        titleData,
-        setOpenError,
-        openError,
-        error,
-        accountBalance,
-        nfts,
-        setNfts,
-        likes,
-        setLikes,
-        openSwitchNetwork,
-        setOpenSwitchNetwork,
-      }}
-    >
-      {children}
+    <NFTMarketplaceContext.Provider value={contextValue}>
+      {children}      
+      {showLoginModal && (
+        <LoginModal
+          onClose={() => setShowLoginModal(false)}
+          onLogin={async (username, password) => {
+            try {
+              setLoading(true);
+              if (walletContext?.login) {
+                await walletContext.login(username, password);
+              }
+              setShowLoginModal(false);
+            } catch (error) {
+              setError("Login failed");
+              setOpenError(true);
+            } finally {
+              setLoading(false);
+            }
+          }}
+        />
+      )}
     </NFTMarketplaceContext.Provider>
   );
 };
+
+export default NFTMarketplaceContext;

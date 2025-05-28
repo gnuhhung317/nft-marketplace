@@ -13,7 +13,7 @@
 ### 1. Clone Repository
 
 ```bash
-git clone git@github.com:gnuhhung317/nft-marketplace.git
+git clone <repository-url>
 cd NFT-Marketplace
 ```
 
@@ -21,7 +21,8 @@ cd NFT-Marketplace
 
 ```bash
 npm install
-
+# hoặc
+yarn
 ```
 
 ### 3. Cấu Hình Environment Variables
@@ -62,8 +63,19 @@ Neon là dịch vụ PostgreSQL serverless, không cần cài đặt local:
    DATABASE_URL="postgresql://neondb_owner:password@ep-fragrant-unit-a1q43zjg-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
    ```
 
+#### Hoặc sử dụng Docker
 
+```bash
+# Khởi động PostgreSQL container
+docker-compose up -d
+```
 
+#### Hoặc sử dụng PostgreSQL đã cài đặt sẵn
+
+Tạo database:
+```sql
+CREATE DATABASE nft_marketplace;
+```
 
 ### 5. Chạy Prisma Migrations
 
@@ -91,8 +103,8 @@ npm run prismaDev
 # Biên dịch smart contracts
 npx hardhat compile
 
-# Triển khai localhost
-npx hardhat run scripts/deploy.js --network localhost
+# Triển khai lên Polygon testnet (Amoy)
+npx hardhat run scripts/deploy.js --network amoy
 ```
 
 Sau khi triển khai, cập nhật địa chỉ contract trong mã nguồn (nếu cần).
@@ -100,11 +112,19 @@ Sau khi triển khai, cập nhật địa chỉ contract trong mã nguồn (nế
 ### 7. Khởi Động Ứng Dụng
 
 ```bash
-# Chạy ứng dụng ở chế độ development
+# Chạy Hardhat node (local blockchain)
+npx hardhat node
+
+# Mở terminal mới và chạy ứng dụng ở chế độ development
 npm run dev
 ```
 
 Ứng dụng sẽ chạy tại địa chỉ: [http://localhost:3331](http://localhost:3331)
+
+> **Lưu ý**: Khi chạy với Hardhat node, bạn cần:
+> - Mở terminal mới để chạy `npm run dev`
+> - Kết nối MetaMask với Hardhat network (localhost:8545)
+> - Import test accounts từ Hardhat vào MetaMask để test
 
 ## Kiểm Tra Các Chức Năng
 

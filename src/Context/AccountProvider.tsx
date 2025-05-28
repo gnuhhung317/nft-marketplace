@@ -12,10 +12,11 @@ import {
 } from "react";
 import { z } from "zod";
 import { NFTMarketplaceContext } from "./NFTMarketplaceContext";
+import { LocalStorageService } from "@/services/LocalStorageService";
 
 export type AccountType = Partial<z.infer<typeof AccountSchema>>;
 
-const accountData: AccountType = {
+export const accountData: AccountType = {
   username: "",
   email: "",
   description: "",
@@ -32,13 +33,22 @@ export const AccountContext = createContext<{ account: AccountType, setAccount: 
 export const useLoading = () => useContext(AccountContext);
 export const AccountProvider = ({ children }: { children: ReactNode }) => {
   const { currentAccount } = useContext(NFTMarketplaceContext)!;
-  const [account, setAccount] = useState<AccountType>(accountData);
+  const [account, setAccount] = useState<AccountType>(() => {
+    // Khôi phục dữ liệu từ localStorage nếu có
+    if (typeof window !== 'undefined') {
+      const savedAccount = LocalStorageService.getItem('accountData');
+      return savedAccount || accountData;
+    }
+    return accountData;
+  });
   useEffect(() => {
+    
     if (!currentAccount) return;
     const getDetail = async () => {
       const account = await existAccountByAccountAddress(currentAccount);
-      console.log(account);
-      setAccount({
+      LocalStorageService.setAccountAddress(currentAccount);
+      
+      const updatedAccount = {
         avatar: account?.avatar || "",
         username: account?.username || "",
         email: account?.email || "",
@@ -48,7 +58,11 @@ export const AccountProvider = ({ children }: { children: ReactNode }) => {
         twitter: account?.twitter || "",
         instagram: account?.instagram || "",
         accountAddress: account?.accountAddress || currentAccount,
-      });
+      };
+      
+      // Cập nhật state và lưu vào localStorage
+      setAccount(updatedAccount);
+      LocalStorageService.setItem('accountData', updatedAccount);
     };
     getDetail();
   }, [currentAccount]);

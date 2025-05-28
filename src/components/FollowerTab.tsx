@@ -10,92 +10,46 @@ import images from "@/img";
 import { Button } from "./ui/button";
 import React, { useState, useEffect, useContext, Suspense } from "react";
 import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
-import { getTopCreators } from "@/lib/getTopCreators";
-
-interface FollowerTabProps {
-  TopCreator: Array<any>;
-}
+import { getTopCreators, getFollowingUsers, getNewUsers } from "@/actions/Account";
 
 const FollowerTab = () => {
   const [tab, setTab] = useState("popular");
-  const { checkIfWalletConnected, currentAccount, nfts } = useContext(
-    NFTMarketplaceContext
-  )!;
-  const TopCreator = getTopCreators(nfts);
-  const FollowingArray = [
-    {
-      background: images.creatorbackground3,
-      user: images.user3,
-      seller: "7200d8d8390d9993ujdc93900399djj277x",
-    },
-    {
-      background: images.creatorbackground4,
-      user: images.user4,
-      seller: "7200d8d8390d9993ujdc93900399djj277x",
-    },
-    {
-      background: images.creatorbackground5,
-      user: images.user5,
-      seller: "7200d8d8390d9993ujdc93900399djj277x",
-    },
-    {
-      background: images.creatorbackground6,
-      user: images.user6,
-      seller: "7200d8d8390d9993ujdc93900399djj277x",
-    },
-    {
-      background: images.creatorbackground1,
-      user: images.user1,
-      seller: "7200d8d8390d9993ujdc93900399djj277x",
-    },
-    {
-      background: images.creatorbackground2,
-      user: images.user2,
-      seller: "7200d8d8390d9993ujdc93900399djj277x",
-    },
-  ];
-  const NewsArray = [
-    {
-      background: images.creatorbackground1,
-      user: images.user1,
-      seller: "7200d8d8390d9993ujdc93900399djj277x",
-    },
-    {
-      background: images.creatorbackground2,
-      user: images.user2,
-      seller: "7200d8d8390d9993ujdc93900399djj277x",
-    },
-    {
-      background: images.creatorbackground3,
-      user: images.user3,
-      seller: "7200d8d8390d9993ujdc93900399djj277x",
-    },
-    {
-      background: images.creatorbackground4,
-      user: images.user4,
-      seller: "7200d8d8390d9993ujdc93900399djj277x",
-    },
-    {
-      background: images.creatorbackground5,
-      user: images.user5,
-      seller: "7200d8d8390d9993ujdc93900399djj277x",
-    },
-    {
-      background: images.creatorbackground6,
-      user: images.user6,
-      seller: "7200d8d8390d9993ujdc93900399djj277x",
-    },
-    {
-      background: images.creatorbackground7,
-      user: images.user7,
-      seller: "7200d8d8390d9993ujdc93900399djj277x",
-    },
-    {
-      background: images.creatorbackground8,
-      user: images.user8,
-      seller: "7200d8d8390d9993ujdc93900399djj277x",
-    },
-  ];
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { currentAccount } = useContext(NFTMarketplaceContext)!;
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      try {
+        let response;
+        if (tab === "popular") {
+          response = await getTopCreators();
+        } else if (tab === "following") {
+          if (!currentAccount) {
+            response = { success: false, error: "No account connected" };
+          } else {
+            response = await getFollowingUsers(currentAccount);
+          }
+        } else {
+          response = await getNewUsers();
+        }
+
+        if (response.success) {
+          setUsers(response.data);
+        } else {
+          console.error("Failed to fetch users:", response.error);
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, [tab, currentAccount]);
+
   return (
     <div className={cn("w-full relative pb-52 padding-6 padding-0 sm:pb-24")}>
       <div className={cn("w-96 mx-auto pb-24 text-center sm:w-full")}>
@@ -137,39 +91,28 @@ const FollowerTab = () => {
         </div>
       </div>
 
-      {tab === "popular" && (
+      {loading ? (
+        <div className="flex justify-center items-center min-h-[200px]">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      ) : (
         <div
           className={cn(
             "w-4/5tt mx-auto grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
           )}
         >
-          {TopCreator.map((el, i) => (
-            <FollowerTabCard key={i} i={i} el={el} />
+          {users.map((user, i) => (
+            <FollowerTabCard
+              key={user.accountAddress}
+              i={i}
+              el={{
+                background: user.avatar || images.creatorbackground1,
+                user: user.avatar || images.user1,
+                seller: user.accountAddress,
+                total: user._count.nfts
+              }}
+            />
           ))}
-        </div>
-      )}
-
-      {tab === "following" && (
-        <div
-          className={cn(
-            "w-4/5tt mx-auto grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
-          )}
-        >
-          {FollowingArray.map((el, i) => (
-            <FollowerTabCard key={i + 1} i={i} el={el} />
-          ))}{" "}
-        </div>
-      )}
-
-      {tab === "news" && (
-        <div
-          className={cn(
-            "w-4/5tt mx-auto grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
-          )}
-        >
-          {NewsArray.map((el, i) => (
-            <FollowerTabCard key={i + 1} i={i} el={el} />
-          ))}{" "}
         </div>
       )}
 

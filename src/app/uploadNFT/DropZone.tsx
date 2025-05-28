@@ -2,7 +2,7 @@ import React, { useState, useCallback, Dispatch, SetStateAction } from "react";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { TNFTMarketplaceContextType } from "@/Context/NFTMarketplaceContext";
+import { NFTMarketplaceContextType } from "@/Context/NFTMarketplaceContext";
 import images from "@/img";
 
 type TDropZone = {
@@ -16,7 +16,7 @@ type TDropZone = {
   fileSize: string;
   category: string;
   properties: string;
-  uploadToPinata: TNFTMarketplaceContextType["uploadToPinata"];
+  uploadToPinata: NFTMarketplaceContextType["uploadToPinata"];
   setImage: Dispatch<SetStateAction<string>>;
   setName: Dispatch<SetStateAction<string>>;
   setFileSize: Dispatch<SetStateAction<string>>;

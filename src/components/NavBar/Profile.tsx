@@ -15,18 +15,20 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import DropDown from "../DropDown";
-import { AccountType } from "@/Context/AccountProvider";
+import { AccountContext, AccountType, accountData } from "@/Context/AccountProvider";
 import { useRouter } from "next/navigation";
 import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
+import { LocalStorageProvider } from "@/utils/localStorageProvider";
 
 interface ProfileProps {
   currentAccount: string;
   account: AccountType;
 }
 
-function Profile({ currentAccount, account }: ProfileProps) {
+const Profile = ({ currentAccount, account }: ProfileProps) => {
   const router = useRouter();
-  const { disconnectWallet } = useContext(NFTMarketplaceContext)!;
+  const { connectWallet, disconnectWallet } = useContext(NFTMarketplaceContext)!;
+  const { setAccount } = useContext(AccountContext)!;
 
   // Hiển thị 6 ký tự đầu và 4 ký tự cuối của địa chỉ ví
   const shortenAddress = (address: string) => {
@@ -42,6 +44,7 @@ function Profile({ currentAccount, account }: ProfileProps) {
           alt="profile"
           width={40}
           height={40}
+          priority
           className="rounded-full"
         />
       </DropdownMenuTrigger>
@@ -54,6 +57,7 @@ function Profile({ currentAccount, account }: ProfileProps) {
                 alt="profile"
                 width={60}
                 height={60}
+                priority
                 className="rounded-full mb-1"
               />
               <p className="text-base font-semibold">{account?.username || "Người dùng"}</p>
@@ -84,9 +88,13 @@ function Profile({ currentAccount, account }: ProfileProps) {
             </DropdownMenuItem>
             
             <DropdownMenuSeparator className="bg-gray-700" />
-            
-            <DropdownMenuItem
-              onClick={disconnectWallet}
+              <DropdownMenuItem
+              onClick={() => {
+                disconnectWallet();
+                router.push("/");
+                setAccount(accountData); // Reset account to empty data
+                LocalStorageProvider.clearAccount(); // Clear localStorage data
+              }}
               className="cursor-pointer hover:bg-gray-800 py-2 text-red-500"
             >
               Đăng xuất
@@ -94,7 +102,7 @@ function Profile({ currentAccount, account }: ProfileProps) {
           </>
         ) : (
           <DropdownMenuItem
-            onClick={() => router.push("/connectWallet")}
+            onClick={connectWallet}
             className="cursor-pointer hover:bg-gray-800 py-2"
           >
             Kết nối ví
@@ -103,6 +111,6 @@ function Profile({ currentAccount, account }: ProfileProps) {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+};
 
 export default Profile;

@@ -6,8 +6,6 @@ const HelpCenter: React.FC = () => {
   const helpItems = [
     { name: "Giới thiệu", link: "aboutus" },
     { name: "Liên hệ với chúng tôi", link: "contactus" },
-    { name: "Đăng ký", link: "signUp" },
-    { name: "Đăng nhập", link: "login" },
     { name: "Đăng ký nhận tin", link: "subscription" },
   ];
 

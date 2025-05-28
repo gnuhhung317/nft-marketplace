@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { NFTMarketplaceProvider } from "@/Context/NFTMarketplaceContext";
+import { WalletProvider } from "@/Context/WalletContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -40,16 +41,18 @@ export default function RootLayout({
       >
         <div suppressHydrationWarning className="w-full px-4 sm:px-12 md:px-16 lg:px-36 mx-auto">
           <LoadingSpinnerProvider>
-            <NFTMarketplaceProvider>
-              <AccountProvider>
-                <Suspense fallback={<Loader></Loader>}>
-                  <LoadingSpinner></LoadingSpinner>
-                  <NavBar />
-                  {children}
-                  <Footer />
-                </Suspense>
-              </AccountProvider>
-            </NFTMarketplaceProvider>
+            <WalletProvider>
+              <NFTMarketplaceProvider>
+                <AccountProvider>
+                  <Suspense fallback={<Loader></Loader>}>
+                    <LoadingSpinner></LoadingSpinner>
+                    <NavBar />
+                    {children}
+                    <Footer />
+                  </Suspense>
+                </AccountProvider>
+              </NFTMarketplaceProvider>
+            </WalletProvider>
           </LoadingSpinnerProvider>
         </div>
       </body>
