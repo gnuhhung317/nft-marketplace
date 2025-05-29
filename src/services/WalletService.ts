@@ -75,13 +75,13 @@ export class WalletService {
         if (data.error_code !== 'OK') {
             throw new Error('Lỗi khi lấy tài khoản: ' + data.error_code);
         }
-        return data;
+        return data.data;
     }
     // Lấy số dư
     async getBalance(accountId: number) {
         const url = new URL(`${this.apiUrl}/wallet/balance`);
         url.searchParams.append('account_id', accountId.toString());
-
+        url.searchParams.append('chain_id', '1');
         const response = await fetch(url.toString(), {
             method: 'GET',
             headers: {

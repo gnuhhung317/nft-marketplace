@@ -77,7 +77,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {  cons
         });
         
         console.log("Wallet connected successfully:", response.data);
-        return response.data;
+        return response.data.data;
       } else {
         throw new Error(response.error_message || "Failed to connect wallet");
       }

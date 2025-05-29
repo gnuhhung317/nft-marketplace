@@ -38,15 +38,18 @@ const Profile = ({ currentAccount, account }: ProfileProps) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="outline-none">
-        <Image
-          src={account?.avatar || images.user1}
-          alt="profile"
-          width={40}
-          height={40}
-          priority
-          className="rounded-full"
-        />
+      <DropdownMenuTrigger className="outline-none cursor-pointer">
+        <div className="relative">
+          <Image
+            src={account?.avatar || images.user1}
+            alt="profile"
+            width={40}
+            height={40}
+            priority
+            unoptimized
+            className="rounded-full"
+          />
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="bg-main-bg border border-primary min-w-[200px]">
         {currentAccount ? (
@@ -58,6 +61,7 @@ const Profile = ({ currentAccount, account }: ProfileProps) => {
                 width={60}
                 height={60}
                 priority
+                unoptimized
                 className="rounded-full mb-1"
               />
               <p className="text-base font-semibold">{account?.username || "Người dùng"}</p>

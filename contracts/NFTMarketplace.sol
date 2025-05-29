@@ -217,6 +217,7 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
         require(msg.value == price, "Please submit the asking price in order to complete the purchase");
         require(address(this) == ownerOf(tokenId), "Marketplace must be the owner of the token");
         require(!idToMarketItem[tokenId].sold, "This item is already sold");
+        require(msg.sender != seller, "Seller cannot buy their own token");
 
         idToMarketItem[tokenId].owner = payable(msg.sender);
         idToMarketItem[tokenId].sold = true;

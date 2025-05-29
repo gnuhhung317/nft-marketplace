@@ -27,7 +27,7 @@ import {
 } from "../ui/dropdown-menu";
 import { create2, createNewNFT } from "@/actions/NFT";
 import { AccountContext } from "@/Context/AccountProvider";
-import { UpdateAccount } from "@/actions/Account";
+import { UpdateAccount, getUserByAddress } from "@/actions/Account";
 import SwitchNetwork from "../SwitchNetwork";
 
 const discoverItems = [
@@ -61,7 +61,7 @@ const helpItems = [
 const NavBar = () => {
   const router = useRouter();
   const { currentAccount, connectWallet, openError, openSwitchNetwork } = useContext(NFTMarketplaceContext)!;
-  const { account } = useContext(AccountContext)!;
+  const { account, setAccount } = useContext(AccountContext)!;
   const [openSideMenu, setOpenSideMenu] = useState(false);
 
   // Use useEffect to handle client-side state updates
@@ -69,7 +69,7 @@ const NavBar = () => {
   useEffect(() => {
     setMounted(true);
   }, []);
-
+ 
   const [searchValue, setSearchValue] = useState("");
   const gotoSearchPage = useCallback(() => {
     console.log(searchValue);

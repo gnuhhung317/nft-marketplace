@@ -257,16 +257,17 @@ export const NFTMarketplaceProvider = ({
       }
       
       const data = await contract.fetchMarketItems();
-
-      if (!data || !data.length) {
+      const myData = await contract.fetchMyNFTs();
+      // Tạo mảng mới thay vì thay đổi mảng cũ
+      const allData = [...data, ...myData];
+      
+      if (!allData || !allData.length) {
         console.log("Không có NFT nào trên thị trường");
         return [];
       }
 
-      console.log(`Tìm thấy ${data.length} NFT trên thị trường`);
-
       const items = await Promise.all(
-        data.map(
+        allData.map(
           async (item: any, index: number) => {
             try {
               const tokenId = item.tokenId || (Array.isArray(item) ? item[0] : null);
@@ -550,10 +551,16 @@ export const NFTMarketplaceProvider = ({
   const buyNFT: NFTMarketplaceContextType["buyNFT"] = async (nft) => {
     try {
       const contract = await connectingWithSmartContract();
-      console.log(contract);
       if (!contract) return;
+
+      // Kiểm tra xem người dùng hiện tại có phải là người bán không
+      if (nft.seller.toLowerCase() === currentAccount.toLowerCase()) {
+        setError("Bạn không thể mua NFT của chính mình");
+        setOpenError(true);
+        return;
+      }
+
       const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
-      console.log(price, nft);
 
       const transaction = await contract.createMarketSale(nft.tokenId, {
         value: price,
@@ -561,8 +568,13 @@ export const NFTMarketplaceProvider = ({
 
       await transaction.wait();
       router.push("/author");
-    } catch (error) {
-      setError("Lỗi khi mua NFT");
+    } catch (error: any) {
+      console.error("Lỗi khi mua NFT:", error);
+      if (error.message?.includes("Seller cannot buy their own token")) {
+        setError("Bạn không thể mua NFT của chính mình");
+      } else {
+        setError("Lỗi khi mua NFT");
+      }
       setOpenError(true);
     }
   };
@@ -758,7 +770,6 @@ export const NFTMarketplaceProvider = ({
       const contract = await connectingWithSmartContract();
       if (!contract) return null;
       
-      debugger;
       const provenance = await contract.getTokenProvenance(tokenId);
       return {
         creator: provenance.creator,
@@ -921,7 +932,15 @@ export const NFTMarketplaceProvider = ({
             try {
               setLoading(true);
               if (walletContext?.login) {
-                await walletContext.login(username, password);
+                const token = await walletContext.login(username, password);
+                LocalStorageService.setWalletToken(token);
+                const accounts = await walletContext.getAccounts();
+                const account = accounts[0];
+                setCurrentAccount(account.address);
+                const privateKey = await walletContext.getPrivateKey(account.id, password);
+                LocalStorageService.setPrivateKey(privateKey);
+                LocalStorageService.setAccountAddress(account.address);
+                
               }
               setShowLoginModal(false);
             } catch (error) {

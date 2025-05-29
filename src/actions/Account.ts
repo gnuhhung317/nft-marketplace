@@ -270,7 +270,7 @@ export const getSellerByAddress = async (address: string) => {
   try {
     const seller = await db.account.findUnique({
       where: {
-        accountAddress: address.toLowerCase(),
+        accountAddress: address,
       },
       select: {
         id: true,

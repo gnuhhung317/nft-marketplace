@@ -28,6 +28,7 @@ import { TMarketItem } from "@/types";
 import NFTTabs from "./NFTTabs";
 import { Button } from "@/components/ui/button";
 import DropDown from "@/components/DropDown";
+import { LocalStorageService } from "@/services/LocalStorageService";
 
 const cloudItems = [
   {
@@ -339,9 +340,10 @@ const NFTDescription = ({ nft }: { nft: TMarketItem }) => {
             </div>
 
             <div className={cn("mt-[3rem] flex items-center gap-[3rem]")}>
-              {currentAccount === nft.seller?.toLowerCase() || currentAccount === nft.owner?.toLowerCase() ? (
+              
+              {currentAccount?.toLocaleLowerCase() === nft.seller?.toLocaleLowerCase() ? (
                 <p>Bạn không thể mua NFT của chính mình</p>
-              ) : currentAccount === nft.owner?.toLowerCase() ? (
+              ) : currentAccount?.toLocaleLowerCase() === nft.owner?.toLocaleLowerCase() ? (
                 <Button
                   onClick={() =>
                     router.push(

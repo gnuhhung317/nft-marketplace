@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Noto_Sans_Tai_Viet } from "next/font/google";
 import "./globals.css";
 import { NFTMarketplaceProvider } from "@/Context/NFTMarketplaceContext";
 import { WalletProvider } from "@/Context/WalletContext";
@@ -8,6 +8,14 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });
+
+const notoSansTaiViet = Noto_Sans_Tai_Viet({
+  weight: '400',
+  subsets: ['tai-viet'],
+  display: 'swap',
+  variable: '--font-noto-sans-tai-viet',
+});
+
 //INTRNAL IMPORT
 import NavBar from "@/components/NavBar/Navbar";
 import Footer from "@/components/Footer";
@@ -29,14 +37,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" >
+    <html lang="vi" className={`${notoSansTaiViet.variable}`}>
       <body
       suppressHydrationWarning
         className={cn(
           "w-full min-h-screen bg-background font-sans antialiased",
           "text-sm bg-main-bg text-icons m-0 p-0",
-
-          inter.className
+          inter.className,
+          notoSansTaiViet.className
         )}
       >
         <div suppressHydrationWarning className="w-full px-4 sm:px-12 md:px-16 lg:px-36 mx-auto">
