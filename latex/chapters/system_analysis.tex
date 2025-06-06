@@ -1,0 +1,186 @@
+\chapter{PHÂN TÍCH HỆ THỐNG}
+
+\section{Các Khái Niệm Cơ Bản về Blockchain}
+
+\subsection{Block và Blockchain}
+
+\indent  Block là đơn vị cơ bản của blockchain, chứa đựng thông tin về các giao dịch, mã băm của khối trước đó, timestamp và nonce. Mỗi block được liên kết với block trước đó thông qua mã băm, tạo thành một chuỗi các khối không thể thay đổi.
+
+Blockchain là một cơ sở dữ liệu phân tán, nơi thông tin được lưu trữ trong các khối liên kết với nhau bằng mã hóa. Tính chất quan trọng của blockchain bao gồm tính bất biến, minh bạch và được đồng bộ giữa các node trong mạng. Trong môi trường Hardhat, blockchain được mô phỏng cục bộ để phục vụ cho việc phát triển và kiểm thử.
+
+\subsection{Node và Network}
+Node là một máy tính tham gia vào mạng blockchain, có nhiệm vụ lưu trữ bản sao của blockchain, xác thực giao dịch và tham gia vào quá trình đồng thuận. Mỗi node đều có quyền truy cập đầy đủ vào toàn bộ lịch sử giao dịch và có thể tham gia vào việc xác thực các giao dịch mới.
+
+Network trong Hardhat là một môi trường mô phỏng blockchain cục bộ, nơi các node được tạo tự động và hoạt động độc lập. Khác với mạng blockchain thực, Hardhat Network không cần đồng bộ với các node khác và có thể tạo khối theo yêu cầu, giúp quá trình phát triển và kiểm thử trở nên nhanh chóng và hiệu quả.
+
+\subsection{Consensus (Đồng Thuận)}
+Consensus là cơ chế đảm bảo tính nhất quán của dữ liệu trong mạng blockchain. Nó cho phép các node trong mạng đồng ý về trạng thái hiện tại của blockchain, xác thực các giao dịch mới và tạo ra các khối mới. Cơ chế này đảm bảo rằng tất cả các node đều có cùng một phiên bản của blockchain.
+
+Trong môi trường Hardhat, consensus được mô phỏng đơn giản hóa. Thay vì sử dụng các cơ chế phức tạp như Proof of Work hay Proof of Stake, Hardhat tự động xác thực các giao dịch và tạo khối, phù hợp cho mục đích phát triển và kiểm thử.
+
+\subsection{Giao Dịch và Gas}
+Transaction (Giao dịch) là đơn vị cơ bản của tương tác trong blockchain. Mỗi giao dịch chứa thông tin về việc chuyển tiền hoặc thực thi hợp đồng thông minh, được ký bởi người gửi và yêu cầu phí gas để thực thi. Giao dịch là cách duy nhất để thay đổi trạng thái của blockchain.
+
+Gas là đơn vị đo lường công việc cần thiết để thực thi một giao dịch trên blockchain. Chi phí gas phụ thuộc vào độ phức tạp của giao dịch và được tính bằng ETH. Gas Price là chi phí cho mỗi đơn vị gas, do người gửi quyết định và ảnh hưởng đến tốc độ xác nhận giao dịch. Gas Limit là số gas tối đa mà người gửi sẵn sàng chi trả cho một giao dịch, bảo vệ khỏi các lỗi vô hạn và đảm bảo giao dịch có đủ gas để thực thi.
+
+Trong Hardhat Network, gas được mô phỏng với giá cố định và giới hạn cao, cho phép phát triển và kiểm thử mà không cần quan tâm đến chi phí thực tế.
+
+\subsection{Bảo Mật và Xác Thực}
+Sign (Ký) là quá trình xác thực người gửi và bảo vệ tính toàn vẹn của giao dịch. Quá trình này sử dụng khóa riêng để tạo chữ ký số, đảm bảo rằng giao dịch không bị giả mạo và đến từ đúng người gửi.
+
+Signature (Chữ ký) bao gồm ba thành phần chính: V (giá trị phục hồi), R (thành phần x) và S (thành phần y). Chữ ký được tạo từ giao dịch và khóa riêng, cho phép xác minh tính hợp lệ của giao dịch mà không cần tiết lộ khóa riêng.
+
+Private Key (Khóa riêng) là mật khẩu của ví, được sử dụng để tạo chữ ký và không được chia sẻ với bất kỳ ai. Trong Hardhat, khóa riêng được tạo tự động cho các tài khoản test. Public Key (Khóa công khai) được tạo từ khóa riêng, dùng để xác minh chữ ký và tạo địa chỉ ví. Khóa công khai có thể được chia sẻ an toàn.
+
+Wallet (Ví) là công cụ quản lý khóa, lưu trữ tài sản và ký giao dịch. Trong môi trường Hardhat, ví test được tạo tự động với số dư ETH ban đầu để phục vụ cho việc phát triển và kiểm thử.
+
+\subsection{Smart Contract}
+Contract (Hợp đồng) là mã chạy trên blockchain, được viết bằng ngôn ngữ Solidity. Hợp đồng thông minh tự động thực thi các điều khoản được định nghĩa trước và không thể bị sửa đổi sau khi triển khai. Chúng cho phép tạo ra các ứng dụng phi tập trung (dApps) với logic kinh doanh được mã hóa.
+
+Deploy (Triển khai) là quá trình đưa hợp đồng lên blockchain, tạo ra địa chỉ hợp đồng và tốn phí gas. Trong Hardhat, việc triển khai được thực hiện trên mạng cục bộ, cho phép kiểm thử nhanh chóng và không tốn chi phí thực.
+
+Mint (Đúc) là quá trình tạo token mới, gán quyền sở hữu và cập nhật số dư. Mỗi lần mint đều phát sinh sự kiện để theo dõi. Burn (Đốt) là quá trình ngược lại, hủy token và giảm tổng cung, không thể hoàn tác và được ghi nhận trong lịch sử.
+
+Transfer (Chuyển) là quá trình di chuyển token giữa các địa chỉ, bao gồm việc cập nhật quyền sở hữu, kiểm tra quyền và phát sinh sự kiện. Đây là hoạt động cơ bản nhất trong việc quản lý token.
+
+\subsection{Token và NFT}
+Token là tài sản số trên blockchain, đại diện cho giá trị và có thể chuyển nhượng. Mỗi token tuân theo một tiêu chuẩn nhất định, định nghĩa cách thức hoạt động và tương tác.
+
+NFT (Non-Fungible Token) là token độc nhất, không thể thay thế và có định danh riêng. Mỗi NFT lưu trữ metadata riêng, mô tả các thuộc tính và đặc điểm của nó. Khác với Fungible Token (token có thể thay thế) như ERC20, NFT đại diện cho tài sản độc nhất.
+
+Token Standard (Tiêu chuẩn token) định nghĩa cách thức hoạt động của token. ERC721 là tiêu chuẩn cho NFT, ERC20 cho token thay thế, và ERC1155 cho token hỗn hợp. Mỗi tiêu chuẩn định nghĩa một interface chuẩn cho việc tương tác với token.
+
+Metadata (Siêu dữ liệu) chứa thông tin mô tả về token, bao gồm hình ảnh và các thuộc tính đặc biệt. Trong trường hợp của NFT, metadata được lưu trữ trên IPFS để đảm bảo tính phi tập trung và bất biến.
+
+\subsection{Tương Tác với Blockchain}
+RPC (Remote Procedure Call) là giao thức cho phép giao tiếp với blockchain, thông qua việc gọi hàm từ xa. JSON-RPC là tiêu chuẩn được sử dụng trong Ethereum, và Hardhat cung cấp một RPC cục bộ cho việc phát triển.
+
+ABI (Application Binary Interface) định nghĩa cách thức tương tác với hợp đồng thông minh, bao gồm việc mã hóa và giải mã dữ liệu. ABI được tạo tự động từ mã nguồn Solidity và là cầu nối giữa ứng dụng và hợp đồng.
+
+Event (Sự kiện) là cơ chế thông báo thay đổi trong hợp đồng thông minh. Sự kiện được lưu trong log và có thể được lắng nghe bởi ứng dụng. Các tham số được đánh dấu là indexed có thể được tìm kiếm hiệu quả.
+
+Call (Gọi) là phương thức đọc dữ liệu từ hợp đồng, không tốn gas và không thay đổi trạng thái. Send (Gửi) là phương thức thay đổi trạng thái, tốn gas và tạo giao dịch cần được xác nhận.
+
+\subsection{Lưu Trữ và Dữ Liệu}
+Storage (Lưu trữ) là nơi lưu trữ vĩnh viễn dữ liệu trong hợp đồng thông minh. Việc sử dụng storage tốn nhiều gas và thường được dùng cho các biến trạng thái, mapping và mảng. Memory (Bộ nhớ) là nơi lưu trữ tạm thời, tốn ít gas hơn và được dùng cho các tham số hàm và biến cục bộ.
+
+IPFS (InterPlanetary File System) là hệ thống lưu trữ phân tán, không tập trung và dựa trên nội dung. IPFS thường được sử dụng để lưu trữ metadata của NFT, đảm bảo tính phi tập trung và bất biến của dữ liệu.
+
+CID (Content Identifier) là địa chỉ nội dung trong IPFS, được tạo từ hash của nội dung và không thay đổi. CID cho phép truy cập nội dung trên IPFS một cách chính xác và hiệu quả.
+
+Merkle Tree (Cây Merkle) là cấu trúc dữ liệu được sử dụng để xác minh hiệu quả và tối ưu lưu trữ. Cây Merkle đóng vai trò quan trọng trong việc bảo mật dữ liệu và xác minh tính toàn vẹn của blockchain.
+
+\section{Kiến Trúc Hệ Thống}
+Kiến trúc của NFT Marketplace được xây dựng trên nền tảng Hardhat Network, một môi trường phát triển và kiểm thử blockchain cục bộ. Hệ thống được thiết kế theo mô hình phân lớp như sau:
+
+\begin{verbatim}
+[Ứng dụng Next.js] <-> [Dịch Vụ Wallet Backend]
+    ↓
+[Mạng Hardhat]
+    ↓
+[Hợp Đồng Thông Minh (ERC721 + Marketplace)]
+    ↓
+[Lưu Trữ IPFS]
+\end{verbatim}
+
+Dịch vụ Wallet hoạt động độc lập, hỗ trợ các tính năng chính:
+\begin{itemize}
+    \item Quản lý địa chỉ ví
+    \item Ký giao dịch
+    \item Kiểm tra số dư
+\end{itemize}
+
+\section{Các Thành Phần Chính}
+
+\subsection{Hardhat Network và Môi Trường Phát Triển}
+Hardhat Network là một môi trường phát triển blockchain cục bộ, cung cấp các tính năng:
+\begin{itemize}
+    \item Mô phỏng blockchain hoàn chỉnh
+    \item Tạo tài khoản test tự động
+    \item Theo dõi giao dịch và sự kiện
+    \item Hỗ trợ gỡ lỗi chi tiết
+    \item Console.log trong Solidity
+    \item Stack traces cho gỡ lỗi
+\end{itemize}
+Cấu trúc mạng Hardhat:
+\begin{itemize}
+    \item Node cục bộ: Mô phỏng toàn bộ blockchain
+    \item Tài khoản test: Tự động tạo với ETH
+    \item Khối: Tạo theo yêu cầu
+    \item Gas: Mô phỏng chi phí giao dịch
+\end{itemize}
+
+\subsection{Hợp Đồng Thông Minh và NFT}
+Hợp đồng thông minh được phát triển bằng Solidity, với cấu trúc:
+\begin{itemize}
+    \item Biến trạng thái: Lưu dữ liệu
+    \item Hàm: Xử lý logic
+    \item Sự kiện: Thông báo thay đổi
+    \item Bộ điều chỉnh: Kiểm tra điều kiện
+\end{itemize}
+NFT được triển khai theo chuẩn ERC721, với các chức năng:
+\begin{itemize}
+    \item \texttt{balanceOf}: Kiểm tra số lượng NFT
+    \item \texttt{ownerOf}: Xác định chủ sở hữu
+    \item \texttt{transferFrom}: Chuyển NFT
+    \item \texttt{approve}: Cho phép chuyển
+    \item \texttt{setApprovalForAll}: Cho phép chuyển hàng loạt
+\end{itemize}
+Hợp đồng marketplace hỗ trợ:
+\begin{itemize}
+    \item Đăng bán NFT với giá cố định
+    \item Chuyển nhượng và thanh toán
+\end{itemize}
+
+\subsection{Gas và Giao Dịch}
+Gas trên Hardhat Network:
+\begin{itemize}
+    \item Mô phỏng chi phí tính toán
+    \item Dựa trên độ phức tạp thao tác
+    \item Dựa trên sử dụng bộ nhớ
+\end{itemize}
+Cấu trúc giao dịch:
+\begin{itemize}
+    \item Nonce: Số thứ tự giao dịch
+    \item Giá gas: Phí mỗi đơn vị
+    \item Giới hạn gas: Giới hạn tối đa
+    \item Địa chỉ nhận: Đích đến
+    \item Giá trị: Số ETH gửi
+    \item Dữ liệu: Gọi hàm hợp đồng
+    \item Chữ ký: Xác thực giao dịch
+\end{itemize}
+
+\subsection{Tương Tác với Hợp Đồng}
+Giao tiếp với hợp đồng thông minh:
+\begin{itemize}
+    \item ethers.js cho tương tác
+    \item Hỗ trợ TypeScript
+    \item Xử lý số lớn
+    \item Mã hóa ABI
+    \item Xử lý sự kiện
+\end{itemize}
+Các phương thức tương tác:
+\begin{itemize}
+    \item \texttt{eth\_sendTransaction}: Gửi giao dịch
+    \item \texttt{eth\_getTransactionReceipt}: Lấy thông tin giao dịch
+    \item \texttt{eth\_call}: Gọi hàm hợp đồng
+    \item \texttt{eth\_getLogs}: Lấy sự kiện
+    \item \texttt{eth\_getBalance}: Kiểm tra số dư
+\end{itemize}
+
+\subsection{Lưu Trữ IPFS}
+IPFS lưu trữ siêu dữ liệu và hình ảnh NFT:
+\begin{itemize}
+    \item CID cho địa chỉ nội dung
+    \item DHT để tìm kiếm
+    \item Bitswap để trao đổi
+    \item IPLD cho dữ liệu liên kết
+\end{itemize}
+Siêu dữ liệu NFT theo chuẩn ERC721 Metadata:
+\begin{itemize}
+    \item name: Tên NFT
+    \item description: Mô tả
+    \item image: URL hình ảnh
+    \item attributes: Thuộc tính
+    \item external\_url: Liên kết web
+\end{itemize}

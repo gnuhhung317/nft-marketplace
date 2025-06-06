@@ -1,0 +1,340 @@
+\documentclass[a4paper,12pt]{report}
+\usepackage[utf8]{vietnam}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{array}
+\usepackage{tocloft}
+
+% Điều chỉnh định dạng mục lục
+\renewcommand{\cftchapdotsep}{\cftdotsep} % Thêm dấu chấm giữa số chương và tiêu đề
+\renewcommand{\cftchapleader}{\cftdotfill{\cftchapdotsep}} % Định dạng đường chấm cho chương
+\renewcommand{\cftchapfont}{\bfseries} % Chương in đậm trong mục lục
+\renewcommand{\cftsecfont}{\normalfont} % Section bình thường
+
+% Đặt lại bộ đếm section theo chương
+\counterwithin{section}{chapter}
+
+\title{\textbf{ĐỒ ÁN MÔN HỌC: PROJECT III} \\ \textbf{ĐỀ TÀI: XÂY DỰNG NFT MARKETPLACE}}
+\author{
+    Họ tên sinh viên: [Tên của bạn] \\
+    Mã số sinh viên: [MSSV của bạn] \\
+    Học phần: Project III \\
+    Mã học phần: IT3940 \\
+    Giảng viên hướng dẫn: [Tên giảng viên]
+}
+\date{Hà Nội, tháng [tháng] năm [năm]}
+
+\begin{document}
+
+\maketitle
+\begin{center}
+    \textbf{ĐẠI HỌC BÁCH KHOA HÀ NỘI} \\
+    \textbf{TRƯỜNG CNTT\&TT}
+\end{center}
+
+\tableofcontents
+\newpage
+
+\chapter{LỜI NÓI ĐẦU}
+Trong bối cảnh công nghệ blockchain và NFT (Non-Fungible Token) ngày càng phát triển, việc xây dựng một nền tảng giao dịch NFT đã trở thành xu hướng tất yếu. Dự án "Xây dựng NFT Marketplace" hướng tới việc tạo ra một nền tảng cho phép người dùng tạo, mua bán và quản lý NFT một cách an toàn, minh bạch và hiệu quả. Nền tảng này phục vụ các nghệ sĩ số, nhà sưu tập, nhà đầu tư và cả những người mới bắt đầu tìm hiểu về NFT.
+
+Dự án sử dụng blockchain Ethereum và Polygon để đảm bảo giao dịch nhanh chóng với chi phí thấp, kết hợp với giao diện thân thiện và các biện pháp bảo mật cao nhằm mang lại trải nghiệm tối ưu cho người dùng. Báo cáo này sẽ trình bày chi tiết quá trình phát triển dự án, từ việc xác định bài toán, đặc tả yêu cầu, phân tích hệ thống, đến công nghệ sử dụng và thiết kế chương trình.
+
+\chapter{TRÌNH BÀY BÀI TOÁN}
+
+\section{Giới thiệu bài toán}
+NFT Marketplace là một nền tảng giao dịch trực tuyến dựa trên blockchain, cho phép người dùng tạo, mua, bán và quản lý các tài sản kỹ thuật số độc nhất (NFT). Dự án giải quyết nhu cầu sở hữu và giao dịch tài sản kỹ thuật số một cách an toàn, minh bạch và phi tập trung. Đây không chỉ là một thị trường giao dịch mà còn là cầu nối giữa nghệ sĩ số và nhà sưu tập, góp phần nâng cao giá trị của các tác phẩm nghệ thuật và vật phẩm kỹ thuật số.
+
+\section{Xác định các tác nhân}
+\begin{itemize}
+    \item \textbf{Người dùng (User):} Bao gồm nghệ sĩ số, nhà sưu tập, nhà đầu tư và người mới bắt đầu. Họ có thể tạo, mua, bán và quản lý NFT.
+    \item \textbf{Smart Contract Owner:} Người sở hữu hợp đồng thông minh, có quyền cập nhật phí listing khi cần thiết, nhưng không quản lý trực tiếp người dùng.
+\end{itemize}
+
+\section{Mô tả các chức năng}
+\begin{itemize}
+    \item \textbf{Đối với Người dùng:}
+    \begin{itemize}
+        \item Tạo NFT mới (minting).
+        \item Mua NFT từ người khác.
+        \item Bán lại NFT đã sở hữu.
+        \item Quản lý tài khoản và ví.
+        \item Tìm kiếm và lọc NFT theo tiêu chí (loại, giá, nghệ sĩ\ldots).
+    \end{itemize}
+    \item \textbf{Đối với Smart Contract Owner:}
+    \begin{itemize}
+        \item Cập nhật phí listing (nếu cần).
+    \end{itemize}
+\end{itemize}
+
+\chapter{ĐẶC TẢ YÊU CẦU BÀI TOÁN}
+
+\section{Giới thiệu chung}
+\textbf{Bảng 2.1: Bảng liệt kê các tác nhân và mô tả thông tin}
+\begin{center}
+\begin{tabular}{|c|l|p{8cm}|}
+    \hline
+    \textbf{STT} & \textbf{Tên tác nhân} & \textbf{Mô tả tác nhân} \\
+    \hline
+    1 & Người dùng (User) & Người sử dụng nền tảng để tạo, mua, bán và quản lý NFT \\
+    \hline
+    2 & Smart Contract Owner & Người sở hữu hợp đồng thông minh, cập nhật phí listing \\
+    \hline
+\end{tabular}
+\end{center}
+
+\section{Biểu đồ use case}
+[Hình 2.1: Biểu đồ use case tổng quan - Chèn biểu đồ tại đây] \\
+\textbf{Giải thích:} \\
+- Người dùng thực hiện các use case: "Tạo NFT", "Mua NFT", "Bán NFT", "Quản lý tài khoản", "Tìm kiếm NFT". \\
+- Smart Contract Owner thực hiện use case: "Cập nhật phí listing".
+
+\section{Đặc tả use case}
+
+\subsection{Use case "Tạo NFT"}
+\begin{tabular}{|l|p{10cm}|}
+    \hline
+    \textbf{Mã Use case} & UC101 \\
+    \hline
+    \textbf{Tên Use case} & Tạo NFT \\
+    \hline
+    \textbf{Tác nhân} & Người dùng \\
+    \hline
+    \textbf{Mô tả} & Cho phép người dùng tạo và đúc NFT mới trên blockchain \\
+    \hline
+    \textbf{Tiền điều kiện} & Người dùng đã kết nối ví MetaMask và có đủ ETH/MATIC để trả phí gas \\
+    \hline
+    \textbf{Luồng sự kiện chính} & 1. Người dùng chọn "Tạo NFT" trên giao diện \\
+    & 2. Hệ thống hiển thị form nhập thông tin NFT (tên, mô tả, hình ảnh) \\
+    & 3. Người dùng nhập thông tin và tải lên hình ảnh \\
+    & 4. Hệ thống lưu hình ảnh lên IPFS và nhận CID \\
+    & 5. Người dùng xác nhận giao dịch qua MetaMask \\
+    & 6. Hệ thống gọi smart contract để mint NFT với metadata \\
+    \hline
+    \textbf{Luồng sự kiện thay thế} & 5a. Nếu giao dịch thất bại (hết gas, lỗi mạng), hệ thống thông báo lỗi \\
+    \hline
+    \textbf{Hậu điều kiện} & NFT được tạo thành công và hiển thị trong tài khoản người dùng \\
+    \hline
+\end{tabular}
+
+\subsection{Use case "Mua NFT"}
+\begin{tabular}{|l|p{10cm}|}
+    \hline
+    \textbf{Mã Use case} & UC102 \\
+    \hline
+    \textbf{Tên Use case} & Mua NFT \\
+    \hline
+    \textbf{Tác nhân} & Người dùng \\
+    \hline
+    \textbf{Mô tả} & Cho phép người dùng mua NFT từ người bán \\
+    \hline
+    \textbf{Tiền điều kiện} & Người dùng đã kết nối ví và có đủ ETH/MATIC \\
+    \hline
+    \textbf{Luồng sự kiện chính} & 1. Người dùng chọn NFT muốn mua \\
+    & 2. Hệ thống hiển thị thông tin chi tiết và giá \\
+    & 3. Người dùng xác nhận mua qua MetaMask \\
+    & 4. Hệ thống gọi smart contract để thực hiện giao dịch \\
+    & 5. NFT được chuyển vào ví người mua \\
+    \hline
+    \textbf{Luồng sự kiện thay thế} & 4a. Nếu giao dịch thất bại, hệ thống thông báo lỗi \\
+    \hline
+    \textbf{Hậu điều kiện} & NFT được chuyển sang sở hữu của người mua \\
+    \hline
+\end{tabular}
+
+\subsection{Use case "Bán NFT"}
+\begin{tabular}{|l|p{10cm}|}
+    \hline
+    \textbf{Mã Use case} & UC103 \\
+    \hline
+    \textbf{Tên Use case} & Bán NFT \\
+    \hline
+    \textbf{Tác nhân} & Người dùng \\
+    \hline
+    \textbf{Mô tả} & Cho phép người dùng bán lại NFT đã sở hữu \\
+    \hline
+    \textbf{Tiền điều kiện} & Người dùng là chủ sở hữu NFT và đã kết nối ví \\
+    \hline
+    \textbf{Luồng sự kiện chính} & 1. Người dùng chọn NFT muốn bán \\
+    & 2. Hệ thống hiển thị form nhập giá bán \\
+    & 3. Người dùng nhập giá và xác nhận qua MetaMask \\
+    & 4. Hệ thống gọi smart contract để liệt kê NFT trên marketplace \\
+    \hline
+    \textbf{Luồng sự kiện thay thế} & 3a. Nếu giá không hợp lệ (giá 0), hệ thống thông báo lỗi \\
+    \hline
+    \textbf{Hậu điều kiện} & NFT được liệt kê trên marketplace để bán \\
+    \hline
+\end{tabular}
+
+\section{Biểu đồ hoạt động}
+[Hình 2.2: Biểu đồ hoạt động "Tạo NFT" - Chèn biểu đồ tại đây] \\
+[Hình 2.3: Biểu đồ hoạt động "Mua NFT" - Chèn biểu đồ tại đây] \\
+[Hình 2.4: Biểu đồ hoạt động "Bán NFT" - Chèn biểu đồ tại đây]
+
+\chapter{PHÂN TÍCH HỆ THỐNG}
+
+\section{Kiến trúc hệ thống}
+Kiến trúc của NFT Marketplace được thiết kế theo mô hình phân lớp:
+\begin{verbatim}
+[Frontend Layer (Next.js)]
+    ↓
+[Backend Layer (Server Actions)]
+    ↓
+[Database Layer (PostgreSQL)]
+    ↓
+[Blockchain Layer (Ethereum/Polygon)]
+\end{verbatim}
+- \textbf{Frontend Layer:} Giao diện người dùng sử dụng Next.js, tích hợp Web3Modal và ethers.js để tương tác với blockchain. \\
+- \textbf{Backend Layer:} Next.js Server Actions xử lý logic nghiệp vụ. \\
+- \textbf{Database Layer:} PostgreSQL lưu trữ thông tin người dùng và NFT. \\
+- \textbf{Blockchain Layer:} Smart contracts trên Ethereum/Polygon thực hiện giao dịch.
+
+\section{Xử lý giao dịch}
+\begin{itemize}
+    \item \textbf{Minting NFT:} Người dùng gọi smart contract ERC721 để tạo NFT.
+    \item \textbf{Trading NFT:} Giao dịch mua bán qua smart contract marketplace với cơ chế escrow.
+    \item \textbf{Gas Optimization:} Tối ưu hóa smart contract để giảm chi phí gas.
+    \item \textbf{Phí Listing:} Phí tự động chuyển đến ví của Smart Contract Owner khi giao dịch hoàn tất.
+\end{itemize}
+
+\section{Bảo mật}
+\begin{itemize}
+    \item \textbf{Xác thực ví:} Sử dụng MetaMask để xác minh danh tính người dùng.
+    \item \textbf{Kiểm tra quyền sở hữu:} Chỉ chủ sở hữu NFT mới có thể bán hoặc chuyển nhượng.
+    \item \textbf{Bảo vệ chống gian lận:} Smart contract kiểm tra giá trị giao dịch (không cho phép giá 0).
+    \item \textbf{Audit:} Smart contract được audit để đảm bảo an toàn.
+\end{itemize}
+
+\chapter{CÔNG NGHỆ SỬ DỤNG}
+
+\section{Smart Contracts}
+\begin{itemize}
+    \item \textbf{Solidity v0.8.4:} Ngôn ngữ lập trình smart contract.
+    \item \textbf{ERC721:} Tiêu chuẩn NFT.
+    \item \textbf{OpenZeppelin Contracts:} Thư viện an toàn cho smart contract.
+    \item \textbf{Hardhat:} Công cụ phát triển và kiểm thử.
+\end{itemize}
+
+\section{Frontend}
+\begin{itemize}
+    \item \textbf{Next.js 14+:} Framework React cho giao diện.
+    \item \textbf{TypeScript:} Đảm bảo an toàn kiểu dữ liệu.
+    \item \textbf{Tailwind CSS:} Thiết kế giao diện responsive.
+    \item \textbf{Web3Modal:} Kết nối ví điện tử.
+    \item \textbf{ethers.js:} Tương tác với blockchain.
+\end{itemize}
+
+\section{Backend}
+\begin{itemize}
+    \item \textbf{Node.js:} Môi trường runtime.
+    \item \textbf{Prisma ORM:} Quản lý cơ sở dữ liệu.
+    \item \textbf{PostgreSQL:} Cơ sở dữ liệu quan hệ.
+    \item \textbf{Next.js Server Actions:} Xử lý logic backend.
+\end{itemize}
+
+\section{Công cụ \& Dịch vụ bên thứ ba}
+\begin{itemize}
+    \item \textbf{IPFS/Pinata:} Lưu trữ hình ảnh và metadata NFT.
+    \item \textbf{MetaMask:} Ví điện tử cho người dùng.
+    \item \textbf{Alchemy:} Node provider cho blockchain.
+\end{itemize}
+
+\chapter{THIẾT KẾ CHƯƠNG TRÌNH}
+
+\section{Thiết kế cơ sở dữ liệu}
+
+\textbf{Bảng Users:}
+\begin{center}
+\begin{tabular}{|l|l|p{6cm}|}
+    \hline
+    \textbf{Trường} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\
+    \hline
+    id & UUID & Khóa chính \\
+    \hline
+    walletAddress & String & Địa chỉ ví \\
+    \hline
+    name & String & Tên người dùng \\
+    \hline
+    email & String & Email \\
+    \hline
+\end{tabular}
+\end{center}
+
+\textbf{Bảng NFTs:}
+\begin{center}
+\begin{tabular}{|l|l|p{6cm}|}
+    \hline
+    \textbf{Trường} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\
+    \hline
+    id & UUID & Khóa chính \\
+    \hline
+    tokenId & String & ID NFT trên blockchain \\
+    \hline
+    ownerId & UUID & ID chủ sở hữu \\
+    \hline
+    name & String & Tên NFT \\
+    \hline
+    description & String & Mô tả \\
+    \hline
+    imageUrl & String & URL hình ảnh \\
+    \hline
+\end{tabular}
+\end{center}
+
+\textbf{Bảng Transactions:}
+\begin{center}
+\begin{tabular}{|l|l|p{6cm}|}
+    \hline
+    \textbf{Trường} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\
+    \hline
+    id & UUID & Khóa chính \\
+    \hline
+    nftId & UUID & ID NFT \\
+    \hline
+    buyerId & UUID & ID người mua \\
+    \hline
+    sellerId & UUID & ID người bán \\
+    \hline
+    price & Decimal & Giá giao dịch \\
+    \hline
+    timestamp & DateTime & Thời gian giao dịch \\
+    \hline
+\end{tabular}
+\end{center}
+
+\section{Thiết kế giao diện}
+
+\subsection{Giao diện người dùng}
+\begin{itemize}
+    \item \textbf{Trang chủ:} Hiển thị NFT nổi bật, thanh tìm kiếm và bộ lọc.
+    \item \textbf{Trang tạo NFT:} Form nhập thông tin và tải hình ảnh.
+    \item \textbf{Trang chi tiết NFT:} Thông tin NFT, lịch sử giao dịch, tùy chọn mua/bán.
+    \item \textbf{Trang quản lý tài khoản:} Quản lý thông tin cá nhân, ví và NFT sở hữu.
+\end{itemize}
+
+\subsection{Giao diện Smart Contract Owner}
+\begin{itemize}
+    \item [Cần bổ sung]: Dashboard quản lý phí listing (nếu có).
+\end{itemize}
+
+\chapter{KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN}
+
+\section{Kết luận}
+Dự án NFT Marketplace đã đạt được các mục tiêu đề ra: \\
+- Hệ thống giao dịch NFT ổn định, an toàn. \\
+- Bảo mật cao với xác thực ví và audit smart contract. \\
+- Trải nghiệm người dùng tốt nhờ giao diện thân thiện và tích hợp đa nền tảng.
+
+\section{Hướng phát triển}
+\begin{itemize}
+    \item \textbf{Tích hợp thêm blockchain:} Hỗ trợ Binance Smart Chain, Solana.
+    \item \textbf{Tính năng đấu giá:} Cho phép đấu giá NFT.
+    \item \textbf{Social features:} Theo dõi, bình luận, chia sẻ NFT.
+    \item \textbf{Mobile app:} Phát triển ứng dụng di động.
+    \item \textbf{API public:} Cung cấp API cho nhà phát triển bên thứ ba.
+\end{itemize}
+
+\end{document}

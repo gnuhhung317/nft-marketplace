@@ -1,0 +1,77 @@
+\chapter{THIẾT KẾ CHƯƠNG TRÌNH}
+
+\section{Thiết kế cơ sở dữ liệu}
+
+\textbf{Bảng Users:}
+\begin{center}
+\begin{tabular}{|l|l|p{6cm}|}
+    \hline
+    \textbf{Trường} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\
+    \hline
+    id & UUID & Khóa chính \\
+    \hline
+    walletAddress & String & Địa chỉ ví \\
+    \hline
+    name & String & Tên người dùng \\
+    \hline
+    email & String & Email \\
+    \hline
+\end{tabular}
+\end{center}
+
+\textbf{Bảng NFTs:}
+\begin{center}
+\begin{tabular}{|l|l|p{6cm}|}
+    \hline
+    \textbf{Trường} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\
+    \hline
+    id & UUID & Khóa chính \\
+    \hline
+    tokenId & String & ID NFT trên blockchain \\
+    \hline
+    ownerId & UUID & ID chủ sở hữu \\
+    \hline
+    name & String & Tên NFT \\
+    \hline
+    description & String & Mô tả \\
+    \hline
+    imageUrl & String & URL hình ảnh \\
+    \hline
+\end{tabular}
+\end{center}
+
+\textbf{Bảng Transactions:}
+\begin{center}
+\begin{tabular}{|l|l|p{6cm}|}
+    \hline
+    \textbf{Trường} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\
+    \hline
+    id & UUID & Khóa chính \\
+    \hline
+    nftId & UUID & ID NFT \\
+    \hline
+    buyerId & UUID & ID người mua \\
+    \hline
+    sellerId & UUID & ID người bán \\
+    \hline
+    price & Decimal & Giá giao dịch \\
+    \hline
+    timestamp & DateTime & Thời gian giao dịch \\
+    \hline
+\end{tabular}
+\end{center}
+
+\section{Thiết kế giao diện}
+
+\subsection{Giao diện người dùng}
+\begin{itemize}
+    \item \textbf{Trang chủ:} Hiển thị NFT nổi bật, thanh tìm kiếm và bộ lọc.
+    \item \textbf{Trang tạo NFT:} Form nhập thông tin và tải hình ảnh.
+    \item \textbf{Trang chi tiết NFT:} Thông tin NFT, lịch sử giao dịch, tùy chọn mua/bán.
+    \item \textbf{Trang quản lý tài khoản:} Quản lý thông tin cá nhân, ví và NFT sở hữu.
+\end{itemize}
+
+\subsection{Giao diện Smart Contract Owner}
+\begin{itemize}
+    \item [Cần bổ sung]: Dashboard quản lý phí listing (nếu có).
+\end{itemize} 

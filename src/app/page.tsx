@@ -18,6 +18,7 @@ import { Suspense } from "react";
 import { NFT } from '@prisma/client';
 import { MediaType } from '@/types/nft';
 import { TMarketItem } from '@/types';
+import EmptyState from "@/components/EmptyState";
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -38,13 +39,12 @@ const Home = async ({ searchParams }: Props) => {
         heading="NFT Nổi Bật"
         paragraph="Khám phá những NFT xuất sắc nhất trong tất cả các lĩnh vực của cuộc sống."
       />
-      <Filter />
       <Suspense fallback={<Loader />}>
         <div className="w-4/5tt mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {error ? (
             <p className="text-red-500">{error}</p>
           ) : nfts.length === 0 ? (
-            <p className="text-icons">Không tìm thấy NFT nào</p>
+            <EmptyState type="all" variant="default" className="mt-8" />
           ) : (
             nfts.map((nft: NFT) => {
               const marketItem: TMarketItem = {

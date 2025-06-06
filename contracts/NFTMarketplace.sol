@@ -21,6 +21,8 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
     mapping(uint256 => TransactionHistory[]) private tokenTransactionHistory;
     mapping(uint256 => Provenance) private tokenProvenance;
     mapping(uint256 => address[]) private tokenOwnershipHistory;
+    mapping(uint256 => string) private tokenMediaType;
+    mapping(string => uint256[]) private mediaTypeToTokens;
 
     uint256[] private activeMarketItems;
     mapping(address => uint256[]) private userOwnedTokens;
@@ -117,7 +119,7 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
     }
 
     /* OPTIMIZED: Mints a token and lists it in the marketplace */
-    function createToken(string memory tokenURI, uint256 price)
+    function createToken(string memory tokenURI, uint256 price, string memory mediaType)
         public
         payable
         nonReentrant
@@ -125,12 +127,16 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
     {
         require(price > 0, "Price must be greater than 0");
         require(msg.value == listingPrice, "Must pay listing price");
+        require(bytes(mediaType).length > 0, "Media type cannot be empty");
 
         _tokenIds.increment();
         uint256 newTokenId = _tokenIds.current();
 
         _mint(msg.sender, newTokenId);
         _setTokenURI(newTokenId, tokenURI);
+        
+        tokenMediaType[newTokenId] = mediaType;
+        mediaTypeToTokens[mediaType].push(newTokenId);
         
         _recordProvenance(newTokenId, tokenURI);
         tokenOwnershipHistory[newTokenId].push(msg.sender);
@@ -435,5 +441,51 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
         require(isListed || isOwner, "Token is not accessible");
         
         return idToMarketItem[tokenId];
+    }
+
+    /* NEW: Returns all NFTs of a specific media type */
+    function fetchNFTsByMediaType(string memory mediaType) public view returns (MarketItem[] memory) {
+        uint256[] memory tokens = mediaTypeToTokens[mediaType];
+        uint256 count = 0;
+        
+        // Đếm số lượng token đang được list trên market
+        for (uint256 i = 0; i < tokens.length; i++) {
+            uint256 tokenId = tokens[i];
+            if (!idToMarketItem[tokenId].sold) {
+                count++;
+            }
+        }
+        
+        // Tạo mảng kết quả
+        MarketItem[] memory items = new MarketItem[](count);
+        uint256 index = 0;
+        
+        // Lấy thông tin các token đang được list
+        for (uint256 i = 0; i < tokens.length; i++) {
+            uint256 tokenId = tokens[i];
+            if (!idToMarketItem[tokenId].sold) {
+                items[index] = idToMarketItem[tokenId];
+                index++;
+            }
+        }
+        
+        return items;
+    }
+
+    /* NEW: Returns the media type of a specific token */
+    function getTokenMediaType(uint256 tokenId) public view returns (string memory) {
+        require(_exists(tokenId), "Token does not exist");
+        return tokenMediaType[tokenId];
+    }
+
+    /* NEW: Returns all available media types */
+    function getAvailableMediaTypes() public view returns (string[] memory) {
+        // Lưu ý: Trong thực tế, bạn nên lưu trữ danh sách các media type đã sử dụng
+        // Đây là một ví dụ đơn giản với các media type cố định
+        string[] memory mediaTypes = new string[](3);
+        mediaTypes[0] = "image";
+        mediaTypes[1] = "video";
+        mediaTypes[2] = "audio";
+        return mediaTypes;
     }
 }

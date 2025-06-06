@@ -1,0 +1,56 @@
+% Các package cơ bản
+\usepackage[utf8]{vietnam}
+\usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+
+% Cấu hình geometry
+\geometry{a4paper, left=3cm, right=2cm, top=2.5cm, bottom=2.5cm}
+
+% Cấu hình fancyhdr
+\pagestyle{fancy}
+\fancyhf{}
+\chead{Project III}
+\renewcommand{\headrulewidth}{0.5pt}
+\cfoot{\thepage}
+
+% Cấu hình chapter
+\renewcommand{\chaptername}{CHƯƠNG}
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}
+  {\MakeUppercase{\chaptername}\ \thechapter}
+  {20pt}
+  {\Huge}
+
+% Cấu hình mục lục
+\renewcommand{\cftchapdotsep}{\cftdotsep}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftchapdotsep}}
+\renewcommand{\cftchapfont}{\bfseries}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\contentsname}{MỤC LỤC}
+\renewcommand{\cfttoctitlefont}{\huge\bfseries}
+\renewcommand{\cftaftertoctitle}{\vspace{1cm}}
+
+% Thêm mục lục vào bảng mục lục
+\addtocontents{toc}{\protect\contentsline{chapter}{MỤC LỤC}{}{}}
+
+% Cấu hình counter
+\counterwithin{section}{chapter}
+\newcounter{myfig}
+
+% Cấu hình tikz
+\usetikzlibrary{calc}
+
+% Đặt lại bộ đếm section theo chương
+\counterwithin{section}{chapter} 

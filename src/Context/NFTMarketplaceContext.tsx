@@ -87,6 +87,9 @@ export type NFTMarketplaceContextType = {
   isOriginalToken: (tokenId: string) => Promise<boolean>;
   getTokensCreatedBy: (creator: string) => Promise<string[]>;
   getListingPrice: () => Promise<string>;
+  fetchNFTsByMediaType: (mediaType: MediaType) => Promise<TMarketItem[]>;
+  getTokenMediaType: (tokenId: string) => Promise<string>;
+  getAvailableMediaTypes: () => Promise<string[]>;
 };
 
 export const NFTMarketplaceContext = createContext<NFTMarketplaceContextType | null>(null);
@@ -137,6 +140,12 @@ export const NFTMarketplaceProvider = ({
         const contract = fetchContract(signer);
         setContractInstance(contract);
         fetchBalance();
+        return contract;
+      }else{
+        const provider = new ethers.providers.JsonRpcProvider(SUPPORTED_NETWORKS.LOCALHOST.rpcUrl);
+        const signer = provider.getSigner();
+        const contract = fetchContract(signer);
+        setContractInstance(contract);
         return contract;
       }
     } catch (error) {
@@ -901,6 +910,72 @@ export const NFTMarketplaceProvider = ({
     }
   };
 
+  const fetchNFTsByMediaType = useCallback(async (mediaType: MediaType) => {
+    try {
+      const contract = await connectingWithSmartContract();
+      if (!contract) throw new Error("Không thể kết nối với smart contract");
+
+      const data = await contract.fetchNFTsByMediaType(mediaType);
+      const items = await Promise.all(
+        data.map(async (i: any) => {
+          const tokenURI = await contract.tokenURI(i.tokenId);
+          const meta = await axios.get(tokenURI);
+          const price = ethers.utils.formatUnits(i.price.toString(), "ether");
+          const item = {
+            price,
+            tokenId: i.tokenId.toNumber(),
+            seller: i.seller,
+            owner: i.owner,
+            mediaUrl: meta.data.mediaUrl,
+            name: meta.data.name,
+            description: meta.data.description,
+            category: meta.data.category,
+            mediaType: meta.data.mediaType,
+            thumbnailUrl: meta.data.thumbnailUrl,
+            properties: meta.data.properties,
+          };
+          return item;
+        })
+      );
+
+      return items;
+    } catch (error) {
+      console.error("Lỗi khi lấy NFT theo loại media:", error);
+      setError("Không thể lấy NFT theo loại media");
+      setOpenError(true);
+      return [];
+    }
+  }, [connectingWithSmartContract]);
+
+  const getTokenMediaType: NFTMarketplaceContextType["getTokenMediaType"] = async (tokenId) => {
+    try {
+      const contract = await connectingWithSmartContract();
+      if (!contract) throw new Error("Không thể kết nối với smart contract");
+
+      const mediaType = await contract.getTokenMediaType(tokenId);
+      return mediaType;
+    } catch (error) {
+      console.error("Lỗi khi lấy loại media của token:", error);
+      setError("Không thể lấy loại media của token");
+      setOpenError(true);
+      return "";
+    }
+  };
+
+  const getAvailableMediaTypes: NFTMarketplaceContextType["getAvailableMediaTypes"] = async () => {
+    try {
+      const contract = await connectingWithSmartContract();
+      if (!contract) throw new Error("Không thể kết nối với smart contract");
+
+      const mediaTypes = await contract.getAvailableMediaTypes();
+      return mediaTypes;
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách loại media:", error);
+      setError("Không thể lấy danh sách loại media");
+      setOpenError(true);
+      return [];
+    }
+  };
 
   // Memoize context value
   const contextValue = useMemo(() => ({
@@ -938,6 +1013,9 @@ export const NFTMarketplaceProvider = ({
     isOriginalToken,
     getTokensCreatedBy,
     getListingPrice,
+    fetchNFTsByMediaType,
+    getTokenMediaType,
+    getAvailableMediaTypes,
   }), [
     uploadToPinata,
     checkIfWalletConnected,
@@ -972,7 +1050,10 @@ export const NFTMarketplaceProvider = ({
     getTokenOwnerCount,
     isOriginalToken,
     getTokensCreatedBy,
-    getListingPrice
+    getListingPrice,
+    fetchNFTsByMediaType,
+    getTokenMediaType,
+    getAvailableMediaTypes
   ]);
 
   return (

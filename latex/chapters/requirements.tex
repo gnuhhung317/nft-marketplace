@@ -1,0 +1,103 @@
+\chapter{ĐẶC TẢ YÊU CẦU BÀI TOÁN}
+
+\section{Giới thiệu chung}
+\textbf{Bảng 2.1: Bảng liệt kê các tác nhân và mô tả thông tin}
+\begin{center}
+\begin{tabular}{|c|l|p{8cm}|}
+    \hline
+    \textbf{STT} & \textbf{Tên tác nhân} & \textbf{Mô tả tác nhân} \\
+    \hline
+    1 & Người dùng (User) & Người sử dụng nền tảng để tạo, mua, bán và quản lý NFT \\
+    \hline
+    2 & Smart Contract Owner & Người sở hữu hợp đồng thông minh, cập nhật phí listing \\
+    \hline
+\end{tabular}
+\end{center}
+
+\section{Biểu đồ use case}
+[Hình 2.1: Biểu đồ use case tổng quan - Chèn biểu đồ tại đây] \\
+\textbf{Giải thích:} \\
+- Người dùng thực hiện các use case: "Tạo NFT", "Mua NFT", "Bán NFT", "Quản lý tài khoản", "Tìm kiếm NFT". \\
+- Smart Contract Owner thực hiện use case: "Cập nhật phí listing".
+
+\section{Đặc tả use case}
+
+\subsection{Use case "Tạo NFT"}
+\begin{tabular}{|l|p{10cm}|}
+    \hline
+    \textbf{Mã Use case} & UC101 \\
+    \hline
+    \textbf{Tên Use case} & Tạo NFT \\
+    \hline
+    \textbf{Tác nhân} & Người dùng \\
+    \hline
+    \textbf{Mô tả} & Cho phép người dùng tạo và đúc NFT mới trên blockchain \\
+    \hline
+    \textbf{Tiền điều kiện} & Người dùng đã kết nối ví MetaMask và có đủ ETH/MATIC để trả phí gas \\
+    \hline
+    \textbf{Luồng sự kiện chính} & 1. Người dùng chọn "Tạo NFT" trên giao diện \\
+    & 2. Hệ thống hiển thị form nhập thông tin NFT (tên, mô tả, hình ảnh) \\
+    & 3. Người dùng nhập thông tin và tải lên hình ảnh \\
+    & 4. Hệ thống lưu hình ảnh lên IPFS và nhận CID \\
+    & 5. Người dùng xác nhận giao dịch qua MetaMask \\
+    & 6. Hệ thống gọi smart contract để mint NFT với metadata \\
+    \hline
+    \textbf{Luồng sự kiện thay thế} & 5a. Nếu giao dịch thất bại (hết gas, lỗi mạng), hệ thống thông báo lỗi \\
+    \hline
+    \textbf{Hậu điều kiện} & NFT được tạo thành công và hiển thị trong tài khoản người dùng \\
+    \hline
+\end{tabular}
+
+\subsection{Use case "Mua NFT"}
+\begin{tabular}{|l|p{10cm}|}
+    \hline
+    \textbf{Mã Use case} & UC102 \\
+    \hline
+    \textbf{Tên Use case} & Mua NFT \\
+    \hline
+    \textbf{Tác nhân} & Người dùng \\
+    \hline
+    \textbf{Mô tả} & Cho phép người dùng mua NFT từ người bán \\
+    \hline
+    \textbf{Tiền điều kiện} & Người dùng đã kết nối ví và có đủ ETH/MATIC \\
+    \hline
+    \textbf{Luồng sự kiện chính} & 1. Người dùng chọn NFT muốn mua \\
+    & 2. Hệ thống hiển thị thông tin chi tiết và giá \\
+    & 3. Người dùng xác nhận mua qua MetaMask \\
+    & 4. Hệ thống gọi smart contract để thực hiện giao dịch \\
+    & 5. NFT được chuyển vào ví người mua \\
+    \hline
+    \textbf{Luồng sự kiện thay thế} & 4a. Nếu giao dịch thất bại, hệ thống thông báo lỗi \\
+    \hline
+    \textbf{Hậu điều kiện} & NFT được chuyển sang sở hữu của người mua \\
+    \hline
+\end{tabular}
+
+\subsection{Use case "Bán NFT"}
+\begin{tabular}{|l|p{10cm}|}
+    \hline
+    \textbf{Mã Use case} & UC103 \\
+    \hline
+    \textbf{Tên Use case} & Bán NFT \\
+    \hline
+    \textbf{Tác nhân} & Người dùng \\
+    \hline
+    \textbf{Mô tả} & Cho phép người dùng bán lại NFT đã sở hữu \\
+    \hline
+    \textbf{Tiền điều kiện} & Người dùng là chủ sở hữu NFT và đã kết nối ví \\
+    \hline
+    \textbf{Luồng sự kiện chính} & 1. Người dùng chọn NFT muốn bán \\
+    & 2. Hệ thống hiển thị form nhập giá bán \\
+    & 3. Người dùng nhập giá và xác nhận qua MetaMask \\
+    & 4. Hệ thống gọi smart contract để liệt kê NFT trên marketplace \\
+    \hline
+    \textbf{Luồng sự kiện thay thế} & 3a. Nếu giá không hợp lệ (giá 0), hệ thống thông báo lỗi \\
+    \hline
+    \textbf{Hậu điều kiện} & NFT được liệt kê trên marketplace để bán \\
+    \hline
+\end{tabular}
+
+\section{Biểu đồ hoạt động}
+[Hình 2.2: Biểu đồ hoạt động "Tạo NFT" - Chèn biểu đồ tại đây] \\
+[Hình 2.3: Biểu đồ hoạt động "Mua NFT" - Chèn biểu đồ tại đây] \\
+[Hình 2.4: Biểu đồ hoạt động "Bán NFT" - Chèn biểu đồ tại đây] 

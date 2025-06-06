@@ -1,43 +1,96 @@
 'use client'
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { TiArrowLeftThick, TiArrowRightThick } from "react-icons/ti";
 import { cn } from "@/lib/utils";
+import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
+import { MediaType } from "@/types/nft";
+import { TMarketItem } from "@/types";
+import { FaVideo } from "react-icons/fa";
 
 //INTERNAL IMPORT
 import SliderCard from "./SliderCard";
-import images from "@/img";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, useCarousel } from "./ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
+import EmptyState from "./EmptyState";
+
+const LoadingState = () => (
+  <div className="w-full flex flex-col items-center justify-center py-16 px-4 bg-main-bg rounded-2xl border border-icons/20">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-icons mb-4"></div>
+    <p className="text-icons text-lg">Đang tải Video NFT...</p>
+  </div>
+);
+
+const ErrorState = () => (
+  <div className="w-full flex flex-col items-center justify-center py-16 px-4 bg-main-bg rounded-2xl border border-red-500/20">
+    <div className="text-red-500 text-5xl mb-4">!</div>
+    <h3 className="text-2xl font-semibold text-red-500 mb-3">Có lỗi xảy ra</h3>
+    <p className="text-gray-400 text-center max-w-md">
+      Không thể tải danh sách Video NFT. Vui lòng thử lại sau.
+    </p>
+  </div>
+);
 
 const Slider = () => {
-  const followingArray = [
-    {
-      background: images.creatorbackground3,
-      user: images.user3,
-    },
-    {
-      background: images.creatorbackground4,
-      user: images.user4,
-    },
-    {
-      background: images.creatorbackground5,
-      user: images.user5,
-    },
-    {
-      background: images.creatorbackground6,
-      user: images.user6,
-    },
-    {
-      background: images.creatorbackground1,
-      user: images.user1,
-    },
-    {
-      background: images.creatorbackground2,
-      user: images.user2,
-    },
-  ];
-  const leftSideRef = useRef<HTMLButtonElement>(null)
-  const rightSideRef = useRef<HTMLButtonElement>(null)
+  const [videoNFTs, setVideoNFTs] = useState<TMarketItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const context = useContext(NFTMarketplaceContext);
+  const leftSideRef = useRef<HTMLButtonElement>(null);
+  const rightSideRef = useRef<HTMLButtonElement>(null);
+
+  const loadVideoNFTs = useCallback(async () => {
+    if (!context?.fetchNFTsByMediaType) {
+      console.warn("fetchNFTsByMediaType không khả dụng");
+      return;
+    }
+    
+    try {
+      setIsLoading(true);
+      setHasError(false);
+      const videos = await context.fetchNFTsByMediaType(MediaType.VIDEO);
+      setVideoNFTs(videos);
+    } catch (error) {
+      console.error("Lỗi khi tải video NFTs:", error);
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [context?.fetchNFTsByMediaType]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchData = async () => {
+      if (!mounted) return;
+      await loadVideoNFTs();
+    };
+
+    fetchData();
+
+    return () => {
+      mounted = false;
+    };
+  }, [loadVideoNFTs]);
+
+  const renderContent = useMemo(() => {
+    if (isLoading) {
+      return <LoadingState />;
+    }
+
+    if (hasError) {
+      return <ErrorState />;
+    }
+
+    if (videoNFTs.length === 0) {
+      return <EmptyState type="video" variant="compact" />;
+    }
+
+    return videoNFTs.map((nft, i) => (
+      <CarouselItem className="pl-1 md:basis-1/2 xl:basis-1/3 2xl:basis-1/4" key={nft.tokenId}>
+        <SliderCard i={i} el={nft} />
+      </CarouselItem>
+    ));
+  }, [isLoading, hasError, videoNFTs]);
 
   return (
     <div className={cn("w-full")}>
@@ -65,11 +118,9 @@ const Slider = () => {
             align: "start",
             loop: true,
           }}
-          className="w-full ">
+          className="w-full">
           <CarouselContent className="-ml-4">
-            {followingArray.map((el, i) => (
-              <CarouselItem className="pl-1 md:basis-1/2 xl:basis-1/3 2xl:basis-1/4" key={i}> <SliderCard key={i} i={i} el={el} /></CarouselItem>
-            ))}
+            {renderContent}
           </CarouselContent>
           <CarouselPrevious className="absolute left-0 invisible" ref={leftSideRef} />
           <CarouselNext className="absolute left-0 invisible" ref={rightSideRef} />
@@ -89,4 +140,4 @@ const Slider = () => {
   );
 };
 
-export default Slider;
+export default React.memo(Slider);
