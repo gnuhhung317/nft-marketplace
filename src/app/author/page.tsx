@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useContext } from "react";
 import { cn } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 
 // INTERNAL IMPORT
 import images from "@/img";
@@ -12,7 +13,7 @@ import Title from "@/components/Title";
 import AuthorProfileCard from "./AuthorProfileCard";
 import AuthorTaps from "./AuthorTabs";
 import { AccountContext } from "@/Context/AccountProvider";
-import { getAllUsers } from "@/actions/Account";
+import { getAllUsers, getUserByAddress } from "@/actions/Account";
 
 const Author = () => {
   const [collectiables, setCollectiables] = useState(true);
@@ -23,9 +24,36 @@ const Author = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [authorData, setAuthorData] = useState<any>(null);
+
+  const searchParams = useSearchParams();
+  const authorAddress = searchParams.get("address");
 
   const { currentAccount } = useContext(NFTMarketplaceContext)!;
   const { account } = useContext(AccountContext)!;
+
+  useEffect(() => {
+    const fetchAuthorData = async () => {
+      const addressToFetch = authorAddress || currentAccount;
+      if (!addressToFetch) return;
+      
+      try {
+        setLoading(true);
+        const result = await getUserByAddress(addressToFetch);
+        if (result.success) {
+          setAuthorData(result.data);
+        } else {
+          setError("Không tìm thấy thông tin người dùng");
+        }
+      } catch (err) {
+        setError("Đã xảy ra lỗi khi tải thông tin người dùng");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAuthorData();
+  }, [authorAddress, currentAccount]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -50,17 +78,28 @@ const Author = () => {
     fetchUsers();
   }, []);
 
+  if (!currentAccount && !authorAddress) {
+    return (
+      <div className="text-center p-4 mt-4 text-red-500 bg-red-50 rounded-md w-4/5 mx-auto">
+        Vui lòng kết nối ví để xem thông tin
+      </div>
+    );
+  }
+
   return (
     <div>
       <Banner bannerImage={images.creatorbackground2} />
-      <AuthorProfileCard currentAccount={currentAccount!} account={account} />
+      <AuthorProfileCard 
+        currentAccount={authorData?.accountAddress || authorAddress || currentAccount} 
+        account={authorData || account} 
+      />
       <AuthorTaps
         setCollectiables={setCollectiables}
         setCreated={setCreated}
         setLike={setLike}
         setFollower={setFollower}
         setFollowing={setFollowing}
-        currentAccount={currentAccount!}
+        currentAccount={authorData?.accountAddress || authorAddress || currentAccount}
       />
 
       {error && (

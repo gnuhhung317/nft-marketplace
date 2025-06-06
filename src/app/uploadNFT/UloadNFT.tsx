@@ -1,65 +1,79 @@
 "use client";
 
 import React, { useState } from "react";
-import { MdOutlineHttp, MdOutlineAttachFile } from "react-icons/md";
+import { MdOutlineHttp } from "react-icons/md";
 import { FaPercent } from "react-icons/fa";
-import { AiTwotonePropertySafety } from "react-icons/ai";
 import { TiTick } from "react-icons/ti";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import images from "@/img";
 import type { NFTMarketplaceContextType } from "@/Context/NFTMarketplaceContext";
 import DropZone from "./DropZone";
 import { IconInput } from "@/components/IconInput";
 import { Button } from "@/components/ui/button";
 import Modal from "@/components/Modal";
+import { CATEGORIES } from "@/constants/categories";
+import { MediaType, INFTMetadata } from "@/types/nft";
+import MediaPreview from "@/components/MediaPreview";
+import CreateNFTConfirmationModal from "@/components/CreateNFTConfirmationModal";
+import { ethers } from "ethers";
+
+// Hàm xác định mediaType từ file extension
+const getMediaTypeFromFile = (file: File): MediaType => {
+  const extension = file.name.split('.').pop()?.toLowerCase();
+  
+  switch (extension) {
+    // Image types
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+    case 'gif':
+    case 'webp':
+      return MediaType.IMAGE;
+    
+    // Video types
+    case 'mp4':
+    case 'webm':
+    case 'mov':
+    case 'avi':
+      return MediaType.VIDEO;
+    
+    // Audio types
+    case 'mp3':
+    case 'wav':
+    case 'ogg':
+    case 'm4a':
+      return MediaType.AUDIO;
+    
+    default:
+      return MediaType.IMAGE; // Default to IMAGE if unknown
+  }
+};
 
 const UploadNFT: React.FC<
-  Pick<NFTMarketplaceContextType, "createNFT" | "uploadToPinata">
-> = ({ createNFT, uploadToPinata }) => {
+  Pick<NFTMarketplaceContextType, "createNFT" | "uploadToPinata" | "accountBalance" | "gasEstimate" | "getListingPrice">
+> = ({ createNFT, uploadToPinata, accountBalance, gasEstimate ,getListingPrice}) => {
   const [price, setPrice] = useState("");
   const [active, setActive] = useState(0);
   const [name, setName] = useState("");
   const [website, setWebsite] = useState("");
   const [description, setDescription] = useState("");
-  const [royalties, setRoyalties] = useState("");
   const [fileSize, setFileSize] = useState("");
   const [category, setCategory] = useState("");
   const [properties, setProperties] = useState("");
-  const [image, setImage] = useState("");
+  const [mediaUrl, setMediaUrl] = useState("");
+  const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const [mediaType, setMediaType] = useState<MediaType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [listingFee, setListingFee] = useState("0");
   const router = useRouter();
 
-  const categoryArray = [
-    {
-      image: images.nft_image_1,
-      category: "Thể Thao",
-    },
-    {
-      image: images.nft_image_2,
-      category: "Nghệ Thuật",
-    },
-    {
-      image: images.nft_image_3,
-      category: "Âm Nhạc",
-    },
-    {
-      image: images.nft_image_1,
-      category: "Kỹ Thuật Số",
-    },
-    // {
-    //   image: images.nft_image_2,
-    //   category: "Thời Gian",
-    // },
-    {
-      image: images.nft_image_3,
-      category: "Nhiếp Ảnh",
-    },
-  ]; // Mảng ví dụ cho mục đích minh họa
-
   const handlePreview = () => {
+    if (!mediaUrl || !mediaType) {
+      alert("Vui lòng upload file trước khi xem trước");
+      return;
+    }
     setIsModalOpen(true);
   };
 
@@ -67,23 +81,121 @@ const UploadNFT: React.FC<
     setIsModalOpen(false);
   };
 
+  const handleFileUpload = async (file: File) => {
+    try {
+      const mediaType = getMediaTypeFromFile(file);
+      setMediaType(mediaType);
+      
+      const url = await uploadToPinata(file);
+      if (url) {
+        setMediaUrl(url);
+        
+        // Nếu là video, tạo thumbnail từ frame đầu tiên
+        if (mediaType === MediaType.VIDEO) {
+          const video = document.createElement('video');
+          video.src = URL.createObjectURL(file);
+          video.onloadeddata = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(video, 0, 0);
+              canvas.toBlob(async (blob) => {
+                if (blob) {
+                  const thumbnailFile = new File([blob], 'thumbnail.jpg', { type: 'image/jpeg' });
+                  const thumbnailUrl = await uploadToPinata(thumbnailFile);
+                  if (thumbnailUrl) {
+                    setThumbnailUrl(thumbnailUrl);
+                  }
+                }
+              }, 'image/jpeg');
+            }
+          };
+        }
+      }
+    } catch (error) {
+      console.error("Lỗi khi upload file:", error);
+      alert("Có lỗi xảy ra khi upload file");
+    }
+  };
+
+  const handleCreateNFT = async () => {
+    if (!mediaType || !mediaUrl) {
+      alert("Vui lòng upload file trước khi tạo NFT");
+      return;
+    }
+
+    if (!name || !description || !price || !category) {
+      alert("Vui lòng điền đầy đủ thông tin");
+      return;
+    }
+
+    const metadata: INFTMetadata = {
+      name,
+      price,
+      mediaUrl,
+      description,
+      category,
+      mediaType,
+      thumbnailUrl: thumbnailUrl || undefined,
+      properties: {
+        fileSize,
+        ...(properties ? { properties } : {}),
+      },
+    };
+
+    const listingPrice = await getListingPrice();
+    setListingFee(ethers.utils.formatEther(listingPrice));
+    // Show confirmation modal
+    setShowConfirmation(true);
+  };
+
+  const handleConfirmCreate = async () => {
+    const metadata: INFTMetadata = {
+      name,
+      price,
+      mediaUrl,
+      description,
+      category,
+      mediaType: mediaType!,
+      thumbnailUrl: thumbnailUrl || undefined,
+      properties: {
+        fileSize,
+        ...(properties ? { properties } : {}),
+      },
+    };
+
+    await createNFT({
+      ...metadata,
+      router,
+    });
+    setShowConfirmation(false);
+  };
+
   return (
     <div className={cn("p-4")}>
+      {/* Hiển thị balance */}
+      <div className={cn("mb-4 p-4 border border-icons rounded-xl")}>
+        <p className="font-bold text-xl">Số dư tài khoản:</p>
+        <p className="text-lg">{accountBalance} ETH</p>
+      </div>
+
       <DropZone
-        title="JPG, PNG, WEBM , TỐI ĐA 100MB"
+        title="JPG, PNG, WEBM, MP4, WAV, MP3, TỐI ĐA 100MB"
         heading="Kéo và thả tệp"
         subHeading="hoặc Duyệt phương tiện trên thiết bị của bạn"
         name={name}
         website={website}
         description={description}
-        royalties={royalties}
         fileSize={fileSize}
         category={category}
         properties={properties}
-        setImage={setImage}
+        setImage={setMediaUrl}
         uploadToPinata={uploadToPinata}
         setName={setName}
-        setFileSize={setFileSize} // Pass the existing setFileSize
+        setFileSize={setFileSize}
+        onFileUpload={handleFileUpload}
       />
       <div className={cn("flex flex-col gap-4")}>
         {/* Text inputs for item name, website, description */}
@@ -144,24 +256,24 @@ const UploadNFT: React.FC<
           ></textarea>
         </div>
 
-        {/* Slider for categories */}
+        {/* Categories grid */}
         <div className={cn("grid grid-cols-2 xl:grid-cols-3 gap-4")}>
-          {categoryArray.map((el, i) => (
+          {CATEGORIES.map((el, i) => (
             <div
-              key={i}
+              key={el.id}
               className={cn(
                 "border border-icons rounded-lg p-4 cursor-pointer",
                 active === i + 1 && "bg-icons text-main-bg"
               )}
               onClick={() => {
                 setActive(i + 1);
-                setCategory(el.category);
+                setCategory(el.id);
               }}
             >
               <div className={cn("flex items-center justify-between")}>
                 <Image
                   src={el.image}
-                  alt="hình ảnh nền"
+                  alt={el.name}
                   width={70}
                   height={70}
                   className={cn("rounded-full")}
@@ -175,51 +287,38 @@ const UploadNFT: React.FC<
                 </div>
               </div>
               <p className={cn("text-lg font-bold leading-snug")}>
-                Crypto Legend - {el.category}
+                {el.name}
+              </p>
+              <p className={cn("text-sm text-icons/70")}>
+                {el.description}
               </p>
             </div>
           ))}
         </div>
         <div>
           <IconInput
-            label="Royalty"
-            placeholder="Nhập tỷ lệ phần trăm royalty"
-            onChange={(e) => setRoyalties(e.target.value)}
-            icon={<FaPercent className="text-4xl p-3" />}
-          ></IconInput>
-
-          <IconInput
-
             value={fileSize}
             label="Kích thước"
             placeholder="Nhập kích thước tệp"
             onChange={(e) => setFileSize(e.target.value)}
             icon={<FaPercent className="text-4xl p-3" />}
-          ></IconInput>
+          />
           <IconInput
             label="Thuộc tính"
             placeholder="Nhập thuộc tính"
             onChange={(e) => setProperties(e.target.value)}
             icon={<FaPercent className="text-4xl p-3" />}
-          ></IconInput>
+          />
           <IconInput
             label="Giá"
             placeholder="Nhập Giá"
             onChange={(e) => setPrice(e.target.value)}
             icon={<FaPercent className="text-4xl p-3" />}
-          ></IconInput>
+          />
         </div>
         <div className={cn("grid grid-cols-[repeat(2,1fr)] gap-8")}>
           <Button
-            onClick={async () =>
-              createNFT({
-                name,
-                price,
-                image,
-                description,
-                router,
-              })
-            }
+            onClick={handleCreateNFT}
             className={cn("w-full grid self-center text-[1.3rem]")}
           >
             Tải lên
@@ -233,69 +332,87 @@ const UploadNFT: React.FC<
         </div>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={closeModal} title="Connect to Dragon Wallet">
-        <div className="flex flex-col items-center">
-          <div className="relative w-64 h-64 mb-6 rounded-lg overflow-hidden border border-icons shadow-custom">
-            {image ? (
-              <img
-                src={image}
-                alt="NFT Preview"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-shadow-dark/20 flex items-center justify-center text-icons/50">
-                No Image
+      {/* Modal xem trước */}
+      {isModalOpen && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          title="Xem trước NFT"
+        >
+          <div className={cn("p-4 max-h-[80vh] overflow-y-auto")}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Phần preview media */}
+              <div className="w-full">
+                <h2 className="text-2xl font-bold mb-4 break-words">{name || "Chưa có tên"}</h2>
+                {mediaUrl && mediaType && (
+                  <div className="aspect-square">
+                    <MediaPreview
+                      mediaType={mediaType}
+                      mediaUrl={mediaUrl}
+                      thumbnailUrl={thumbnailUrl}
+                      className="rounded-lg w-full h-full object-contain"
+                    />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          <div className="w-full space-y-3 text-primary">
-            <div className="grid grid-cols-[100px_1fr] items-center border-b border-icons/30 pb-2">
-              <span className="font-medium">Tên:</span>
-              <span>{name || "—"}</span>
-            </div>
-
-            <div className="grid grid-cols-[100px_1fr] items-center border-b border-icons/30 pb-2">
-              <span className="font-medium">Giá:</span>
-              <span>{price || "—"}</span>
-            </div>
-
-            <div className="grid grid-cols-[100px_1fr] items-center border-b border-icons/30 pb-2">
-              <span className="font-medium">Danh mục:</span>
-              <span>{category || "—"}</span>
-            </div>
-
-            <div className="grid grid-cols-[100px_1fr] items-center border-b border-icons/30 pb-2">
-              <span className="font-medium">Royalty:</span>
-              <span>{royalties || "—"}</span>
-            </div>
-
-            <div className="grid grid-cols-[100px_1fr] items-center border-b border-icons/30 pb-2">
-              <span className="font-medium">Kích thước:</span>
-              <span>{fileSize || "—"}</span>
-            </div>
-
-            <div className="grid grid-cols-[100px_1fr] items-center border-b border-icons/30 pb-2">
-              <span className="font-medium">Thuộc tính:</span>
-              <span>{properties || "—"}</span>
-            </div>
-
-            {description && (
-              <div className="pt-2">
-                <div className="font-medium mb-1">Mô tả:</div>
-                <p className="text-sm text-primary/80 bg-shadow-dark/10 p-3 rounded-md">{description}</p>
+              {/* Phần thông tin */}
+              <div className="w-full space-y-4">
+                <div className="space-y-2">
+                  <div className="break-words">
+                    <p className="font-bold">Mô tả:</p>
+                    <p className="whitespace-pre-wrap">{description || "Chưa có mô tả"}</p>
+                  </div>
+                  <div className="break-words">
+                    <p className="font-bold">Giá:</p>
+                    <p>{price ? `${price} ETH` : "Chưa có giá"}</p>
+                  </div>
+                  <div className="break-words">
+                    <p className="font-bold">Danh mục:</p>
+                    <p>{category || "Chưa chọn danh mục"}</p>
+                  </div>
+                  {fileSize && (
+                    <div className="break-words">
+                      <p className="font-bold">Kích thước:</p>
+                      <p>{fileSize}</p>
+                    </div>
+                  )}
+                  {properties && (
+                    <div className="break-words">
+                      <p className="font-bold">Thuộc tính:</p>
+                      <p className="whitespace-pre-wrap">{properties}</p>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
+            </div>
           </div>
+        </Modal>
+      )}
 
-          <div className="mt-6 w-full flex justify-end">
-            <Button onClick={closeModal} className="bg-icons text-main-bg hover:bg-main-bg hover:text-icons hover:border-icons border">
-              Đóng
-            </Button>
-          </div>
-        </div>
-      </Modal>
-
+      {showConfirmation && (
+        <CreateNFTConfirmationModal
+          isOpen={showConfirmation}
+          onClose={() => setShowConfirmation(false)}
+          onConfirm={handleConfirmCreate}
+          metadata={{
+            name,
+            price,
+            mediaUrl,
+            description,
+            category,
+            mediaType: mediaType!,
+            thumbnailUrl: thumbnailUrl || undefined,
+            properties: {
+              fileSize,
+              ...(properties ? { properties } : {}),
+            },
+          }}
+          listingFee={listingFee}
+          gasEstimate={gasEstimate}
+          userBalance={accountBalance}
+        />
+      )}
     </div>
   );
 };

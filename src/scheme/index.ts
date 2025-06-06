@@ -21,6 +21,7 @@ const NFTSchema = z.object({
   price: z.string(),
   sold: z.boolean(),
   tokenURI: z.string(),
+  category: z.string(),
   likes: z.array(z.lazy(() => LikeSchema)).optional(),
 });
 

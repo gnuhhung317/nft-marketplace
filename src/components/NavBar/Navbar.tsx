@@ -32,10 +32,6 @@ import SwitchNetwork from "../SwitchNetwork";
 
 const discoverItems = [
   {
-    name: "Bộ sưu tập",
-    link: "collection",
-  },
-  {
     name: "Tìm kiếm",
     link: "searchPage",
   },

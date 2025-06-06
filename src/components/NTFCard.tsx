@@ -1,92 +1,72 @@
 "use client";
+import React, { useContext, useState } from "react";
+import { BsImage } from "react-icons/bs";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { BsImages } from "react-icons/bs";
-import Image from "next/image";
+import { MdVerified } from "react-icons/md";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { TMarketItem } from "@/types";
-import React, { useState, useEffect, useContext, Suspense } from "react";
-import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
-import { LikeOrDislike } from "@/actions/NFT";
+import LikeProfile from "./LikeProfile";
 import { Like } from "./Like";
+import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
+import MediaPreview from "./MediaPreview";
 
-const NFTCard = () => {
-  const { checkIfWalletConnected, currentAccount, nfts, setNfts, likes } =
-    useContext(NFTMarketplaceContext)!;
+const NTFCard = ({ NFTs }: { NFTs: TMarketItem[] }) => {
+  const { currentAccount } = useContext(NFTMarketplaceContext)!;
+  const [like, setLike] = useState(false);
+  const [likeInc, setLikeInc] = useState(21);
+
+  const likeNFT = () => {
+    setLike(!like);
+    setLikeInc(like ? likeInc - 1 : likeInc + 1);
+  };
 
   return (
     <div
       className={cn(
-        "mx-auto grid gap-12 mb-40 sm:grid-cols-1 md:grid-cols-2 md:gap-6 xl:grid-cols-3"
+        "mx-auto grid lg:grid-cols-3 gap-12 mb-56 grid-cols-1 md:w-9/10 md:grid-cols-2"
       )}
-    >      {nfts.map((el, i) => (
+    >
+      {NFTs?.map((el, i) => (
         <Link href={`/NFT-details/${el.tokenId}`} key={i}>
           <div
             className={cn(
-              "h-72 grid grid-cols-4 grid-rows-4 bg-main-bg p-4 rounded-lg cursor-pointer transition-all duration-300 ease-in-out hover:shadow-custom"
+              "cursor-pointer relative transition-all duration-300 ease-in rounded-lg",
+              "hover:shadow-[0_0_15px_rgba(93,222,226,1)]"
             )}
           >
-            <div
-              className={cn(
-                "col-[1/-1] row-[1/-1] overflow-hidden rounded-lg"
-              )}
-            >
-              <Image
-                src={el.image}
-                width={1024}
-                height={768}
-                alt="Hình ảnh NFT"
-                className={cn(
-                  "col-span-full object-fill row-span-full transition-all duration-400 ease-in-out w-full"
-                )}
-              />
-            </div>
-
-            <div
-              className={cn(
-                "col-[1/-1] row-[1/2] z-9 flex items-start justify-between overflow-hidden"
-              )}
-            >
-              <Like nFTTokenId={el.tokenId!} currentAccount={currentAccount!}></Like>              <div className={cn("flex justify-end")}>
-                {/* Removed auction timer */}
+            <div className={cn("absolute w-full p-4 grid-cols-1 z-2")}>
+              <div className={cn("flex items-center w-full justify-between")}>
+                <BsImage className={cn("text-icons text-4xl")} />
+                <Like nFTTokenId={el.tokenId!} currentAccount={currentAccount!}></Like>
               </div>
             </div>
-
-            <div
-              className={cn(
-                "col-[1/-1] row-[3/-1] overflow-hidden items-end pb-0"
-              )}
-            >
-              <div
-                className={cn(
-                  "bg-main-bg ml-[-3rem] h-full skew-x-[35deg] overflow-hidden text-ellipsis whitespace-nowrap p-2 w-max rounded-tr-lg"
-                )}
-              >
-                <div className={cn("pl-12 skew-x-[-35deg]")}>
-                  <h4 className={cn("text-2xl mt-2")}>
-                    {el.name} # {el.tokenId}
-                  </h4>
-
-                  <div
-                    className={cn("flex mt-2 justify-start gap-4 items-end")}
-                  >
-                    <div
-                      className={cn(
-                        "border border-icons p-1 rounded-sm flex items-center"
-                      )}
-                    >
-                      <small
-                        className={cn("bg-icons text-main-bg rounded-sm p-1")}
-                      >
-                        Giá Hiện Tại
-                      </small>
-                      <p className={cn("p-2 font-bold")}>{el.price} ETH</p>
-                    </div>
-                    <div>
-                      <small>61 trong kho</small>
-                    </div>
-                  </div>
-                </div>
+            <div className={cn("grid-cols-1 relative aspect-square")}>
+              <MediaPreview
+                mediaType={el.mediaType}
+                mediaUrl={el.mediaUrl}
+                thumbnailUrl={el.thumbnailUrl}
+                className="col-span-full object-fill row-span-full transition-all duration-400 ease-in-out w-full h-full"
+              />
+            </div>
+            <div className={cn("flex justify-between p-4")}>
+              <div>
+                <LikeProfile></LikeProfile>
+                <p className="text-xl truncate max-w-[200px]">{el.name}</p>
+              </div>
+            </div>
+            <div className={cn("flex justify-between items-end p-4")}>
+              <div>
+                <small className="bg-primary text-main-bg py-1 px-2 rounded-sm ml-4">
+                  Giá Hiện Tại
+                </small>
+                <p
+                  className={cn(
+                    "border-[1px] -mt-4 whitespace-nowrap border-icons p-6 text-[1.4rem] rounded-sm"
+                  )}
+                >
+                  {el.price || i + 4} ETH
+                </p>
               </div>
             </div>
           </div>
@@ -96,4 +76,4 @@ const NFTCard = () => {
   );
 };
 
-export default NFTCard;
+export default NTFCard;

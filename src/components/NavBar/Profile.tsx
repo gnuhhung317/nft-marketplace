@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import { FaUserAlt, FaRegImage, FaUserEdit } from "react-icons/fa";
 import { MdHelpCenter } from "react-icons/md";
@@ -19,6 +19,7 @@ import { AccountContext, AccountType, accountData } from "@/Context/AccountProvi
 import { useRouter } from "next/navigation";
 import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
 import { LocalStorageProvider } from "@/utils/localStorageProvider";
+import { getUserByAddress } from "@/actions/Account";
 
 interface ProfileProps {
   currentAccount: string;
@@ -27,8 +28,39 @@ interface ProfileProps {
 
 const Profile = ({ currentAccount, account }: ProfileProps) => {
   const router = useRouter();
-  const { connectWallet, disconnectWallet } = useContext(NFTMarketplaceContext)!;
+  const { disconnectWallet } = useContext(NFTMarketplaceContext)!;
   const { setAccount } = useContext(AccountContext)!;
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!currentAccount) return;
+      
+      try {
+        setIsLoading(true);
+        const result = await getUserByAddress(currentAccount);
+        if (result.success && result.data) {
+          setUserAvatar(result.data.avatar);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy thông tin người dùng:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [currentAccount]);
+
+  const handleLogout = () => {
+    disconnectWallet();
+    LocalStorageProvider.clearAccount();
+    LocalStorageProvider.removeItem('accountData');
+    setAccount({...accountData});
+    setUserAvatar(null);
+    router.push("/");
+  };
 
   // Hiển thị 6 ký tự đầu và 4 ký tự cuối của địa chỉ ví
   const shortenAddress = (address: string) => {
@@ -38,32 +70,39 @@ const Profile = ({ currentAccount, account }: ProfileProps) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="outline-none cursor-pointer">
-        <div className="relative">
-          <Image
-            src={account?.avatar || images.user1}
-            alt="profile"
-            width={40}
-            height={40}
-            priority
-            unoptimized
-            className="rounded-full"
-          />
+      <DropdownMenuTrigger className="focus:outline-none">
+        <div className="relative w-10 h-10 rounded-full overflow-hidden">
+          {isLoading ? (
+            <div className="w-full h-full bg-gray-200 animate-pulse" />
+          ) : (
+            <Image
+              src={userAvatar || account?.avatar || images.user1}
+              alt="profile"
+              width={40}
+              height={40}
+              priority
+              unoptimized
+              className="rounded-full object-cover"
+            />
+          )}
         </div>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent className="bg-main-bg border border-primary min-w-[200px]">
         {currentAccount ? (
           <>
             <DropdownMenuLabel className="flex flex-col items-center gap-2 py-3">
-              <Image
-                src={account?.avatar || images.user1}
-                alt="profile"
-                width={60}
-                height={60}
-                priority
-                unoptimized
-                className="rounded-full mb-1"
-              />
+              <div className="relative w-16 h-16 rounded-full overflow-hidden">
+                <Image
+                  src={userAvatar || account?.avatar || images.user1}
+                  alt="profile"
+                  width={64}
+                  height={64}
+                  priority
+                  unoptimized
+                  className="rounded-full object-cover"
+                />
+              </div>
               <p className="text-base font-semibold">{account?.username || "Người dùng"}</p>
               <p className="text-sm text-gray-400">{shortenAddress(currentAccount)}</p>
             </DropdownMenuLabel>
@@ -92,13 +131,9 @@ const Profile = ({ currentAccount, account }: ProfileProps) => {
             </DropdownMenuItem>
             
             <DropdownMenuSeparator className="bg-gray-700" />
-              <DropdownMenuItem
-              onClick={() => {
-                disconnectWallet();
-                router.push("/");
-                setAccount(accountData); // Reset account to empty data
-                LocalStorageProvider.clearAccount(); // Clear localStorage data
-              }}
+            
+            <DropdownMenuItem
+              onClick={handleLogout}
               className="cursor-pointer hover:bg-gray-800 py-2 text-red-500"
             >
               Đăng xuất
@@ -106,10 +141,10 @@ const Profile = ({ currentAccount, account }: ProfileProps) => {
           </>
         ) : (
           <DropdownMenuItem
-            onClick={connectWallet}
+            onClick={() => router.push("/login")}
             className="cursor-pointer hover:bg-gray-800 py-2"
           >
-            Kết nối ví
+            Đăng nhập
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

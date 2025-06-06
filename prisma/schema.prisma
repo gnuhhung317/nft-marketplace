@@ -39,14 +39,20 @@ model NFT {
   sold           Boolean
   tokenURI       String
   name           String
-  image          String
+  mediaUrl       String
+  mediaType      String
+  thumbnailUrl   String?
   description    String
-  likes          Like[] // Array of likes
+  category       String
+  properties     Json?
+  likes          Like[]
   Account        Account? @relation(fields: [accountId], references: [id])
   accountId      Int?
   accountAddress String
   createAt       DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  @@map("nfts")
 }
 
 model Like {

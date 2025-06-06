@@ -22,6 +22,7 @@ export interface WalletContextType {
   login: (username: string, password: string) => Promise<string>;
   getPrivateKey: (accountId: number, password: string) => Promise<string>;
   walletService: WalletService;
+  setToken: (token: string) => Promise<void>;
 }
 
 export const WalletContext = createContext<WalletContextType | null>(null);
@@ -86,6 +87,9 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {  cons
       throw error;
     }
   };
+  const setToken = async (token: string) => {
+    await walletService.setToken(token);
+  };
   const disconnect = () => {
     setState({ isConnected: false, address: "", balance: "", network: {
       name: "",
@@ -131,6 +135,11 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {  cons
     }
   };
 
+  const getBalance = async (accountId: number) => {
+    const balance = await walletService.getBalance(accountId);
+    return balance.data.balance;
+  };
+
   const getPrivateKey = async (accountId: number, password: string) => {
     const privateKey = await walletService.getPrivateKey(accountId, password);
     return privateKey;
@@ -154,7 +163,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {  cons
   }, []);
 
   return (
-    <WalletContext.Provider value={{ state, connect, disconnect, sendTransaction, login, getAccounts, getPrivateKey, walletService }}>
+    <WalletContext.Provider value={{ state, connect, disconnect, sendTransaction, login, getAccounts, getPrivateKey, walletService, setToken }}>
       {children}
     </WalletContext.Provider>
   );

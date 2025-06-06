@@ -1,8 +1,6 @@
 "use client";
 import React, { useContext, useState, useEffect } from "react";
-import Image from "next/image";
 import { BsImage } from "react-icons/bs";
-import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { MdVerified } from "react-icons/md";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -11,11 +9,10 @@ import LikeProfile from "./LikeProfile";
 import { Like } from "./Like";
 import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
 import { getNFTByTokenId } from "@/actions/NFT";
+import MediaPreview from "./MediaPreview";
 
 const NFTCardTwo = ({ NFTs }: { NFTs: TMarketItem[] }) => {
   const { currentAccount } = useContext(NFTMarketplaceContext)!;
-  const [like, setLike] = useState(false);
-  const [likeInc, setLikeInc] = useState(21);
   const [nftData, setNftData] = useState<TMarketItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -46,11 +43,6 @@ const NFTCardTwo = ({ NFTs }: { NFTs: TMarketItem[] }) => {
 
     fetchNFTs();
   }, [NFTs]);
-
-  const likeNFT = () => {
-    setLike(!like);
-    setLikeInc(like ? likeInc - 1 : likeInc + 1);
-  };
 
   if (loading) {
     return (
@@ -85,9 +77,10 @@ const NFTCardTwo = ({ NFTs }: { NFTs: TMarketItem[] }) => {
   return (
     <div
       className={cn(
-        "mx-auto  grid lg:grid-cols-3 gap-12 mb-56  grid-cols-1 md:w-9/10 md:grid-cols-2"
+        "mx-auto grid lg:grid-cols-3 gap-12 mb-56 grid-cols-1 md:w-9/10 md:grid-cols-2"
       )}
-    >      {nftData?.map((el, i) => (
+    >
+      {nftData?.map((el, i) => (
         <Link href={`/NFT-details/${el.tokenId}`} key={i}>
           <div
             className={cn(
@@ -98,20 +91,15 @@ const NFTCardTwo = ({ NFTs }: { NFTs: TMarketItem[] }) => {
             <div className={cn("absolute w-full p-4 grid-cols-1 z-2")}>
               <div className={cn("flex items-center w-full justify-between")}>
                 <BsImage className={cn("text-icons text-4xl")} />
-                {/* <p onClick={likeNFT} className={cn('flex items-center gap-4 text-[1.2rem] bg-icons text-main-bg rounded-full px-2 py-1')}>
-                  {like ? <AiFillHeart /> : <AiOutlineHeart />}
-                  <span>{likeInc}</span>
-                </p> */}
                 <Like nFTTokenId={el.tokenId!} currentAccount={currentAccount!}></Like>
               </div>
             </div>
-            <div className={cn("grid-cols-1")}>
-              <Image
-                src={el.image}
-                alt={el.name || "NFT Image"}
-                width={300}
-                height={200}
-                className={cn("rounded-lg w-full h-60 object-cover")}
+            <div className={cn("grid-cols-1 relative aspect-square")}>
+              <MediaPreview
+                mediaType={el.mediaType}
+                mediaUrl={el.mediaUrl}
+                thumbnailUrl={el.thumbnailUrl}
+                className="rounded-lg w-full h-full object-cover"
               />
             </div>
             <div className={cn("flex justify-between p-4")}>
@@ -119,21 +107,20 @@ const NFTCardTwo = ({ NFTs }: { NFTs: TMarketItem[] }) => {
                 <LikeProfile></LikeProfile>
                 <p className="text-xl truncate max-w-[200px]">{el.name}</p>
               </div>
-              {/* <small>4{i + 2}</small> */}
             </div>
             <div className={cn("flex justify-between items-end p-4")}>
               <div>
-                <small className=" bg-primary text-main-bg py-1 px-2 rounded-sm ml-4">
+                <small className="bg-primary text-main-bg py-1 px-2 rounded-sm ml-4">
                   Giá Hiện Tại
                 </small>
                 <p
                   className={cn(
-                    "border-[1px] -mt-4 whitespace-nowrap border-icons p-6 text-[1.4rem]  rounded-sm"
+                    "border-[1px] -mt-4 whitespace-nowrap border-icons p-6 text-[1.4rem] rounded-sm"
                   )}
                 >
                   {el.price || i + 4} ETH
                 </p>
-              </div>              {/* Removed auction timer */}
+              </div>
             </div>
           </div>
         </Link>

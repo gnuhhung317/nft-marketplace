@@ -32,7 +32,12 @@ const DropDown = ({
           {items.map((item, index) => (
             <DropdownMenuItem key={index}>
               <div key={index} className={cn(" w-full h-full  ")}>
-                <Link className=" w-full h-full block p-2  transition-all duration-300 hover:bg-icons hover:text-shadow-dark hover:rounded-sm" href={item.link}>{item.name}</Link>
+                <Link 
+                  className=" w-full h-full block p-2  transition-all duration-300 hover:bg-icons hover:text-shadow-dark hover:rounded-sm" 
+                  href={item.link.startsWith('/') ? item.link : `/${item.link}`}
+                >
+                  {item.name}
+                </Link>
               </div>
             </DropdownMenuItem>
           ))}

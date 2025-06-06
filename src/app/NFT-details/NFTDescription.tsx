@@ -29,6 +29,7 @@ import NFTTabs from "./NFTTabs";
 import { Button } from "@/components/ui/button";
 import DropDown from "@/components/DropDown";
 import { LocalStorageService } from "@/services/LocalStorageService";
+import EthPriceDisplay from '@/components/EthPriceDisplay';
 
 const cloudItems = [
   {
@@ -255,7 +256,7 @@ const NFTDescription = ({ nft }: { nft: TMarketItem }) => {
               "bg-icons text-main-bg p-[0.2rem_0.8rem] rounded-[2rem]"
             )}
           >
-            Thế giới ảo
+           {nft.category} 
           </p>
           <div className="flex items-center gap-4">
             <DropDown items={cloudItems}>
@@ -286,7 +287,7 @@ const NFTDescription = ({ nft }: { nft: TMarketItem }) => {
                 className={cn("rounded-full")}
               />
               <div>
-                <small className={cn("font-medium")}>Người tạo</small> <br />
+                <small className={cn("font-medium")}>Người bán</small> <br />
                 <Link href={{ pathname: `/author/${seller?.id}` }}>
                   <span className={cn("font-bold flex items-center")}>
                     {seller?.username || nft.seller} <MdVerified />
@@ -333,9 +334,8 @@ const NFTDescription = ({ nft }: { nft: TMarketItem }) => {
                 >
                   Giá hiện tại
                 </small>
-                <p className={cn("px-[1rem] text-[1.5rem] font-extrabold")}>
-                  {nft.price} ETH <span>( ≈ $3,221.22)</span>
-                </p>
+                <br />
+                <EthPriceDisplay ethAmount={nft.price} className={cn("px-[1rem] text-[1.5rem] font-extrabold")} />
               </div>
             </div>
 

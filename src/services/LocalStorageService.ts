@@ -9,7 +9,10 @@ export class LocalStorageService {
     private static readonly WALLET_TOKEN_KEY = 'wallet_token';
     private static readonly PRIVATE_KEY_KEY = 'private_key';
 
-    // Safe method to access localStorage
+    // Cache for frequently accessed values
+    private static cache: Map<string, string> = new Map();
+
+    // Safe method to access localStorage with caching
     private static safeLocalStorage(operation: 'get' | 'set' | 'remove', key: string, value?: string): string | null {
         if (typeof window === 'undefined' || !window.localStorage) {
             console.log('LocalStorage not available');
@@ -18,12 +21,22 @@ export class LocalStorageService {
         
         try {
             if (operation === 'get') {
-                return localStorage.getItem(key);
+                // Check cache first
+                if (this.cache.has(key)) {
+                    return this.cache.get(key) || null;
+                }
+                const value = localStorage.getItem(key);
+                if (value) {
+                    this.cache.set(key, value);
+                }
+                return value;
             } else if (operation === 'set' && value !== undefined) {
                 localStorage.setItem(key, value);
+                this.cache.set(key, value);
                 return value;
             } else if (operation === 'remove') {
                 localStorage.removeItem(key);
+                this.cache.delete(key);
             }
         } catch (error) {
             console.error('LocalStorage operation failed:', error);
@@ -49,16 +62,22 @@ export class LocalStorageService {
         this.safeLocalStorage('remove', key);
     }
 
-    // Account address methods
+    // Account address methods with reduced logging
     static getAccountAddress(): string | null {
         const address = this.safeLocalStorage('get', this.ACCOUNT_ADDRESS_KEY);
-        console.log('LocalStorageService: Đọc địa chỉ tài khoản:', address);
+        // Only log in development
+        if (process.env.NODE_ENV === 'development') {
+            console.log('LocalStorageService: Đọc địa chỉ tài khoản:', address);
+        }
         return address;
     }
 
     static setAccountAddress(address: string): void {
         this.safeLocalStorage('set', this.ACCOUNT_ADDRESS_KEY, address);
-        console.log('LocalStorageService: Đã lưu địa chỉ tài khoản:', address);
+        // Only log in development
+        if (process.env.NODE_ENV === 'development') {
+            console.log('LocalStorageService: Đã lưu địa chỉ tài khoản:', address);
+        }
     }
 
     static clearAccountAddress(): void {

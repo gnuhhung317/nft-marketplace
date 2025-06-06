@@ -24,6 +24,7 @@ import Link from "next/link";
 import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
 import { LocalStorageProvider } from "@/utils/localStorageProvider";
 import { AccountContext, accountData } from "@/Context/AccountProvider";
+import { LocalStorageService } from "@/services/LocalStorageService";
 
 // TypeScript Props
 interface SideBarProps {
@@ -100,6 +101,7 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
     // Xóa tất cả dữ liệu tài khoản khỏi localStorage
     LocalStorageProvider.clearAccount();
     LocalStorageProvider.removeItem('accountData');
+    LocalStorageService.clearAll();
     
     // Reset trạng thái tài khoản về rỗng
     setAccount({...accountData});
@@ -152,8 +154,8 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
           {openHelp && (
             <div className={cn("pl-4")}>
               {helpCenter.map((el, i) => (
-                <p key={i} className="mb-2">
-                  <Link href={el.link}>{el.name}</Link>
+                <p key={i} className="mb-2 cursor-pointer" onClick={() => router.push(el.link)}>
+                  {el.name}
                 </p>
               ))}
             </div>
@@ -167,8 +169,8 @@ const SideBar: React.FC<SideBarProps> = ({ setOpenSideMenu, currentAccount, conn
           {openDiscover && (
             <div className={cn("pl-4 ")}>
               {discover.map((el, i) => (
-                <p key={i} className="mb-2">
-                  <Link href={el.link}>{el.name}</Link>
+                <p key={i} className="mb-2 cursor-pointer" onClick={() => router.push(el.link)}>
+                  {el.name}
                 </p>
               ))}
             </div>

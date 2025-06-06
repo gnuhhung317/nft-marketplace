@@ -56,7 +56,7 @@ const Form = ({
             if (!res.success) {
               const error = JSON.parse(res.error as string);
               console.log(error);
-              setError(error[0].message + " at " + error[0].path?.[0]);
+              setError(error[0].message + " ở " + error[0].path?.[0]);
               setOpenError(true);
               return;
             }

@@ -19,31 +19,52 @@ const SearchPage = () => {
   const [nftsCopy, setNftsCopy] = useState<TMarketItem[]>([]);
 
   useEffect(() => {
-    try {
-      // if (currentAccount) {
-        console.log('fetchNFTS')
-      fetchNFTs().then((items: TMarketItem[]) => {
-        console.log(items);
-        setNfts(items?.reverse());
-        setNftsCopy(items);
-      }).catch((reason)=>{
-        console.log(reason)
-      });
-      // }
-    } catch (error) {
-      setError("Please reload the browser");
-    }
-  }, []);
+    const loadNFTs = async () => {
+      try {
+        console.log('Bắt đầu tải NFTs...');
+        const items = await fetchNFTs();
+        console.log('Dữ liệu NFTs nhận được:', items);
+        
+        if (!items || items.length === 0) {
+          console.log('Không có NFT nào được tìm thấy');
+          setNfts([]);
+          setNftsCopy([]);
+          return;
+        }
+
+        // Đảm bảo dữ liệu hợp lệ trước khi lưu
+        const validItems = items.filter(item => 
+          item && 
+          item.tokenId && 
+          item.name && 
+          item.mediaUrl && 
+          item.price
+        );
+
+        console.log(`Đã lọc được ${validItems.length} NFT hợp lệ`);
+        setNfts(validItems);
+        setNftsCopy(validItems);
+      } catch (error) {
+        console.error('Lỗi khi tải NFTs:', error);
+        setError("Không thể tải dữ liệu NFT. Vui lòng thử lại sau.");
+      }
+    };
+
+    loadNFTs();
+  }, [fetchNFTs, setError]);
 
   const onHandleSearch = (value: string) => {
-    const filteredNFTS = nfts.filter(({ name }) =>
-      name.toLowerCase().includes(value.toLowerCase())
-    );
-    if (filteredNFTS.length === 0) {
+    if (!value.trim()) {
       setNfts(nftsCopy);
-    } else {
-      setNfts(filteredNFTS);
+      return;
     }
+
+    const searchTerm = value.toLowerCase().trim();
+    const filteredNFTS = nftsCopy.filter(({ name }) =>
+      name.toLowerCase().includes(searchTerm)
+    );
+
+    setNfts(filteredNFTS);
   };
 
   const onClearSearch = () => {

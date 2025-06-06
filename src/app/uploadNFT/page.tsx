@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import UploadNFT from "./UloadNFT";
 
 const UploadNFTComponent = () => {
-  const { createNFT, uploadToPinata } = useContext(NFTMarketplaceContext)!;
+  const { createNFT, uploadToPinata, accountBalance, gasEstimate, getListingPrice } = useContext(NFTMarketplaceContext)!;
 
   return (
     <div className={cn("w-full my-32")}>
@@ -18,17 +18,19 @@ const UploadNFTComponent = () => {
         </div>
 
         <div className={cn("border-b border-shadow-dark mt-8")}>
-          <h2 className={cn("text-3xl leading-none")}>Hình ảnh, Video, Âm thanh, hoặc Mô hình 3D</h2>
+          <h2 className={cn("text-3xl leading-none")}>Hình ảnh, Video, Âm thanh</h2>
           <p className={cn("text-lg font-medium py-4")}>
             Các định dạng tệp được hỗ trợ: JPG, PNG, GIF, SVG, MP4, WEBM, MP3, WAV, OGG, GLB, GLTF. Kích thước tối đa: 100 MB
           </p>
         </div>
 
         <div>
-          {/* uploadToIPFS={uploadToIPFS} */}
           <UploadNFT
             createNFT={createNFT}
             uploadToPinata={uploadToPinata}
+            accountBalance={accountBalance}
+            gasEstimate={gasEstimate}
+            getListingPrice={getListingPrice}
           />
         </div>
       </div>

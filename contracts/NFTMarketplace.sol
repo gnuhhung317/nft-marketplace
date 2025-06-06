@@ -308,6 +308,30 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
         return items;
     }
 
+    /* NEW: Returns only items that a specific address has purchased */
+    function fetchOwnedNFTs(address targetAddress) public view returns (MarketItem[] memory) {
+        uint256[] memory ownedTokens = userOwnedTokens[targetAddress];
+        MarketItem[] memory items = new MarketItem[](ownedTokens.length);
+        
+        for (uint256 i = 0; i < ownedTokens.length; i++) {
+            uint256 tokenId = ownedTokens[i];
+            items[i] = idToMarketItem[tokenId];
+        }
+        return items;
+    }
+
+    /* NEW: Returns only items a specific address has listed for sale */
+    function fetchListedNFTs(address targetAddress) public view returns (MarketItem[] memory) {
+        uint256[] memory listedTokens = userListedTokens[targetAddress];
+        MarketItem[] memory items = new MarketItem[](listedTokens.length);
+        
+        for (uint256 i = 0; i < listedTokens.length; i++) {
+            uint256 tokenId = listedTokens[i];
+            items[i] = idToMarketItem[tokenId];
+        }
+        return items;
+    }
+
     // ===== NEW TRACKING FEATURES =====
 
     /* 1. LỊCH SỬ GIAO DỊCH - Get transaction history of a token */
@@ -389,5 +413,27 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
         }
         
         return createdTokens;
+    }
+
+    /* NEW: Returns NFT details by tokenId with access control */
+    function fetchNFTByTokenId(uint256 tokenId) public view returns (MarketItem memory) {
+        require(_exists(tokenId), "Token does not exist");
+        
+        // Kiểm tra xem token có đang được list trên market không
+        bool isListed = false;
+        for (uint256 i = 0; i < activeMarketItems.length; i++) {
+            if (activeMarketItems[i] == tokenId) {
+                isListed = true;
+                break;
+            }
+        }
+        
+        // Kiểm tra xem người dùng có phải là chủ sở hữu token không
+        bool isOwner = ownerOf(tokenId) == msg.sender;
+        
+        // Chỉ cho phép xem nếu token đang được list hoặc người dùng là chủ sở hữu
+        require(isListed || isOwner, "Token is not accessible");
+        
+        return idToMarketItem[tokenId];
     }
 }

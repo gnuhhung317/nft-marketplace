@@ -1,3 +1,4 @@
+'use client'
 import React, { useContext, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,6 +7,12 @@ import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
 import { LoadingContext } from "@/Context/LoadingSpinnerProvider";
 import { TMarketItem } from "@/types";
 import { cn } from "@/lib/utils";
+import MediaPreview from "./MediaPreview";
+import { BsImage } from "react-icons/bs";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import { MdVerified } from "react-icons/md";
+import LikeProfile from "./LikeProfile";
+import { Like } from "./Like";
 
 type NFTCardProps = {
   nft: TMarketItem;
@@ -13,9 +20,11 @@ type NFTCardProps = {
 };
 
 const NFTCard = ({ nft, listedMode = false }: NFTCardProps) => {
-  const { buyNFT } = useContext(NFTMarketplaceContext)!;
+  const { buyNFT, currentAccount } = useContext(NFTMarketplaceContext)!;
   const { setLoading } = useContext(LoadingContext) || { setLoading: () => {} };
   const [isBuying, setIsBuying] = useState(false);
+  const [like, setLike] = useState(false);
+  const [likeInc, setLikeInc] = useState(21);
 
   const handleBuyNFT = async () => {
     try {
@@ -28,15 +37,21 @@ const NFTCard = ({ nft, listedMode = false }: NFTCardProps) => {
     }
   };
 
+  const likeNFT = () => {
+    setLike(!like);
+    setLikeInc(like ? likeInc - 1 : likeInc + 1);
+  };
+
   return (
-    <div className="rounded-2xl overflow-hidden border border-icons/30 bg-main-bg shadow-custom transition-all duration-300 hover:shadow-lg hover:border-icons/60">      {/* NFT Image */}
-      <Link href={`/NFT-details/${nft.tokenId}`} className="block relative">
+    <div className="rounded-2xl overflow-hidden border border-icons/30 bg-main-bg shadow-custom transition-all duration-300 hover:shadow-lg hover:border-icons/60">
+      {/* NFT Media */}
+      <div className="block relative">
         <div className="relative h-60 w-full overflow-hidden group">
-          <Image
-            src={nft.image || "/images/nft_1.png"}
-            alt={nft.name || "NFT"}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-110"
+          <MediaPreview
+            mediaType={nft.mediaType}
+            mediaUrl={nft.mediaUrl}
+            thumbnailUrl={nft.thumbnailUrl}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
           <div className="absolute top-2 right-2 bg-main-bg/70 backdrop-blur-sm rounded-full px-3 py-1 border border-icons/20">
             <div className="flex items-center">
@@ -45,49 +60,40 @@ const NFTCard = ({ nft, listedMode = false }: NFTCardProps) => {
             </div>
           </div>
         </div>
-      </Link>
+      </div>
 
       {/* NFT Info */}
       <div className="p-4">
-        <div className="flex justify-between items-center mb-2">
-          <Link href={`/NFT-details/${nft.tokenId}`} className="block w-3/4">
-            <h3 className="text-primary font-semibold text-xl truncate hover:text-icons transition-colors">
-              {nft.name || `NFT #${nft.tokenId}`}
-            </h3>
-          </Link>
-        </div>
-          <div className="flex justify-between items-center mb-4">
-          <Link href={`/author?address=${nft.seller}`} className="block">
-            <span className="text-primary/70 text-sm hover:text-icons transition-colors flex items-center">
-              <span className="w-2 h-2 bg-green-500 rounded-full mr-1.5"></span>
-              {nft.seller && nft.seller !== "0x0000000000000000000000000000000000000000" 
-                ? `${nft.seller.substring(0, 6)}...${nft.seller.substring(nft.seller.length - 4)}`
-                : "No seller info"
-              }
-            </span>
-          </Link>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <div>
+              <p className="text-sm font-medium">Người bán</p>
+              <p className="text-xs text-icons/70">{nft.seller?.slice(0, 6)}...{nft.seller?.slice(-4)}</p>
+            </div>
+          </div>
         </div>
 
-        {listedMode && (
+        <Link href={`/NFT-details/${nft.tokenId}`} className="block">
+          <h3 className="text-lg font-bold mb-2">{nft.name}</h3>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MdVerified className="text-primary" />
+              <span className="text-sm text-icons/70">Đã xác minh</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <FaEthereum className="text-primary" />
+              <span className="font-bold">{nft.price} ETH</span>
+            </div>
+          </div>
+        </Link>
+
+        {listedMode && currentAccount !== nft.seller && (
           <button
             onClick={handleBuyNFT}
             disabled={isBuying}
-            className={cn(
-              "w-full py-2.5 rounded-lg text-center font-semibold",
-              "bg-icons text-main-bg hover:bg-main-bg hover:text-icons transition-colors duration-300",
-              "border border-transparent hover:border-icons",
-              "flex items-center justify-center",
-              isBuying ? "opacity-70 cursor-not-allowed" : ""
-            )}
+            className="w-full mt-4 bg-primary text-white py-2 rounded-lg hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isBuying ? (
-              <>
-                <div className="h-4 w-4 border-2 border-main-bg border-t-transparent animate-spin rounded-full mr-2"></div>
-                Đang xử lý...
-              </>
-            ) : (
-              "Mua ngay"
-            )}
+            {isBuying ? "Đang xử lý..." : "Mua ngay"}
           </button>
         )}
       </div>

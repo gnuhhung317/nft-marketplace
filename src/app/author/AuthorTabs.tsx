@@ -27,11 +27,11 @@ const AuthorTabs = ({
   const [activeBtn, setActiveBtn] = useState(1);
   const [selectedMenu, setSelectedMenu] = useState('Mới nhất');
   const [marketNFTs, setMarketNFTs] = useState<TMarketItem[]>([]);
-  const [myNFTs, setMyNFTs] = useState<TMarketItem[]>([]);
+  const [ownedNFTs, setOwnedNFTs] = useState<TMarketItem[]>([]);
   const [listedNFTs, setListedNFTs] = useState<TMarketItem[]>([]);
   const [loadingMarket, setLoadingMarket] = useState(true);
-  const [loadingMyNFTs, setLoadingMyNFTs] = useState(true);
-  const [loadingListedNFTs, setLoadingListedNFTs] = useState(true);
+  const [loadingOwned, setLoadingOwned] = useState(true);
+  const [loadingListed, setLoadingListed] = useState(true);
   const [error, setError] = useState("");
 
   const searchParams = useSearchParams();
@@ -59,9 +59,16 @@ const AuthorTabs = ({
         setLoadingMarket(true);
         setError("");
         
-        console.log("Đang tải NFT thị trường...");
-        const items = await fetchNFTs();
-        console.log("Kết quả fetchNFTs:", items);
+        // Sử dụng addressParam nếu có, nếu không thì dùng currentAccount
+        const targetAddress = addressParam || currentAccount;
+        if (!targetAddress) {
+          setMarketNFTs([]);
+          return;
+        }
+        
+        console.log("Đang tải NFT thị trường cho địa chỉ:", targetAddress);
+        const items = await fetchMyNFTsOrListedNFTs("fetchItemsListed", targetAddress);
+        console.log("Kết quả fetchItemsListed:", items);
         setMarketNFTs(items || []);
       } catch (err) {
         console.error("Lỗi khi tải NFTs thị trường:", err);
@@ -72,48 +79,51 @@ const AuthorTabs = ({
     };
 
     loadMarketplaceNFTs();
-  }, []); // Empty dependency array since we only want to run once on mount
+  }, [addressParam, currentAccount]); // Thêm dependencies để load lại khi địa chỉ thay đổi
   
   // Load user data when connected or address param changes
   useEffect(() => {
-    const loadUserNFTs = async () => {
+    if (addressParam || currentAccount) {
+      loadUserNFTs();
+    }
+  }, [addressParam, currentAccount]);
+
+  const loadUserNFTs = async () => {
+    try {
+      setLoadingOwned(true);
+      setLoadingListed(true);
+      setError("");
+
+      // Sử dụng addressParam nếu có, nếu không thì dùng currentAccount
       const targetAddress = addressParam || currentAccount;
       
       if (!targetAddress) {
         console.log("Không có địa chỉ để tải NFT");
-        setLoadingMyNFTs(false);
-        setLoadingListedNFTs(false);
+        setLoadingOwned(false);
+        setLoadingListed(false);
         return;
       }
-      
-      try {
-        setLoadingMyNFTs(true);
-        setLoadingListedNFTs(true);
-        setError("");
-        
-        // Fetch both owned and listed NFTs
-        const [ownedItems, listedItems] = await Promise.all([
-          fetchMyNFTsOrListedNFTs("owned"),
-          fetchMyNFTsOrListedNFTs("fetchItemsListed")
-        ]);
-        
-        console.log(`Đã tìm thấy ${ownedItems.length} NFT sở hữu và ${listedItems.length} NFT đang bán`);
-        
-        setMyNFTs(ownedItems || []);
-        setListedNFTs(listedItems || []);
-      } catch (err) {
-        console.error("Lỗi khi tải NFTs:", err);
-        setError("Không thể tải dữ liệu NFT. Vui lòng thử lại sau.");
-      } finally {
-        setLoadingMyNFTs(false);
-        setLoadingListedNFTs(false);
-      }
-    };
 
-    if (addressParam || currentAccount) {
-      loadUserNFTs();
+      console.log(`Đang tải NFT cho địa chỉ: ${targetAddress}`);
+
+      // Tải NFT đang sở hữu
+      const ownedNFTsData = await fetchMyNFTsOrListedNFTs("fetchMyNFTs", targetAddress);
+      console.log(`Tìm thấy ${ownedNFTsData.length} NFT đang sở hữu`);
+      setOwnedNFTs(ownedNFTsData);
+
+      // Tải NFT đang bán
+      const listedNFTsData = await fetchMyNFTsOrListedNFTs("fetchItemsListed", targetAddress);
+      console.log(`Tìm thấy ${listedNFTsData.length} NFT đang bán`);
+      setListedNFTs(listedNFTsData);
+
+    } catch (error) {
+      console.error("Lỗi khi tải NFT:", error);
+      setError("Không thể tải dữ liệu NFT. Vui lòng thử lại sau.");
+    } finally {
+      setLoadingOwned(false);
+      setLoadingListed(false);
     }
-  }, [addressParam, currentAccount]); // Only depend on address changes
+  };
   
   // Apply sorting based on selected menu
   useEffect(() => {
@@ -139,7 +149,7 @@ const AuthorTabs = ({
     };
     
     setMarketNFTs(prev => sortNFTs([...prev]));
-    setMyNFTs(prev => sortNFTs([...prev]));
+    setOwnedNFTs(prev => sortNFTs([...prev]));
     setListedNFTs(prev => sortNFTs([...prev]));
   }, [selectedMenu]);
 
@@ -150,7 +160,7 @@ const AuthorTabs = ({
         setCollectiables(true); setCreated(false); setFollower(false); 
         setFollowing(false); setLike(false); setActiveBtn(1); 
       },
-      'NFT của tôi': () => { 
+      'NFT sở hữu': () => { 
         setCollectiables(false); setCreated(true); setFollower(false); 
         setFollowing(false); setLike(false); setActiveBtn(2); 
       },
@@ -168,7 +178,7 @@ const AuthorTabs = ({
 
   const isTabLoading = () => {
     if (activeBtn === 1) return loadingMarket;
-    if (activeBtn === 2) return loadingMyNFTs || loadingListedNFTs;
+    if (activeBtn === 2) return loadingOwned || loadingListed;
     return false;
   };
 
@@ -199,7 +209,7 @@ const AuthorTabs = ({
     <div className={cn('mt-32 mb-12')}>
       <div className={cn('mx-auto w-4/5 lg:flex lg:justify-between')}>
         <div className={cn('flex gap-4 md:gap-8 items-center flex-wrap')}>
-          {['Thị trường', 'NFT của tôi', 'Đang theo dõi', 'Người theo dõi'].map((btn, idx) => (
+          {['Thị trường', 'NFT sở hữu', 'Đang theo dõi', 'Người theo dõi'].map((btn, idx) => (
             <button
               key={idx}
               onClick={openTab}
@@ -212,7 +222,7 @@ const AuthorTabs = ({
             </button>
           ))}
         </div>
-        <div className={cn('relative lg:mt-0 mt-8 z-[9]')}>
+        {/* <div className={cn('relative lg:mt-0 mt-8 z-[9]')}>
           <DropdownMenu onOpenChange={setOpenList}>
             <DropdownMenuTrigger className="flex border border-icons px-4 py-2 rounded-3xl items-center">
               <p className={cn('text-xl leading-none whitespace-nowrap mr-2')}>{selectedMenu}</p>
@@ -233,7 +243,7 @@ const AuthorTabs = ({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
+        </div> */}
       </div>
       
       {error && (
@@ -261,8 +271,7 @@ const AuthorTabs = ({
                 {(addressParam || currentAccount) ? (
                   <div className="space-y-8">
                     <div>
-                      <h2 className="text-xl font-semibold mb-4">NFT Đang Sở Hữu</h2>
-                      {renderNFTGrid(myNFTs, addressParam ? 'Địa chỉ này chưa sở hữu NFT nào' : 'Bạn chưa sở hữu NFT nào')}
+                      {renderNFTGrid(ownedNFTs, addressParam ? 'Địa chỉ này chưa sở hữu NFT nào' : 'Bạn chưa sở hữu NFT nào')}
                     </div>
                     {/* <div>
                       <h2 className="text-xl font-semibold mb-4">NFT Đang Bán</h2>

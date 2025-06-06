@@ -2,15 +2,18 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { NFTMarketplaceContext } from "@/Context/NFTMarketplaceContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import MediaPreview from "@/components/MediaPreview";
+import { MediaType } from "@/types/nft";
 
 const ReSellToken = () => {
   const { createSale } = useContext(NFTMarketplaceContext)!;
-  const [image, setImage] = useState("");
+  const [mediaUrl, setMediaUrl] = useState("");
+  const [mediaType, setMediaType] = useState<MediaType>(MediaType.IMAGE);
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | undefined>();
   const [price, setPrice] = useState("");
   const [id, setId] = useState("");
   const [tokenURI, setTokenURI] = useState("");
@@ -26,7 +29,9 @@ const ReSellToken = () => {
   const fetchNFT = async () => {
     if (!tokenURI) return;
     const { data } = await axios.get(tokenURI as string);
-    setImage(data.image);
+    setMediaUrl(data.image);
+    setMediaType(data.mediaType || MediaType.IMAGE);
+    setThumbnailUrl(data.thumbnailUrl);
   };
 
   useEffect(() => {
@@ -59,9 +64,14 @@ const ReSellToken = () => {
           />
         </div>
 
-        <div className={cn("my-16")}>
-          {image && (
-            <Image src={image} alt="Bán lại NFT" width={400} height={400} className="w-full" />
+        <div className={cn("my-16 relative w-full aspect-square")}>
+          {mediaUrl && (
+            <MediaPreview
+              mediaType={mediaType}
+              mediaUrl={mediaUrl}
+              thumbnailUrl={thumbnailUrl}
+              className="w-full h-full object-cover rounded-lg"
+            />
           )}
         </div>
 

@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { SUPPORTED_NETWORKS } from '../Context/constants';
+import { LocalStorageService } from './LocalStorageService';
 
 export class WalletService {
     private apiUrl: string;
@@ -79,9 +80,10 @@ export class WalletService {
     }
     // Lấy số dư
     async getBalance(accountId: number) {
-        const url = new URL(`${this.apiUrl}/wallet/balance`);
+        const url = new URL(`${this.apiUrl}/wallet/get-balance`);
         url.searchParams.append('account_id', accountId.toString());
         url.searchParams.append('chain_id', '1');
+        this.token = LocalStorageService.getWalletToken() || '';
         const response = await fetch(url.toString(), {
             method: 'GET',
             headers: {
