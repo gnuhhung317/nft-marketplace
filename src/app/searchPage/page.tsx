@@ -16,7 +16,7 @@ const SearchPage = () => {
     NFTMarketplaceContext
   )!;
   const [nfts, setNfts] = useState<TMarketItem[]>([]);
-  const [nftsCopy, setNftsCopy] = useState<TMarketItem[]>([]);
+  const [filteredNFTs, setFilteredNFTs] = useState<TMarketItem[]>([]);
 
   useEffect(() => {
     const loadNFTs = async () => {
@@ -28,7 +28,7 @@ const SearchPage = () => {
         if (!items || items.length === 0) {
           console.log('Không có NFT nào được tìm thấy');
           setNfts([]);
-          setNftsCopy([]);
+          setFilteredNFTs([]);
           return;
         }
 
@@ -43,7 +43,7 @@ const SearchPage = () => {
 
         console.log(`Đã lọc được ${validItems.length} NFT hợp lệ`);
         setNfts(validItems);
-        setNftsCopy(validItems);
+        setFilteredNFTs(validItems);
       } catch (error) {
         console.error('Lỗi khi tải NFTs:', error);
         setError("Không thể tải dữ liệu NFT. Vui lòng thử lại sau.");
@@ -55,22 +55,26 @@ const SearchPage = () => {
 
   const onHandleSearch = (value: string) => {
     if (!value.trim()) {
-      setNfts(nftsCopy);
+      setFilteredNFTs(nfts);
       return;
     }
 
     const searchTerm = value.toLowerCase().trim();
-    const filteredNFTS = nftsCopy.filter(({ name }) =>
+    const filteredNFTS = nfts.filter(({ name }) =>
       name.toLowerCase().includes(searchTerm)
     );
 
-    setNfts(filteredNFTS);
+    setFilteredNFTs(filteredNFTS);
   };
 
   const onClearSearch = () => {
-    if (nfts.length && nftsCopy.length) {
-      setNfts(nftsCopy);
+    if (nfts.length && filteredNFTs.length) {
+      setFilteredNFTs(nfts);
     }
+  };
+
+  const handleFilterChange = (filteredNFTs: TMarketItem[]) => {
+    setFilteredNFTs(filteredNFTs);
   };
 
   return (
@@ -80,8 +84,14 @@ const SearchPage = () => {
         onHandleSearch={onHandleSearch}
         onClearSearch={onClearSearch}
       />
-      <Filter />
-      {nfts.length == 0 ? <Loader /> : <NFTCardTwo NFTs={nfts} />}
+      <Filter nfts={nfts} onFilterChange={handleFilterChange} />
+      {filteredNFTs.length === 0 ? (
+        <div className="w-4/5tt mx-auto text-center py-8">
+          <p className="text-xl text-icons">Không có NFT nào được tìm thấy</p>
+        </div>
+      ) : (
+        <NFTCardTwo NFTs={filteredNFTs} />
+      )}
       <Slider />
       <Brand />
     </div>

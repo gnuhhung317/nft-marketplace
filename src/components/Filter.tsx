@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FaFilter,
   FaAngleDown,
@@ -16,14 +16,26 @@ import { TiTick } from 'react-icons/ti';
 import { Button } from './ui/button';
 import { CATEGORIES } from '@/constants/categories';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { TMarketItem } from '@/types';
+import { MediaType } from '@/types/nft';
+import { Input } from '@/components/ui/input';
 
-const Filter: React.FC = () => {
+interface FilterProps {
+  nfts: TMarketItem[];
+  onFilterChange: (filteredNFTs: TMarketItem[]) => void;
+}
+
+const Filter: React.FC<FilterProps> = ({ nfts, onFilterChange }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [filter, setFilter] = useState(true);
   const [image, setImage] = useState(true);
   const [video, setVideo] = useState(true);
   const [music, setMusic] = useState(true);
+  const [noNFTs, setNoNFTs] = useState(false);
+  const [showPriceFilter, setShowPriceFilter] = useState(false);
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
 
   const currentCategory = searchParams.get('category') || '';
 
@@ -31,6 +43,48 @@ const Filter: React.FC = () => {
   const toggleImage = () => setImage(!image);
   const toggleVideo = () => setVideo(!video);
   const toggleMusic = () => setMusic(!music);
+  const togglePriceFilter = () => setShowPriceFilter(!showPriceFilter);
+
+  const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMinPrice(e.target.value);
+  };
+
+  const handleMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMaxPrice(e.target.value);
+  };
+
+  const applyFilters = () => {
+    let filteredNFTs = nfts;
+
+    // Lọc theo category
+    if (currentCategory) {
+      filteredNFTs = filteredNFTs.filter(nft => nft.category === currentCategory);
+    }
+
+    // Lọc theo thể loại media
+    if (!image || !video || !music) {
+      filteredNFTs = filteredNFTs.filter(nft => {
+        // Nếu media type được chọn (true) thì giữ lại NFT có media type đó
+        if (image && nft.mediaType === MediaType.IMAGE) return true;
+        if (video && nft.mediaType === MediaType.VIDEO) return true;
+        if (music && nft.mediaType === MediaType.AUDIO) return true;
+        return false;
+      });
+    }
+
+    // Lọc theo giá
+    if (minPrice || maxPrice) {
+      filteredNFTs = filteredNFTs.filter(nft => {
+        const price = parseFloat(nft.price);
+        const min = minPrice ? parseFloat(minPrice) : 0;
+        const max = maxPrice ? parseFloat(maxPrice) : Infinity;
+        return price >= min && price <= max;
+      });
+    }
+
+    setNoNFTs(filteredNFTs.length === 0);
+    onFilterChange(filteredNFTs);
+  };
 
   const handleCategoryChange = (category: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -39,8 +93,23 @@ const Filter: React.FC = () => {
     } else {
       params.delete('category');
     }
-    router.push(`?${params.toString()}`);
+    router.push(`?${params.toString()}`, { scroll: false });
+    applyFilters();
   };
+
+  // Áp dụng filter khi media type thay đổi
+  useEffect(() => {
+    applyFilters();
+  }, [image, video, music]);
+
+  // Áp dụng filter khi giá thay đổi
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      applyFilters();
+    }, 500); // Debounce 500ms
+
+    return () => clearTimeout(timeoutId);
+  }, [minPrice, maxPrice]);
 
   return (
     <div className="py-16 w-full">
@@ -76,28 +145,54 @@ const Filter: React.FC = () => {
       </div>
 
       {filter && (
-        <div className="w-4/5tt mx-auto flex flex-wrap gap-4 border-t border-icons-light py-8">
-          <div className="flex gap-2 items-center bg-icons text-main-bg p-4 rounded-full cursor-pointer">
-            <FaWallet /> <span>10 ETH</span> <AiFillCloseCircle />
+        <div className="w-4/5tt mx-auto flex flex-col gap-8 border-t border-icons-light py-8">
+          <div className="flex flex-wrap gap-4">
+            <div className="flex gap-2 items-center border border-icons p-4 rounded-full cursor-pointer"
+              onClick={toggleImage}>
+              <FaImages /> <small>Hình Ảnh</small>
+              {image ? <TiTick /> : <AiFillCloseCircle />}
+            </div>
+            <div className="flex gap-2 items-center border border-icons p-4 rounded-full cursor-pointer"
+              onClick={toggleVideo}>
+              <FaVideo /> <small>Video</small>
+              {video ? <TiTick /> : <AiFillCloseCircle />}
+            </div>
+            <div className="flex gap-2 items-center border border-icons p-4 rounded-full cursor-pointer"
+              onClick={toggleMusic}>
+              <FaMusic /> <small>Âm Nhạc</small>
+              {music ? <TiTick /> : <AiFillCloseCircle />}
+            </div>
+            <div 
+              className={`flex gap-2 items-center border border-icons p-4 rounded-full cursor-pointer transition-all duration-300 ${
+                showPriceFilter ? 'bg-icons text-main-bg' : ''
+              }`}
+              onClick={togglePriceFilter}
+            >
+              <FaWallet /> <small>Giá</small>
+              {showPriceFilter ? <TiTick /> : <AiFillCloseCircle />}
+            </div>
           </div>
-          <div className="flex gap-2 items-center border border-icons p-4 rounded-full cursor-pointer"
-            onClick={toggleImage}>
-            <FaImages /> <small>Hình Ảnh</small>
-            {image ? <AiFillCloseCircle /> : <TiTick />}
-          </div>
-          <div className="flex gap-2 items-center border border-icons p-4 rounded-full cursor-pointer"
-            onClick={toggleVideo}>
-            <FaVideo /> <small>Video</small>
-            {video ? <AiFillCloseCircle /> : <TiTick />}
-          </div>
-          <div className="flex gap-2 items-center border border-icons p-4 rounded-full cursor-pointer"
-            onClick={toggleMusic}>
-            <FaMusic /> <small>Âm Nhạc</small>
-            {music ? <AiFillCloseCircle /> : <TiTick />}
-          </div>
-          <div className="flex gap-2 items-center bg-icons text-main-bg p-4 rounded-full cursor-pointer">
-            <FaUserAlt /> <span>Đã Xác Minh</span> <MdVerified />
-          </div>
+
+          {showPriceFilter && (
+            <div className="flex items-center gap-4 bg-main-bg/50 p-4 rounded-lg border border-icons-light">
+              <Input
+                type="number"
+                value={minPrice}
+                onChange={handleMinPriceChange}
+                placeholder="Giá tối thiểu"
+                className="w-32 bg-main-bg border-icons text-icons placeholder:text-icons/50"
+              />
+              <span className="text-icons">-</span>
+              <Input
+                type="number"
+                value={maxPrice}
+                onChange={handleMaxPriceChange}
+                placeholder="Giá tối đa"
+                className="w-32 bg-main-bg border-icons text-icons placeholder:text-icons/50"
+              />
+              <span className="text-icons">ETH</span>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -28,23 +28,13 @@ const SliderCard: React.FC<SliderCardProps> = ({ el, i }) => {
         </div>
         <div className={cn("flex items-center justify-between gap-4 px-8")}>
           <p className={cn("text-xl leading-none font-bold my-4 whitespace-nowrap")}>Video NFT #{i + 1}</p>
-          <div className={cn("flex items-center gap-2")}>
-            {/* <LikeProfile /> */}
-            <small className="whitespace-nowrap">{i + 4} trong 100</small>
-          </div>
+         
         </div>
 
         <div className={cn("flex justify-between px-8 mt-4")}>
           <div className={cn("border relative border-icons p-2 rounded-sm")}>
             <small className={cn("bg-icons px-2 py-1 rounded-sm text-main-bg absolute top-[-1rem] left-4")}>Giá Hiện Tại</small>
             <p className={cn("text-lg font-bold mt-2 whitespace-nowrap")}>{(i + 2).toFixed(3)} ETH</p>
-          </div>
-
-          <div className={cn("flex flex-col justify-end items-end text-right")}>
-            <small>Thời gian còn lại</small>
-            <p className={cn("text-lg font-bold whitespace-nowrap")}>
-              {i + 1}h : 15m : {i + 4}0s
-            </p>
           </div>
         </div>
       </div>

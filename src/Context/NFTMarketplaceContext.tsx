@@ -119,7 +119,6 @@ export const NFTMarketplaceProvider = ({
   const fetchBalance = useCallback(async () => {
     const accountId = LocalStorageService.getAccountId();
     if (!accountId) return;
-    debugger;
     const balance = await walletContext?.walletService.getBalance(Number(accountId));
     setAccountBalance(balance.data.balance);
   }, [walletContext]);
