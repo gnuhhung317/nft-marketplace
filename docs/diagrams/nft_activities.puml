@@ -1,0 +1,205 @@
+@startuml Mint and Sell NFT
+|User|
+start
+:Chọn tệp media;
+|System|
+:Kiểm tra định dạng file;
+if (Định dạng hợp lệ?) then (yes)
+  :Upload lên IPFS;
+  :Tạo metadata;
+  :Nhập thông tin NFT;
+  |Smart Contract|
+  :Kiểm tra phí listing;
+  if (Đủ phí?) then (yes)
+    :Tạo token mới;
+    :Gán quyền sở hữu;
+    :Tạo market item;
+    :Phát sinh sự kiện;
+    |System|
+    :Cập nhật UI;
+    :Chuyển đến trang tìm kiếm;
+  else (no)
+    |System|
+    :Hiển thị lỗi phí;
+    :Giữ ở trang tạo NFT;
+    |User|
+    :Sửa thông tin;
+    repeat
+      :Nhập thông tin NFT;
+    repeat while (Phí hợp lệ?) is (no) not (yes)
+  endif
+else (no)
+  |System|
+  :Hiển thị lỗi định dạng;
+  :Giữ ở trang tạo NFT;
+  |User|
+  :Chọn lại file;
+  repeat
+    :Chọn tệp media;
+  repeat while (Định dạng hợp lệ?) is (no) not (yes)
+endif
+|User|
+:Hoàn thành;
+stop
+@enduml
+
+@startuml Buy NFT
+|User|
+start
+:Chọn NFT để mua;
+|System|
+:Kiểm tra giá và số dư;
+if (Đủ số dư?) then (yes)
+  :Hiển thị xác nhận mua;
+  if (Xác nhận?) then (yes)
+    |Smart Contract|
+    :Kiểm tra quyền sở hữu;
+    :Chuyển NFT;
+    :Chuyển tiền;
+    :Cập nhật listing;
+    :Phát sinh sự kiện;
+    |System|
+    :Cập nhật UI;
+  else (no)
+    :Hủy giao dịch;
+  endif
+else (no)
+  :Hiển thị lỗi số dư;
+endif
+|User|
+:Hoàn thành;
+stop
+@enduml
+
+@startuml Search and Filter NFT
+|User|
+start
+:Nhập từ khóa tìm kiếm;
+|System|
+:Phân tích từ khóa;
+fork
+  :Tìm theo tên;
+fork again
+  :Tìm theo danh mục;
+fork again
+  :Tìm theo loại media;
+end fork
+:Tổng hợp kết quả;
+:Lọc trùng lặp;
+:Sắp xếp kết quả;
+|User|
+:Xem kết quả;
+
+|User|
+:Chọn bộ lọc;
+|System|
+fork
+  :Lọc theo giá;
+  if (Có nhập giá min/max?) then (có)
+    :Lọc NFT theo khoảng giá;
+  else (không)
+    :Bỏ qua lọc giá;
+  endif
+fork again
+  :Lọc theo loại media;
+  if (Đã chọn loại media?) then (có)
+    :Lọc NFT theo loại media;
+  else (không)
+    :Bỏ qua lọc media;
+  endif
+fork again
+  :Lọc theo danh mục;
+  if (Đã chọn danh mục?) then (có)
+    :Lọc NFT theo danh mục;
+  else (không)
+    :Bỏ qua lọc danh mục;
+  endif
+end fork
+:Tổng hợp kết quả đã lọc;
+:Sắp xếp kết quả;
+|User|
+:Xem kết quả đã lọc;
+stop
+@enduml
+
+@startuml List NFT
+|User|
+start
+:Chọn NFT để bán;
+|System|
+:Kiểm tra quyền sở hữu;
+if (Có quyền?) then (yes)
+  :Nhập giá bán;
+  |Smart Contract|
+  :Kiểm tra phí listing;
+  if (Đủ phí?) then (yes)
+    :Phê duyệt marketplace;
+    :Tạo listing;
+    :Phát sinh sự kiện;
+    |System|
+    :Cập nhật UI;
+  else (no)
+    :Hiển thị lỗi phí;
+  endif
+else (no)
+  :Hiển thị lỗi quyền;
+endif
+|User|
+:Hoàn thành;
+stop
+@enduml
+
+@startuml Update Profile
+|User|
+start
+:Truy cập trang profile;
+|System|
+:Kiểm tra đăng nhập;
+if (Đã đăng nhập?) then (yes)
+  :Hiển thị form cập nhật;
+  |User|
+  :Nhập thông tin mới;
+  |System|
+  :Kiểm tra tính hợp lệ;
+  if (Hợp lệ?) then (yes)
+    :Cập nhật database;
+    :Cập nhật UI;
+  else (no)
+    :Hiển thị lỗi;
+  endif
+else (no)
+  :Chuyển hướng đăng nhập;
+endif
+|User|
+:Hoàn thành;
+stop
+@enduml
+
+@startuml Connect Wallet
+|User|
+start
+:Nhấn nút kết nối ví;
+|System|
+:Kiểm tra Web3Modal;
+if (Có ví?) then (yes)
+  :Hiển thị danh sách ví;
+  |User|
+  :Chọn ví;
+  |System|
+  :Kết nối ví;
+  :Lấy địa chỉ;
+  :Kiểm tra mạng;
+  if (Đúng mạng?) then (yes)
+    :Cập nhật trạng thái;
+    :Lấy số dư;
+    :Cập nhật UI;
+  else (no)
+    :Yêu cầu chuyển mạng;
+  endif
+else (no)
+  :Hướng dẫn cài đặt ví;
+endif
+|User|
+:Hoàn thành;
+stop
+@enduml 

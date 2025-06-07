@@ -35,7 +35,9 @@
     \hline
     description & String & Mô tả \\
     \hline
-    imageUrl & String & URL hình ảnh \\
+    mediaType & String & loại media\\
+    \hline
+    mediaUrl & String & URL media \\
     \hline
 \end{tabular}
 \end{center}
@@ -63,15 +65,37 @@
 
 \section{Thiết kế giao diện}
 
-\subsection{Giao diện người dùng}
 \begin{itemize}
     \item \textbf{Trang chủ:} Hiển thị NFT nổi bật, thanh tìm kiếm và bộ lọc.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{./images/homepage.png}
+        \caption{Giao diện trang chủ}
+        \label{fig:homepage}
+    \end{figure}
+
     \item \textbf{Trang tạo NFT:} Form nhập thông tin và tải hình ảnh.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{./images/create-nft.png}
+        \caption{Giao diện trang tạo NFT}
+        \label{fig:create-nft}
+    \end{figure}
+
     \item \textbf{Trang chi tiết NFT:} Thông tin NFT, lịch sử giao dịch, tùy chọn mua/bán.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{./images/nft-detail.png}
+        \caption{Giao diện trang chi tiết NFT}
+        \label{fig:nft-detail}
+    \end{figure}
+
     \item \textbf{Trang quản lý tài khoản:} Quản lý thông tin cá nhân, ví và NFT sở hữu.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{./images/profile.png}
+        \caption{Giao diện trang quản lý tài khoản}
+        \label{fig:profile}
+    \end{figure}
 \end{itemize}
 
-\subsection{Giao diện Smart Contract Owner}
-\begin{itemize}
-    \item [Cần bổ sung]: Dashboard quản lý phí listing (nếu có).
-\end{itemize} 

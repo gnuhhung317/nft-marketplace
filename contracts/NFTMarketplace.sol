@@ -126,8 +126,6 @@ contract NFTMarketplace is ERC721URIStorage, ReentrancyGuard {
         returns (uint256)
     {
         require(price > 0, "Price must be greater than 0");
-        require(msg.value == listingPrice, "Must pay listing price");
-        require(bytes(mediaType).length > 0, "Media type cannot be empty");
 
         _tokenIds.increment();
         uint256 newTokenId = _tokenIds.current();

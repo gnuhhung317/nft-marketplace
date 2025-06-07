@@ -3,101 +3,251 @@
 \section{Giới thiệu chung}
 \textbf{Bảng 2.1: Bảng liệt kê các tác nhân và mô tả thông tin}
 \begin{center}
+\renewcommand{\arraystretch}{1.5}
 \begin{tabular}{|c|l|p{8cm}|}
     \hline
-    \textbf{STT} & \textbf{Tên tác nhân} & \textbf{Mô tả tác nhân} \\
+    \rule{0pt}{3ex}\textbf{STT} & \textbf{Tên tác nhân} & \textbf{Mô tả tác nhân} \\
     \hline
-    1 & Người dùng (User) & Người sử dụng nền tảng để tạo, mua, bán và quản lý NFT \\
-    \hline
-    2 & Smart Contract Owner & Người sở hữu hợp đồng thông minh, cập nhật phí listing \\
+    \rule{0pt}{3ex}1 & Người dùng (User) & Người sử dụng nền tảng để kết nối ví, tạo, mua và quản lý NFT \\
     \hline
 \end{tabular}
 \end{center}
 
 \section{Biểu đồ use case}
-[Hình 2.1: Biểu đồ use case tổng quan - Chèn biểu đồ tại đây] \\
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./images/usecases.png}
+    \caption{Biểu đồ hoạt động "Quản lý tài khoản"}
+    \label{fig:usecases}
+\end{figure}
 \textbf{Giải thích:} \\
-- Người dùng thực hiện các use case: "Tạo NFT", "Mua NFT", "Bán NFT", "Quản lý tài khoản", "Tìm kiếm NFT". \\
-- Smart Contract Owner thực hiện use case: "Cập nhật phí listing".
+- Người dùng thực hiện các use case: "Kết nối ví", "Tạo NFT", "Mua NFT", "Quản lý tài khoản", "Tìm kiếm NFT". \\
 
 \section{Đặc tả use case}
 
-\subsection{Use case "Tạo NFT"}
+\subsection{Use case "Kết nối ví"}
+\textbf{Bảng 2.2: Đặc tả use case "Kết nối ví"}
+\renewcommand{\arraystretch}{1.5}
 \begin{tabular}{|l|p{10cm}|}
     \hline
-    \textbf{Mã Use case} & UC101 \\
+    \rule{0pt}{3ex}\textbf{Mã Use case} & UC101 \\
     \hline
-    \textbf{Tên Use case} & Tạo NFT \\
+    \rule{0pt}{3ex}\textbf{Tên Use case} & Kết nối ví \\
     \hline
-    \textbf{Tác nhân} & Người dùng \\
+    \rule{0pt}{3ex}\textbf{Tác nhân} & Người dùng \\
     \hline
-    \textbf{Mô tả} & Cho phép người dùng tạo và đúc NFT mới trên blockchain \\
+    \rule{0pt}{3ex}\textbf{Mô tả} & Cho phép người dùng kết nối ví Dragon để tương tác với marketplace \\
     \hline
-    \textbf{Tiền điều kiện} & Người dùng đã kết nối ví MetaMask và có đủ ETH/MATIC để trả phí gas \\
+    \rule{0pt}{3ex}\textbf{Tiền điều kiện} &  \\
     \hline
-    \textbf{Luồng sự kiện chính} & 1. Người dùng chọn "Tạo NFT" trên giao diện \\
+    \rule{0pt}{3ex}\textbf{Luồng sự kiện chính} & 1. Người dùng nhấn nút "Connect Wallet" \\
+    & 2. Hệ thống hiển thị popup Dragon wallet \\
+    & 3. Người dùng nhập tài khoản và mật khẩu \\
+    & 4. Dragon wallet xác thực thông tin đăng nhập \\
+    & 5. Hệ thống lưu địa chỉ ví\\
+    \hline
+    \rule{0pt}{3ex}\textbf{Luồng sự kiện thay thế} & a. Nếu thông tin đăng nhập không chính xác, hệ thống hiển thị thông báo lỗi \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Hậu điều kiện} & Ví được kết nối thành công và người dùng có thể tương tác với marketplace \\
+    \hline
+\end{tabular}
+
+\subsection{Use case "Tạo NFT"}
+\textbf{Bảng 2.3: Đặc tả use case "Tạo NFT"}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|p{10cm}|}
+    \hline
+    \rule{0pt}{3ex}\textbf{Mã Use case} & UC102 \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Tên Use case} & Tạo NFT \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Tác nhân} & Người dùng \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Mô tả} & Cho phép người dùng tạo và đúc NFT mới trên blockchain \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Tiền điều kiện} & Người dùng đã kết nối ví Dragon và có đủ ETH/MATIC để trả phí gas \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Luồng sự kiện chính} & 1. Người dùng chọn "Tạo NFT" trên giao diện \\
     & 2. Hệ thống hiển thị form nhập thông tin NFT (tên, mô tả, hình ảnh) \\
-    & 3. Người dùng nhập thông tin và tải lên hình ảnh \\
+    & 3. Người dùng tải lên hình ảnh và nhập thông tin \\
     & 4. Hệ thống lưu hình ảnh lên IPFS và nhận CID \\
-    & 5. Người dùng xác nhận giao dịch qua MetaMask \\
-    & 6. Hệ thống gọi smart contract để mint NFT với metadata \\
+    & 5. Người dùng đặt giá bán \\
+    & 6. Người dùng xác nhận giao dịch qua Dragon wallet \\
+    & 7. Hệ thống gọi smart contract để mint NFT với metadata \\
     \hline
-    \textbf{Luồng sự kiện thay thế} & 5a. Nếu giao dịch thất bại (hết gas, lỗi mạng), hệ thống thông báo lỗi \\
+    \rule{0pt}{3ex}\textbf{Luồng sự kiện thay thế} & 6a. Nếu giao dịch thất bại (hết gas, lỗi mạng), hệ thống thông báo lỗi \\
     \hline
-    \textbf{Hậu điều kiện} & NFT được tạo thành công và hiển thị trong tài khoản người dùng \\
+    \rule{0pt}{3ex}\textbf{Hậu điều kiện} & NFT được tạo thành công và hiển thị trong marketplace \\
     \hline
 \end{tabular}
 
 \subsection{Use case "Mua NFT"}
+\textbf{Bảng 2.4: Đặc tả use case "Mua NFT"}
+\renewcommand{\arraystretch}{1.5}
 \begin{tabular}{|l|p{10cm}|}
     \hline
-    \textbf{Mã Use case} & UC102 \\
+    \rule{0pt}{3ex}\textbf{Mã Use case} & UC103 \\
     \hline
-    \textbf{Tên Use case} & Mua NFT \\
+    \rule{0pt}{3ex}\textbf{Tên Use case} & Mua NFT \\
     \hline
-    \textbf{Tác nhân} & Người dùng \\
+    \rule{0pt}{3ex}\textbf{Tác nhân} & Người dùng \\
     \hline
-    \textbf{Mô tả} & Cho phép người dùng mua NFT từ người bán \\
+    \rule{0pt}{3ex}\textbf{Mô tả} & Cho phép người dùng mua NFT từ marketplace \\
     \hline
-    \textbf{Tiền điều kiện} & Người dùng đã kết nối ví và có đủ ETH/MATIC \\
+    \rule{0pt}{3ex}\textbf{Tiền điều kiện} & Người dùng đã kết nối ví và có đủ ETH/MATIC \\
     \hline
-    \textbf{Luồng sự kiện chính} & 1. Người dùng chọn NFT muốn mua \\
+    \rule{0pt}{3ex}\textbf{Luồng sự kiện chính} & 1. Người dùng chọn NFT muốn mua \\
     & 2. Hệ thống hiển thị thông tin chi tiết và giá \\
-    & 3. Người dùng xác nhận mua qua MetaMask \\
+    & 3. Người dùng xác nhận mua qua Dragon wallet \\
     & 4. Hệ thống gọi smart contract để thực hiện giao dịch \\
     & 5. NFT được chuyển vào ví người mua \\
     \hline
-    \textbf{Luồng sự kiện thay thế} & 4a. Nếu giao dịch thất bại, hệ thống thông báo lỗi \\
+    \rule{0pt}{3ex}\textbf{Luồng sự kiện thay thế} & 4a. Nếu giao dịch thất bại, hệ thống thông báo lỗi \\
     \hline
-    \textbf{Hậu điều kiện} & NFT được chuyển sang sở hữu của người mua \\
+    \rule{0pt}{3ex}\textbf{Hậu điều kiện} & NFT được chuyển sang sở hữu của người mua \\
     \hline
 \end{tabular}
 
-\subsection{Use case "Bán NFT"}
+\subsection{Use case "Quản lý tài khoản"}
+\textbf{Bảng 2.5: Đặc tả use case "Quản lý tài khoản"}
+\renewcommand{\arraystretch}{1.5}
 \begin{tabular}{|l|p{10cm}|}
     \hline
-    \textbf{Mã Use case} & UC103 \\
+    \rule{0pt}{3ex}\textbf{Mã Use case} & UC104 \\
     \hline
-    \textbf{Tên Use case} & Bán NFT \\
+    \rule{0pt}{3ex}\textbf{Tên Use case} & Quản lý tài khoản \\
     \hline
-    \textbf{Tác nhân} & Người dùng \\
+    \rule{0pt}{3ex}\textbf{Tác nhân} & Người dùng \\
     \hline
-    \textbf{Mô tả} & Cho phép người dùng bán lại NFT đã sở hữu \\
+    \rule{0pt}{3ex}\textbf{Mô tả} & Cho phép người dùng quản lý thông tin và tài sản của mình \\
     \hline
-    \textbf{Tiền điều kiện} & Người dùng là chủ sở hữu NFT và đã kết nối ví \\
+    \rule{0pt}{3ex}\textbf{Tiền điều kiện} & Người dùng đã kết nối ví \\
     \hline
-    \textbf{Luồng sự kiện chính} & 1. Người dùng chọn NFT muốn bán \\
-    & 2. Hệ thống hiển thị form nhập giá bán \\
-    & 3. Người dùng nhập giá và xác nhận qua MetaMask \\
-    & 4. Hệ thống gọi smart contract để liệt kê NFT trên marketplace \\
+    \rule{0pt}{3ex}\textbf{Luồng sự kiện chính} & 1. Người dùng truy cập trang quản lý tài khoản \\
+    & 2. Hệ thống hiển thị danh sách NFT đã sở hữu \\
+    & 3. Hệ thống hiển thị NFT đang bán \\
+    & 4. Người dùng có thể cập nhật thông tin cá nhân \\
     \hline
-    \textbf{Luồng sự kiện thay thế} & 3a. Nếu giá không hợp lệ (giá 0), hệ thống thông báo lỗi \\
+    \rule{0pt}{3ex}\textbf{Luồng sự kiện thay thế} & 4a. Nếu thông tin không hợp lệ, hệ thống hiển thị thông báo lỗi \\
     \hline
-    \textbf{Hậu điều kiện} & NFT được liệt kê trên marketplace để bán \\
+    \rule{0pt}{3ex}\textbf{Hậu điều kiện} & Thông tin tài khoản được cập nhật \\
+    \hline
+\end{tabular}
+
+\subsection{Use case "Tìm kiếm NFT"}
+\textbf{Bảng 2.6: Đặc tả use case "Tìm kiếm NFT"}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|p{10cm}|}
+    \hline
+    \rule{0pt}{3ex}\textbf{Mã Use case} & UC105 \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Tên Use case} & Tìm kiếm NFT \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Tác nhân} & Người dùng \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Mô tả} & Cho phép người dùng tìm kiếm NFT trên marketplace \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Tiền điều kiện} & Không có \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Luồng sự kiện chính} & 1. Người dùng nhập từ khóa tìm kiếm \\
+    & 2. Hệ thống hiển thị kết quả tìm kiếm \\
+    & 3. Người dùng có thể lọc theo giá \\
+    & 4. Người dùng có thể lọc theo danh mục \\
+    & 5. Người dùng có thể sắp xếp kết quả \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Luồng sự kiện thay thế} & 2a. Nếu không tìm thấy kết quả, hệ thống hiển thị thông báo \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Hậu điều kiện} & Hiển thị danh sách NFT phù hợp với tiêu chí tìm kiếm \\
+    \hline
+\end{tabular}
+
+\subsection{Use case "Đưa NFT lên thị trường"}
+\textbf{Bảng 2.7: Đặc tả use case "Đưa NFT lên thị trường"}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|p{10cm}|}
+    \hline
+    \rule{0pt}{3ex}\textbf{Mã Use case} & UC106 \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Tên Use case} & Đưa NFT lên thị trường \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Tác nhân} & Người dùng \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Mô tả} & Cho phép người dùng đưa NFT của mình lên marketplace để bán \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Tiền điều kiện} & Người dùng đã kết nối ví và sở hữu NFT muốn bán \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Luồng sự kiện chính} & 1. Người dùng chọn NFT muốn bán từ danh sách NFT đã sở hữu \\
+    & 2. Hệ thống hiển thị form nhập thông tin bán (giá, thời gian) \\
+    & 3. Người dùng nhập giá bán và thời gian listing \\
+    & 4. Người dùng xác nhận giao dịch qua Dragon wallet \\
+    & 5. Hệ thống gọi smart contract để đưa NFT lên marketplace \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Luồng sự kiện thay thế} & 4a. Nếu giao dịch thất bại, hệ thống thông báo lỗi \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Hậu điều kiện} & NFT được đưa lên marketplace và có thể được mua bởi người khác \\
+    \hline
+\end{tabular}
+
+\subsection{Use case "Xem chi tiết NFT"}
+\textbf{Bảng 2.8: Đặc tả use case "Xem chi tiết NFT"}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|p{10cm}|}
+    \hline
+    \rule{0pt}{3ex}\textbf{Mã Use case} & UC107 \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Tên Use case} & Xem chi tiết NFT \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Tác nhân} & Người dùng \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Mô tả} & Cho phép người dùng xem thông tin chi tiết của một NFT \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Tiền điều kiện} & Không có \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Luồng sự kiện chính} & 1. Người dùng chọn NFT từ danh sách hoặc kết quả tìm kiếm \\
+    & 2. Hệ thống hiển thị trang chi tiết NFT \\
+    & 3. Hệ thống hiển thị thông tin: tên, mô tả, giá, người bán \\
+    & 4. Hệ thống hiển thị lịch sử giao dịch \\
+    & 5. Hệ thống hiển thị metadata của NFT \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Luồng sự kiện thay thế} & 2a. Nếu NFT không tồn tại, hệ thống hiển thị thông báo lỗi \\
+    \hline
+    \rule{0pt}{3ex}\textbf{Hậu điều kiện} & Người dùng có thể xem đầy đủ thông tin chi tiết của NFT \\
     \hline
 \end{tabular}
 
 \section{Biểu đồ hoạt động}
-[Hình 2.2: Biểu đồ hoạt động "Tạo NFT" - Chèn biểu đồ tại đây] \\
-[Hình 2.3: Biểu đồ hoạt động "Mua NFT" - Chèn biểu đồ tại đây] \\
-[Hình 2.4: Biểu đồ hoạt động "Bán NFT" - Chèn biểu đồ tại đây] 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./images/connectWallet.png}
+    \caption{Biểu đồ hoạt động "Kết nối ví"}
+    \label{fig:ketnoivi}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./images/createNFT.png}
+    \caption{Biểu đồ hoạt động "Tạo NFT"}
+    \label{fig:taonft}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./images/buyNFT.png}
+    \caption{Biểu đồ hoạt động "Mua NFT"}
+    \label{fig:muanft}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./images/updateProfile.png}
+    \caption{Biểu đồ hoạt động "Quản lý tài khoản"}
+    \label{fig:quanly}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/searchNFT.png}
+    \caption{Biểu đồ hoạt động "Tìm kiếm NFT"}
+    \label{fig:timkiem}
+\end{figure}

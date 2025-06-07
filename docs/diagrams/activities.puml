@@ -1,0 +1,117 @@
+@startuml Mint NFT
+|User|
+start
+:Yêu cầu mint NFT;
+|System|
+:Kiểm tra quyền mint;
+if (Có quyền?) then (yes)
+  :Tạo metadata;
+  :Upload lên IPFS;
+  :Gọi smart contract mint;
+  |Smart Contract|
+  :Tạo token mới;
+  :Gán quyền sở hữu;
+  :Phát sinh sự kiện;
+  |System|
+  :Cập nhật UI;
+else (no)
+  :Hiển thị lỗi;
+endif
+|User|
+:Hoàn thành;
+stop
+@enduml
+
+@startuml Create Listing
+|User|
+start
+:Chọn NFT để bán;
+|System|
+:Kiểm tra quyền sở hữu;
+if (Có quyền?) then (yes)
+  :Nhập giá bán;
+  :Gọi smart contract approve;
+  |Smart Contract|
+  :Phê duyệt marketplace;
+  |System|
+  :Tạo listing;
+  :Cập nhật UI;
+else (no)
+  :Hiển thị lỗi;
+endif
+|User|
+:Hoàn thành;
+stop
+@enduml
+
+@startuml Buy NFT
+|User|
+start
+:Chọn NFT để mua;
+|System|
+:Kiểm tra giá và số dư;
+if (Đủ số dư?) then (yes)
+  :Gọi smart contract buy;
+  |Smart Contract|
+  :Chuyển NFT;
+  :Chuyển tiền;
+  :Cập nhật listing;
+  :Phát sinh sự kiện;
+  |System|
+  :Cập nhật UI;
+else (no)
+  :Hiển thị lỗi;
+endif
+|User|
+:Hoàn thành;
+stop
+@enduml
+
+@startuml Create Collection
+|User|
+start
+:Yêu cầu tạo collection;
+|System|
+:Kiểm tra quyền;
+if (Có quyền?) then (yes)
+  :Nhập thông tin collection;
+  :Tạo metadata;
+  :Upload lên IPFS;
+  :Gọi smart contract;
+  |Smart Contract|
+  :Tạo collection mới;
+  :Gán quyền quản lý;
+  :Phát sinh sự kiện;
+  |System|
+  :Cập nhật UI;
+else (no)
+  :Hiển thị lỗi;
+endif
+|User|
+:Hoàn thành;
+stop
+@enduml
+
+@startuml Transfer NFT
+|User|
+start
+:Chọn NFT để chuyển;
+|System|
+:Kiểm tra quyền sở hữu;
+if (Có quyền?) then (yes)
+  :Nhập địa chỉ nhận;
+  :Gọi smart contract transfer;
+  |Smart Contract|
+  :Kiểm tra quyền;
+  :Chuyển NFT;
+  :Cập nhật sở hữu;
+  :Phát sinh sự kiện;
+  |System|
+  :Cập nhật UI;
+else (no)
+  :Hiển thị lỗi;
+endif
+|User|
+:Hoàn thành;
+stop
+@enduml 

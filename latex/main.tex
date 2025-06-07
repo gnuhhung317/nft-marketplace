@@ -1,5 +1,18 @@
 \documentclass[a4paper,12pt]{report}
-\input{styles/common.tex}
+\usepackage[utf8]{vietnam}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{array}
+\usepackage{tocloft}
+
+% Điều chỉnh định dạng mục lục
+\renewcommand{\cftchapdotsep}{\cftdotsep}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftchapdotsep}}
+\renewcommand{\cftchapfont}{\bfseries}
+\renewcommand{\cftsecfont}{\normalfont}
 
 \title{\textbf{ĐỒ ÁN MÔN HỌC: PROJECT III} \\ \textbf{ĐỀ TÀI: XÂY DỰNG NFT MARKETPLACE}}
 \author{
@@ -13,17 +26,109 @@
 
 \begin{document}
 
-\input{coverpage/coverpage}
-\tableofcontents
-\thispagestyle{empty}
+\maketitle
+\begin{center}
+    \textbf{ĐẠI HỌC BÁCH KHOA HÀ NỘI} \\
+    \textbf{TRƯỜNG CNTT\&TT}
+\end{center}
 
-\addcontentsline{toc}{chapter}{LỜI NÓI ĐẦU}
-\input{chapters/introduction.tex}
-\input{chapters/problem.tex}
-\input{chapters/requirements.tex}
-\input{chapters/system_analysis.tex}
-\input{chapters/technology.tex}
-\input{chapters/design.tex}
-\input{chapters/conclusion.tex}
+\tableofcontents
+\newpage
+
+\chapter{LỜI NÓI ĐẦU}
+Trong bối cảnh công nghệ blockchain và NFT (Non-Fungible Token) ngày càng phát triển, việc xây dựng một nền tảng giao dịch NFT đã trở thành xu hướng tất yếu. Dự án "Xây dựng NFT Marketplace" hướng tới việc tạo ra một nền tảng cho phép người dùng tạo, mua bán và quản lý NFT một cách an toàn, minh bạch và hiệu quả.
+
+\chapter{TRÌNH BÀY BÀI TOÁN}
+\section{Giới thiệu bài toán}
+NFT Marketplace là một nền tảng giao dịch trực tuyến dựa trên blockchain, cho phép người dùng tạo, mua, bán và quản lý các tài sản kỹ thuật số độc nhất (NFT). Dự án giải quyết nhu cầu sở hữu và giao dịch tài sản kỹ thuật số một cách an toàn, minh bạch và phi tập trung.
+
+\section{Xác định các tác nhân}
+\begin{itemize}
+    \item \textbf{Người dùng (User):} Bao gồm nghệ sĩ số, nhà sưu tập, nhà đầu tư và người mới bắt đầu.
+    \item \textbf{Smart Contract Owner:} Người sở hữu hợp đồng thông minh, có quyền cập nhật phí listing.
+\end{itemize}
+
+\chapter{ĐẶC TẢ YÊU CẦU BÀI TOÁN}
+\section{Giới thiệu chung}
+\textbf{Bảng 2.1: Bảng liệt kê các tác nhân và mô tả thông tin}
+\begin{center}
+\begin{tabular}{|c|l|p{8cm}|}
+    \hline
+    \textbf{STT} & \textbf{Tên tác nhân} & \textbf{Mô tả tác nhân} \\
+    \hline
+    1 & Người dùng (User) & Người sử dụng nền tảng để tạo, mua, bán và quản lý NFT \\
+    \hline
+    2 & Smart Contract Owner & Người sở hữu hợp đồng thông minh, cập nhật phí listing \\
+    \hline
+\end{tabular}
+\end{center}
+
+\section{Đặc tả use case}
+\subsection{Use case "Tạo NFT"}
+\begin{tabular}{|l|p{10cm}|}
+    \hline
+    \textbf{Mã Use case} & UC101 \\
+    \hline
+    \textbf{Tên Use case} & Tạo NFT \\
+    \hline
+    \textbf{Tác nhân} & Người dùng \\
+    \hline
+    \textbf{Mô tả} & Cho phép người dùng tạo và đúc NFT mới trên blockchain \\
+    \hline
+    \textbf{Tiền điều kiện} & Người dùng đã kết nối ví và có đủ ETH/MATIC \\
+    \hline
+    \textbf{Luồng sự kiện chính} & 1. Người dùng chọn "Tạo NFT" \\
+    & 2. Hệ thống hiển thị form nhập thông tin \\
+    & 3. Người dùng nhập thông tin và tải hình ảnh \\
+    & 4. Hệ thống lưu hình ảnh lên IPFS \\
+    & 5. Người dùng xác nhận giao dịch \\
+    \hline
+\end{tabular}
+
+\chapter{PHÂN TÍCH HỆ THỐNG}
+\section{Kiến trúc hệ thống}
+Kiến trúc của NFT Marketplace được thiết kế theo mô hình phân lớp:
+\begin{itemize}
+    \item \textbf{Frontend Layer:} Next.js, Web3Modal, ethers.js
+    \item \textbf{Backend Layer:} Next.js Server Actions
+    \item \textbf{Database Layer:} PostgreSQL
+    \item \textbf{Blockchain Layer:} Ethereum/Polygon
+\end{itemize}
+
+\chapter{CÔNG NGHỆ SỬ DỤNG}
+\section{Smart Contracts}
+\begin{itemize}
+    \item Solidity v0.8.4
+    \item ERC721
+    \item OpenZeppelin Contracts
+    \item Hardhat
+\end{itemize}
+
+\section{Frontend}
+\begin{itemize}
+    \item Next.js 14+
+    \item TypeScript
+    \item Tailwind CSS
+    \item Web3Modal
+    \item ethers.js
+\end{itemize}
+
+\chapter{KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN}
+\section{Kết luận}
+Dự án NFT Marketplace đã đạt được các mục tiêu đề ra:
+\begin{itemize}
+    \item Hệ thống giao dịch NFT ổn định, an toàn
+    \item Bảo mật cao với xác thực ví và audit smart contract
+    \item Trải nghiệm người dùng tốt nhờ giao diện thân thiện
+\end{itemize}
+
+\section{Hướng phát triển}
+\begin{itemize}
+    \item Tích hợp thêm blockchain (BSC, Solana)
+    \item Tính năng đấu giá
+    \item Social features
+    \item Mobile app
+    \item API public
+\end{itemize}
 
 \end{document}

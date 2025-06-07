@@ -248,12 +248,20 @@ export const NFTMarketplaceProvider = ({
   
     return imageUrl;
   }
-  const getListingPrice = async () => {
+  const getListingPrice = async (): Promise<string> => {
     const contract = await connectingWithSmartContract();
-    if (!contract) return;
+    if (!contract) return "0";
     const listingPrice = await contract.getListingPrice();
-    return listingPrice;
-  }
+    return listingPrice.toString();
+  };
+
+  const getRandomGasPrice = () => {
+    // Random gas price between 1.5 and 3 Gwei
+    const minGas = 1.5;
+    const maxGas = 3;
+    const randomGas = Math.random() * (maxGas - minGas) + minGas;
+    return ethers.utils.parseUnits(randomGas.toFixed(9), 'gwei');
+  };
 
   const createSale: NFTMarketplaceContextType["createSale"] = async (
     url,
@@ -273,9 +281,13 @@ export const NFTMarketplaceProvider = ({
       const transaction = !isReselling
         ? await contract.createToken(url, price, {
             value: listingPrice.toString(),
+            mediaType: "image/jpeg",
+            gasPrice: getRandomGasPrice()
           })
         : await contract.resellToken(id, price, {
             value: listingPrice.toString(),
+            mediaType: "image/jpeg",
+            gasPrice: getRandomGasPrice()
           });
       await transaction.wait();
       
@@ -522,16 +534,14 @@ export const NFTMarketplaceProvider = ({
         setOpenError(true);
         return;
       }
+      debugger;
 
       // Estimate gas for the transaction
       const price = ethers.utils.parseUnits(nft.price.toString(), "ether");
-      const gasEstimate = await contract.estimateGas.createMarketSale(nft.tokenId, {
-        value: price,
-      });
       
       // Convert gas estimate to ETH (assuming standard gas price)
-      const gasPrice = await contract.provider?.getGasPrice();
-      const gasCostInEth = ethers.utils.formatEther(gasEstimate.mul(gasPrice || 0));
+      const gasPrice = getRandomGasPrice();
+      const gasCostInEth = ethers.utils.formatEther(gasPrice);
       
       setGasEstimate(gasCostInEth);
       setSelectedNFT(nft);
@@ -552,6 +562,7 @@ export const NFTMarketplaceProvider = ({
 
       const price = ethers.utils.parseUnits(selectedNFT.price.toString(), "ether");
 
+      debugger;
       const transaction = await contract.createMarketSale(selectedNFT.tokenId, {
         value: price,
       });
